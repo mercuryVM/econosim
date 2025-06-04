@@ -2,13 +2,13 @@ import { useClient } from "../hooks/useClient";
 import styles from './Lobby.module.css';
 
 export function Lobby() {
-    const {client, playerState, gameState} = useClient();
+    const { client, playerState, gameState } = useClient();
 
     console.log('Lobby component rendered with client:', client);
     console.log('Player state:', playerState);
     console.log('Game state:', gameState);
 
-    if(!client) {
+    if (!client) {
         return (null)
     }
 
@@ -25,7 +25,7 @@ export function Lobby() {
     )
 }
 
-function LobbyContent({client, playerState, gameState}) {
+function LobbyContent({ client, playerState, gameState }) {
     console.log('LobbyContent rendered with client:', client);
     console.log('Player state:', playerState);
     console.log('Game state:', gameState);
@@ -43,12 +43,12 @@ function LobbyContent({client, playerState, gameState}) {
 function LobbyError() {
     return (
         <div className={styles.error}>
-                        Loading
-                    </div>
+            Loading
+        </div>
     )
 }
 
-function PlayerList({players}) {
+function PlayerList({ players }) {
     return (
         <ul className={styles.playerList}>
             {players.map((player, index) => (

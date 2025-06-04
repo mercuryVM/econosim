@@ -3,18 +3,63 @@ class Server {
         this.app = app;
         this.clients = {};
         this.started = false;
+        this.serverController = null;
+        this.economies = [
+            new Economy(this, "Brasil", "🇧🇷"),
+            new Economy(this, "Estados Unidos", "🇺🇸"),
+        ];
 
         this.handleConnections();
+    }
+
+    startGame() {
+        if (this.started) {
+            console.log('Game already started');
+            return;
+        }
+
+        this.started = true;
+        this.economy = new Economy(this);
     }
 
     get state() {
         return {
             clients: Object.values(this.clients).map(client => ({
+                id: client.id,
                 nickname: client.nickname,
                 role: client.role,
                 inLobby: client.state.inLobby,
             })),
+            economies: this.economies.map(economy => ({
+                country: economy.country,
+                flag: economy.flag,
+                bank: {
+                    players: Object.values(economy.banco.players).map(player => ({
+                        id: player.id,
+                        nickname: player.nickname,
+                    })),
+                },
+                government: {
+                    players: Object.values(economy.governo.players).map(player => ({
+                        id: player.id,
+                        nickname: player.nickname,
+                    })),
+                },
+                pib: economy.pib,
+                inflacao: economy.inflacao,
+                juros: economy.juros,
+                despesas: economy.despesas,
+                receitas: economy.receitas,
+                dividaPublica: economy.dividaPublica,
+            })),
             started: this.started
+        }
+    }
+
+    addPlayer(client, economyIndex, role) {
+        const economy = this.economies[economyIndex];
+        if (economy) {
+            economy.addPlayer(client, role);
         }
     }
 
@@ -28,12 +73,17 @@ class Server {
             client.sendState();
         });
         console.log('State synchronized with all clients:', this.state);
+
+        if (this.serverController) {
+            this.serverController.socket.emit('stateUpdate', this.state);
+            console.log('State sent to server controller:', this.state);
+        }
     }
 
     handleConnections() {
         //socket io middleware
         this.app.use((socket, next) => {
-            const {nickname, role} = socket.handshake.auth;
+            const { nickname, role } = socket.handshake.auth;
             if (!nickname || isNaN(role)) {
                 return next(new Error('Invalid nickname or role'));
             }
@@ -46,14 +96,107 @@ class Server {
             const client = new Client(socket, this);
             this.clients[socket.id] = client;
 
+            console.log('New client connected:', socket.id);
+
+            this.addPlayer(client, 0, socket.role);
+
+            
             this.updateSync();
 
-            console.log('New client connected:', socket.id);
             socket.on('disconnect', () => {
                 console.log('Client disconnected:', socket.id);
                 delete this.clients[socket.id];
+                client.entity.removePlayer(client);
+                this.updateSync();
             });
         });
+
+        this.app.of("/server").use((socket, next) => {
+            if (this.serverController) {
+                return next(new Error('Server controller already connected'));
+            }
+            next();
+        });
+
+        this.app.of("/server").on('connection', (socket) => {
+            var controller = new ServerController(socket, this);
+
+            this.serverController = controller;
+
+            this.serverController.socket.emit('stateUpdate', this.state);
+
+            socket.on('disconnect', () => {
+                console.log('Server controller disconnected:', socket.id);
+                this.serverController = null;
+                this.updateSync();
+            });
+        });
+    }
+}
+
+class Economy {
+    constructor(server, country, flag) {
+        this.server = server;
+        this.country = country; // Nome do país
+        this.flag = flag;       // Emoji ou URL da bandeira
+
+        this.banco = new Banco(this);
+        this.governo = new Governo(this);
+
+        this.pib = 100_000_000_000;
+        this.inflacao = 0.04;
+        this.juros = 0.05;
+        this.despesas = 90_000_000_000;
+        this.receitas = 95_000_000_000;
+        this.dividaPublica = 1_000_000_000_000;
+    }
+
+    addPlayer(client, role) {
+        if (role === 0) {
+            this.banco.addPlayer(client);
+        } else if (role === 1) {
+            this.governo.addPlayer(client);
+        }
+    }
+}
+
+class Entity {
+    constructor(economy) {
+        this.economy = economy;
+        this.players = {};
+    }
+
+    addPlayer(client) {
+        this.players[client.id] = client;
+        client.entity = this;
+    }
+
+    removePlayer(client) {
+        delete this.players[client.id];
+    }
+}
+
+class Banco extends Entity {
+}
+
+class Governo extends Entity {
+}
+
+class VoteInstance {
+    constructor() {
+        this.votes = {};
+    }
+
+    castVote(playerId, choice) {
+        this.votes[playerId] = choice;
+    }
+
+    getResults() {
+        const results = {};
+        for (const [playerId, choice] of Object.entries(this.votes)) {
+            results[playerId] = choice;
+        }
+        return results;
     }
 }
 
@@ -67,6 +210,10 @@ class Client {
             gameState: game.state || {}, // Initialize with game state if available
         }
         this.handleMessages();
+    }
+
+    get id() {
+        return this.socket.id;
     }
 
     firstSync() {
@@ -99,6 +246,19 @@ class Client {
             console.log('Received message:', message);
             // Handle the message here
         });
+    }
+}
+
+class ServerController {
+    constructor(socket, server) {
+        this.socket = socket;
+        this.server = server;
+
+        this.handleMessages();
+    }
+
+    handleMessages() {
+
     }
 }
 

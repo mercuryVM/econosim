@@ -3,7 +3,7 @@ import {EventEmitter} from 'events';
 
 let client = undefined;
 
-export function useClient() {
+export function useServer() {
     const [socket, setSocket] = useState(client);
     const [playerState, setPlayerState] = useState(null);
     const [gameState, setGameState] = useState(null);
@@ -11,12 +11,10 @@ export function useClient() {
     useEffect(() => {
         if (!client) {
             const socketIo = require('socket.io-client');
-            client = new Client(
-                socketIo('http://localhost:3001', {
+            client = new Server(
+                socketIo('http://localhost:3001/server', {
                     transports: ['websocket'],
                     auth: {
-                        nickname: 'User' + Math.floor(Math.random() * 1000),
-                        role: 0 // 0 for bank, 1 for government
                     }
                 })
             );
@@ -46,24 +44,16 @@ export class EventSource {
     }
 }
 
-class Client extends EventSource {
+class Server extends EventSource {
     constructor(socket) {
         super();
         this.socket = socket;
-        this.game = new Game(this);
+
         this.state = {
 
         }
 
         this.handleMessages();
-    }
-
-    get nickname() {
-        return this.socket.auth.nickname;
-    }
-
-    get role() {
-        return this.socket.auth.role;
     }
 
     handleMessages() {
@@ -78,34 +68,6 @@ class Client extends EventSource {
         this.state = { ...this.state, ...data };
         console.log('Client state updated:', this.state);
 
-        this.game.updateState(data.gameState);
-
         this.emit('stateUpdate', this.state);
-    }
-}
-
-class Game {
-    constructor(client) {
-        this.client = client;
-        this.state = {};
-        this.handleGameEvents();
-    }
-
-    get inLobby() {
-        return this.state.inLobby || false;
-    }
-
-    handleGameEvents() {
-        this.client.socket.on('gameEvent', (event) => {
-            console.log('Game event received:', event);
-            // Handle the game event here
-            this.updateState(event);
-        });
-    }
-
-    updateState(event) {
-        // Update the game state based on the event
-        this.state = { ...this.state, ...event };
-        console.log('Game state updated:', this.state);
     }
 }
