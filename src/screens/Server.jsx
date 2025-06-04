@@ -11,6 +11,7 @@ import {
     Paper,
     Grid,
     Button,
+    TableHead,
 } from "@mui/material"
 
 export function Server() {
@@ -52,7 +53,7 @@ export function Server() {
                     py: 6,
                 }}
             >
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4 }}>
+                <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
                     Lobby das Economias
                 </Typography>
                 <Grid container spacing={4} justifyContent="center">
@@ -75,12 +76,26 @@ export function Server() {
                                     {eco.country}
                                 </Typography>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={6}  style={{flex: 1,}}>
                                         <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
                                             Banco
                                         </Typography>
                                         <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
-                                            <Table size="small">
+                                            <Table size={"small"}>
+                                                 <TableHead>
+                                                    <TableRow>
+                                                        <TableCell
+                                                            align="center"
+                                                            sx={{
+                                                                fontWeight: 600,
+                                                                borderBottom: "none",
+                                                                backgroundColor: "#e3f2fd",
+                                                            }}
+                                                        >
+                                                            Jogadores
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
                                                 <TableBody>
                                                     {eco.bank.players.map((player, index) => (
                                                         <TableRow
@@ -104,12 +119,26 @@ export function Server() {
                                             </Table>
                                         </TableContainer>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={6} style={{flex: 1,}}>
                                         <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
                                             Governo
                                         </Typography>
-                                        <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
-                                            <Table size="small">
+                                        <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden", flex: 1 }}>
+                                            <Table sx={{flex: 1}} size={"small"}>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell
+                                                            align="center"
+                                                            sx={{
+                                                                fontWeight: 600,
+                                                                borderBottom: "none",
+                                                                backgroundColor: "#e3f2fd",
+                                                            }}
+                                                        >
+                                                            Jogadores
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
                                                 <TableBody>
                                                     {eco.government.players.map((player, index) => (
                                                         <TableRow
@@ -134,6 +163,10 @@ export function Server() {
                                         </TableContainer>
                                     </Grid>
                                 </Grid>
+                                
+                                <Typography variant="subtitle1" align="center" sx={{ mt: 2, fontWeight: 500 }}>
+                                    Jogadores Conectados: {eco.bank.players.length + eco.government.players.length}
+                                </Typography>
                             </Paper>
                         </Grid>
                     ))}
@@ -161,6 +194,10 @@ export function Server() {
                         Iniciar Partida
                     </Button>
                 )}
+
+                <Typography sx={{ mt: 4, color: "text.secondary", textAlign: "center" }}>
+                    Desenvolvido com ❤️ por Grupo 7
+                </Typography>
             </Box>
         )
     }
@@ -174,24 +211,55 @@ export function Server() {
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    backgroundColor: "rgba(0, 0, 0, 0.9)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     zIndex: 9999,
                 }}
             >
-                <Typography variant="h1" sx={{ color: "white", fontWeight: 700 }}>
+                <Typography
+                    variant="h1"
+                    sx={{
+                        color: "white",
+                        fontWeight: 700,
+                        fontSize: "6rem",
+                        animation: "fadeScale 1s ease-in-out",
+                        "@keyframes fadeScale": {
+                            "0%": { transform: "scale(0.5)", opacity: 0 },
+                            "50%": { transform: "scale(1.2)", opacity: 1 },
+                            "100%": { transform: "scale(1)", opacity: 1 },
+                        },
+                    }}
+                    key={countdown}
+                >
                     {countdown}
                 </Typography>
             </Box>
         )
     }
 
+    function renderGame(client) {
+        return (
+            <Box sx={{ p: 2, flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+                <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 2 }}>
+                    Jogo em Andamento
+                </Typography>
+                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                    Partida iniciada! Boa sorte a todos!
+                </Typography>
+                {/* Aqui você pode adicionar mais componentes para o jogo em si */}
+            </Box>
+        )
+    }
+
+
     return (
-        <Box sx={{ p: 0, minHeight: 0, display: "flex", flexDirection: "column", flex: 1 }}>
+        <Box sx={{ p: 0, minHeight: 0, display: "flex", flexDirection: "column", flex: 1, color: "black" }}>
             {countdown !== null && renderCountdown()}
-            {client ? renderLobby(client) : <div>Connecting to server...</div>}
+            {!client && (<div>Connecting to server...</div>)}
+            {client && !client.state.started ? renderLobby(client) : null}
+            {client && client.state.started && (renderGame(client))}
         </Box>
     )
 }

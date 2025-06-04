@@ -19,7 +19,7 @@ class Server {
         }
 
         this.started = true;
-        this.economy = new Economy(this);
+        this.updateSync();
     }
 
     get state() {
@@ -28,7 +28,7 @@ class Server {
                 id: client.id,
                 nickname: client.nickname,
                 role: client.role,
-                inLobby: client.state.inLobby,
+                inLobby: !this.started,
             })),
             economies: this.economies.map(economy => ({
                 country: economy.country,
@@ -124,6 +124,10 @@ class Server {
             this.serverController = controller;
 
             this.serverController.socket.emit('stateUpdate', this.state);
+
+            socket.on("startGame", () => {
+                this.startGame();
+            });
 
             socket.on('disconnect', () => {
                 console.log('Server controller disconnected:', socket.id);
