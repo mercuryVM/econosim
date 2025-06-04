@@ -20,6 +20,7 @@ export function Server() {
 
     function handleStartGame() {
         let counter = 5
+        client.playSound("roundStart", 0.5)
         setCountdown(counter)
 
         const interval = setInterval(() => {

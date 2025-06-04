@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {EventEmitter} from 'events';
+import RoundStart from '../sounds/econosim round start.mp3';
 
 let client = undefined;
 
@@ -54,8 +55,14 @@ class Client extends EventSource {
         this.state = {
 
         }
+        this.soundManager = new SoundManager();
+        this.soundManager.loadSound('roundStart', RoundStart);
 
         this.handleMessages();
+    }
+
+    playSound(name, volume = 1) {
+        this.soundManager.playSound(name, volume);
     }
 
     get nickname() {
@@ -107,5 +114,27 @@ class Game {
         // Update the game state based on the event
         this.state = { ...this.state, ...event };
         console.log('Game state updated:', this.state);
+    }
+}
+
+export class SoundManager {
+    constructor() {
+        this.sounds = {};
+    }
+
+    loadSound(name, url) {
+        const audio = new Audio(url);
+        this.sounds[name] = audio;
+    }
+
+    playSound(name, volume = 1) {
+        if (this.sounds[name]) {
+            this.sounds[name].volume = volume;
+            this.sounds[name].play().catch(error => {
+                console.error(`Error playing sound ${name}:`, error);
+            });
+        } else {
+            console.warn(`Sound ${name} not found`);
+        }
     }
 }
