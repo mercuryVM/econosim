@@ -5,9 +5,10 @@ class Server {
         this.started = false;
         this.serverController = null;
         this.economies = [
-            new Economy(this, "Brasil", "🇧🇷"),
-            new Economy(this, "Estados Unidos", "🇺🇸"),
+            new Economy(this, "Clodolândia", "🏴‍☠️"),
+            new Economy(this, "Jundiaí", "🎌"),
         ];
+        this.tutorial = false;
 
         this.handleConnections();
     }
@@ -19,6 +20,7 @@ class Server {
         }
 
         this.started = true;
+        this.tutorial = true;
         this.updateSync();
     }
 
@@ -52,7 +54,8 @@ class Server {
                 receitas: economy.receitas,
                 dividaPublica: economy.dividaPublica,
             })),
-            started: this.started
+            started: this.started,
+            tutorial: this.tutorial,
         }
     }
 
