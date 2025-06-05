@@ -196,7 +196,7 @@ export function Server() {
                 )}
 
                 <Typography sx={{ mt: 4, color: "text.secondary", textAlign: "center" }}>
-                    Desenvolvido com ❤️ por Grupo 7
+                    Desenvolvido com ❤️ por Cooktop
                 </Typography>
             </Box>
         )
