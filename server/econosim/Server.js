@@ -10,6 +10,7 @@ class Server {
         this.economies = [
 
         ];
+        this.globalPossibleEvents = data.globalEvents || [];
 
         let i = 0;
         for (const economyData of data.countries) {
@@ -25,11 +26,25 @@ class Server {
         this.handleConnections();
     }
 
+    getGlobalRandomEvent() {
+        if (this.globalPossibleEvents.length === 0) return null;
+
+        const index = Math.floor(Math.random() * this.globalPossibleEvents.length);
+        const event = this.globalPossibleEvents[index];
+
+        // Remove the event from the pool to avoid repetition
+        this.globalPossibleEvents.splice(index, 1);
+
+        return event;
+    }
+
     startGame() {
         if (this.started) {
             console.log('Game already started');
             return;
         }
+
+        this.globalPossibleEvents = data.globalEvents || [];
 
         this.started = true;
         this.tutorial = true;
@@ -73,6 +88,7 @@ class Server {
             })),
             started: this.started,
             tutorial: this.tutorial,
+            round: this.round ? this.round.getState() : null,
         }
     }
 
@@ -169,6 +185,7 @@ class Economy {
         this.country = country; // Nome do país
         this.flag = flag;       // Emoji ou URL da bandeira
 
+        this.possibleLocalEvents = data.countries[id].events || [];
         this.banco = new Banco(this);
         this.governo = new Governo(this);
 
@@ -491,17 +508,25 @@ class Round {
             });
         }
 
-        let pool = [];
-
-        pool = data.countries[economiaAtual.id].events.filter(evento => checkConditions(evento.conditions, economiaAtual));
+        let pool = economiaAtual.possibleLocalEvents.filter(evento => {
+            // Verifica se o evento tem condições e se elas são atendidas
+            // Se não tiver condições, sempre retorna true
+            // Se tiver condições, verifica se todas são atendidas
+            return !evento.conditions || checkConditions(evento.conditions, economiaAtual);
+        });
 
         if (pool.length === 0) return null;
 
         const index = Math.floor(Math.random() * pool.length);
-        return pool[index];
+        const evento = pool[index];
+        economiaAtual.possibleLocalEvents.splice(index, 1); // Remove o evento do pool para não repetir
+        return evento;
     }
 
     start() {
+        this.globalEvent = this.server.getGlobalRandomEvent();
+        console.log(`Global event selected for round ${this.numRound}:`, this.globalEvent ? this.globalEvent.name : 'None');
+
         for (const economy of this.economies) {
             const evento = this.getLocalRandomEvent(economy);
             if (!evento) {
@@ -547,7 +572,13 @@ class Round {
                 options: economyEvent.options,
                 impacts: economyEvent.impacts,
             } : null,
-            roundEnded: this.roundEnded
+            roundEnded: this.roundEnded,
+            globalEvent: this.globalEvent ? {
+                name: this.globalEvent.name,
+                description: this.globalEvent.description,
+                impact: this.globalEvent.impact,
+                asset: this.globalEvent.asset
+            } : null,
         };
     }
 

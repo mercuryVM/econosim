@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EventEmitter } from 'events';
 import { SoundManager } from './useClient';
 import RoundStart from '../sounds/econosim round start.mp3';
+import BgSound from '../sounds/econosim_bg.mp3';
 
 let client = undefined;
 
@@ -24,7 +25,7 @@ export function useServer() {
 
             client.on('stateUpdate', (state) => {
                 setPlayerState(state);
-                setGameState(state.gameState);
+                setGameState(state);
             });
         }
     }, []);
@@ -57,12 +58,13 @@ class Server extends EventSource {
 
         this.soundManager = new SoundManager();
         this.soundManager.loadSound('roundStart', RoundStart);
+        this.soundManager.loadSound('bgSound', BgSound);
 
         this.handleMessages();
     }
 
     playSound(name, volume = 1) {
-        this.soundManager.playSound(name, volume);
+        return this.soundManager.playSound(name, volume);
     }
 
     handleMessages() {

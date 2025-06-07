@@ -1289,6 +1289,7 @@
     ],
     "globalEvents": [
         {
+            "asset": "/globalEvents/criseFinanceira.png",
             "name": "Crise Financeira Internacional",
             "description": "Uma crise bancária em grandes economias gerou pânico nos mercados e fuga de capitais de países emergentes.",
             "impact": {
@@ -1298,6 +1299,7 @@
             }
         },
         {
+            "asset": "/globalEvents/boomCommodities.png",
             "name": "Boom de Commodities",
             "description": "O preço internacional de alimentos e minérios disparou, beneficiando países exportadores.",
             "impact": {
@@ -1306,6 +1308,7 @@
             }
         },
         {
+            "asset": "/globalEvents/altaPetroleo.png",
             "name": "Alta Global no Petróleo",
             "description": "O aumento nos preços do petróleo pressionou os custos de transporte e energia no mundo todo.",
             "impact": {
@@ -1315,6 +1318,7 @@
             }
         },
         {
+            "asset": "/globalEvents/estabilidadeGlobal.png",
             "name": "Estabilidade Econômica Global",
             "description": "Confiança nos mercados e crescimento moderado trouxeram estabilidade e otimismo global.",
             "impact": {
@@ -1323,6 +1327,7 @@
             }
         },
         {
+            "asset": "/globalEvents/livreComercio.png",
             "name": "Acordo Global de Livre Comércio",
             "description": "Novos tratados internacionais reduziram barreiras comerciais, aumentando o fluxo de bens e serviços.",
             "impact": {
@@ -1332,6 +1337,7 @@
             }
         },
         {
+            "asset": "/globalEvents/choqueClimatico.png",
             "name": "Choque Climático Global",
             "description": "Eventos climáticos extremos em vários países afetam a produção agrícola e pressionam preços.",
             "impact": {
