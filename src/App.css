@@ -22,8 +22,7 @@
 
 .content {
   background-color: white;
-  padding: 10px;
   flex: 1;
   display: flex;
-      position: relative;
+  position: relative;
 }

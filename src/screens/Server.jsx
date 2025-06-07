@@ -13,6 +13,9 @@ import {
     Button,
     TableHead,
 } from "@mui/material"
+import Twemoji from "react-twemoji"
+import { stringToEmoji } from "../utils"
+import styles from "./Server.module.css"
 
 export function Server() {
     const { client } = useServer()
@@ -98,8 +101,11 @@ export function Server() {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {eco.bank.players.map((player, index) => (
-                                                        <TableRow
+                                                    {eco.bank.players.map((player, index) => {
+                                                        const emoji = stringToEmoji(player.nickname)
+
+                                                        return (
+                                                            <TableRow
                                                             key={player.id}
                                                             sx={{
                                                                 backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
@@ -110,12 +116,17 @@ export function Server() {
                                                                 sx={{
                                                                     fontWeight: 500,
                                                                     borderBottom: "none",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    gap: "5px"
                                                                 }}
                                                             >
+                                                                <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
                                                                 {player.nickname}
                                                             </TableCell>
                                                         </TableRow>
-                                                    ))}
+                                                        )
+                                                    })}
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>

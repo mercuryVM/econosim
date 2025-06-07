@@ -15,13 +15,17 @@ export function Lobby({ client, playerState, gameState }) {
 
     return (
         <div className={styles.lobbyContainer}>
-            {
+            <div className={styles.bg} />
+
+            <div className={styles.lobbyContent}>
+                {
                 playerState && playerState.inLobby ? (
                     <LobbyContent client={client} playerState={playerState} gameState={gameState} />
                 ) : (
                     <LobbyError />
                 )
             }
+            </div>
         </div>
     )
 }
@@ -57,9 +61,9 @@ function LobbyContent({ client, playerState, gameState }) {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                padding: "16px",
-                backgroundColor: "rgba(0, 0, 0, 0.29)",
-                backdropFilter: "blur(10px)",
+                padding: "10px",
+                backgroundColor: "rgb(164 164 164)",
+                boxShadow: "0px -2px 4px rgba(0, 0, 0, 0.1)",
             }}>
                 <Typography variant="body1" textAlign={"center"} color={"black"} fontWeight={"bold"} sx={{ textShadow: "0 0 5px white" }} className={styles.waitingText}>
                     Aguardando início do jogo...
@@ -96,7 +100,7 @@ function PlayerList({ players }) {
                         <Paper sx={{
                             borderRadius: 10,
                             padding: "8px 24px",
-                            backgroundColor: "rgba(0,0,0,0.1)",
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
                             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                             flex: "0 1 150px",
                             display: "flex",
