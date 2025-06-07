@@ -12,6 +12,7 @@ function App() {
     <div className="App">
       <Header />
       <div className='content'>
+        <div className={"bg"} />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Client />} />

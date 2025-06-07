@@ -61,6 +61,11 @@ class Client extends EventSource {
         this.handleMessages();
     }
 
+    sendMessage(event, ...data) {
+        console.log(`Emitting event: ${event}`, data);
+        this.socket.emit(event, ...data);
+    }
+
     playSound(name, volume = 1) {
         this.soundManager.playSound(name, volume);
     }
@@ -78,6 +83,11 @@ class Client extends EventSource {
             console.log('State update received:', data);
             this.updateState(data);
         });
+
+        this.socket.on("votes", (data) => {
+            console.log('Votes received:', data);
+            this.emit('votes', data);
+        })
     }
 
     updateState(data) {

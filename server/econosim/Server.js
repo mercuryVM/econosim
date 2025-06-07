@@ -1,3 +1,6 @@
+const data = require('./data.json');
+console.log('Data loaded:', data);
+
 class Server {
     constructor(app) {
         this.app = app;
@@ -5,10 +8,19 @@ class Server {
         this.started = false;
         this.serverController = null;
         this.economies = [
-            new Economy(this, "Clodolândia", "🏴‍☠️"),
-            new Economy(this, "Jundiaí", "🎌"),
+
         ];
+
+        let i = 0;
+        for (const economyData of data.countries) {
+            const economy = new Economy(this, i, economyData.name, economyData.flag);
+            this.economies.push(economy);
+            i++;
+        }
+
+
         this.tutorial = false;
+        this.currentRound = 0;
 
         this.handleConnections();
     }
@@ -21,6 +33,16 @@ class Server {
 
         this.started = true;
         this.tutorial = true;
+        this.updateSync();
+
+        this.nextRound();
+    }
+
+    nextRound() {
+        this.round = new Round(++this.currentRound, this, this.economies);
+        this.round.start();
+        console.log('New round started:', this.round.numRound);
+
         this.updateSync();
     }
 
@@ -35,24 +57,19 @@ class Server {
             economies: this.economies.map(economy => ({
                 country: economy.country,
                 flag: economy.flag,
-                bank: {
+                banco: {
                     players: Object.values(economy.banco.players).map(player => ({
                         id: player.id,
                         nickname: player.nickname,
                     })),
                 },
-                government: {
+                governo: {
                     players: Object.values(economy.governo.players).map(player => ({
                         id: player.id,
                         nickname: player.nickname,
                     })),
                 },
-                pib: economy.pib,
-                inflacao: economy.inflacao,
-                juros: economy.juros,
-                despesas: economy.despesas,
-                receitas: economy.receitas,
-                dividaPublica: economy.dividaPublica,
+                stats: economy.state,
             })),
             started: this.started,
             tutorial: this.tutorial,
@@ -75,11 +92,9 @@ class Server {
             }
             client.sendState();
         });
-        console.log('State synchronized with all clients:', this.state);
 
         if (this.serverController) {
             this.serverController.socket.emit('stateUpdate', this.state);
-            console.log('State sent to server controller:', this.state);
         }
     }
 
@@ -101,9 +116,9 @@ class Server {
 
             console.log('New client connected:', socket.id);
 
-            this.addPlayer(client, 0, socket.role);
+            this.addPlayer(client, Object.keys(this.clients).length % this.economies.length, socket.role);
 
-            
+
             this.updateSync();
 
             socket.on('disconnect', () => {
@@ -139,23 +154,69 @@ class Server {
             });
         });
     }
+
+    roundOptionSelect(client, optionIndex) {
+        if (this.round) {
+            this.round.onOptionSelected(client, optionIndex);
+        }
+    }
 }
 
 class Economy {
-    constructor(server, country, flag) {
+    constructor(server, id, country, flag) {
         this.server = server;
+        this.id = id;           // Identificador único da economia
         this.country = country; // Nome do país
         this.flag = flag;       // Emoji ou URL da bandeira
 
         this.banco = new Banco(this);
         this.governo = new Governo(this);
 
-        this.pib = 100_000_000_000;
-        this.inflacao = 0.04;
-        this.juros = 0.05;
-        this.despesas = 90_000_000_000;
-        this.receitas = 95_000_000_000;
-        this.dividaPublica = 1_000_000_000_000;
+        this.taxaDeJuros = 0.03;             // Juros baixos, incentivando consumo e investimento
+        this.consumoFamiliar = 70000;        // Nível de consumo nominal em moeda
+        this.investimentoPrivado = 90000;    // Investimento inicial razoável, abaixo do pico histórico
+        this.gastosPublicos = 50000;         // Estado neutro, pronto para estímulos
+        this.exportacoes = 20000;            // Saldo de exportação estável
+        this.importacoes = 20000;            // Equilíbrio comercial inicial
+
+        this.ofertaMoeda = 100000;           // Base monetária neutra
+        this.nivelPrecos = 1.0;              // Índice-base de preços (100%)
+        this.demandaMoeda = 110000;          // Levemente acima da oferta: espaço para política monetária
+    }
+
+    get state() {
+        return {
+            taxaDeJuros: this.taxaDeJuros,
+            consumoFamiliar: this.consumoFamiliar,
+            investimentoPrivado: this.investimentoPrivado,
+            gastosPublicos: this.gastosPublicos,
+            exportacoes: this.exportacoes,
+            importacoes: this.importacoes,
+            ofertaMoeda: this.ofertaMoeda,
+            nivelPrecos: this.nivelPrecos,
+            demandaMoeda: this.demandaMoeda,
+
+            ofertaRealMoeda: this.ofertaRealMoeda,
+            pib: this.pib,
+            demandaAgregada: this.demandaAgregada,
+            demandaMoedaAjustada: this.demandaMoedaAjustada,
+        }
+    }
+
+    get ofertaRealMoeda() {
+        return this.ofertaMoeda / this.nivelPrecos;
+    }
+
+    get pib() {
+        return (this.consumoFamiliar * (1 + this.confiancaConsumidor) + this.investimentoPrivado + this.gastosPublicos + (this.exportacoes - this.importacoes));
+    }
+
+    get demandaAgregada() {
+        return this.consumoFamiliar * (this.investimentoPrivado + this.gastosPublicos + (this.exportacoes - this.importacoes));
+    }
+
+    get demandaMoedaAjustada() {
+        return this.demandaMoeda - (this.taxaDeJuros * 100_000);
     }
 
     addPlayer(client, role) {
@@ -165,6 +226,17 @@ class Economy {
             this.governo.addPlayer(client);
         }
     }
+
+    sendEvent(eventName, ...args) {
+        // Send an event to all players in the economy
+        Object.values(this.banco.players).forEach(player => {
+            player.sendEvent(eventName, ...args);
+        });
+        Object.values(this.governo.players).forEach(player => {
+            player.sendEvent(eventName, ...args);
+        });
+        //console.log(`Event ${eventName} sent to all players in economy ${this.country}`);
+    }
 }
 
 class Entity {
@@ -172,6 +244,11 @@ class Entity {
         this.economy = economy;
         this.name = name;
         this.players = {};
+        this.vote = new VoteInstance();
+    }
+
+    get id() {
+        return this.name.toLowerCase();
     }
 
     addPlayer(client) {
@@ -181,6 +258,14 @@ class Entity {
 
     removePlayer(client) {
         delete this.players[client.id];
+    }
+
+    sendMessage(eventName, ...args) {
+        // Send a message to all players in this entity
+        Object.values(this.players).forEach(player => {
+            player.sendEvent(eventName, ...args);
+        });
+        //console.log(`Message ${eventName} sent to all players in entity ${this.name}`);
     }
 }
 
@@ -197,20 +282,39 @@ class Governo extends Entity {
 }
 
 class VoteInstance {
-    constructor() {
+    constructor(options) {
         this.votes = {};
     }
 
     castVote(playerId, choice) {
+        if (choice === null) {
+            // Remove vote if choice is null
+            delete this.votes[playerId];
+            return;
+        }
+
         this.votes[playerId] = choice;
     }
 
     getResults() {
-        const results = {};
-        for (const [playerId, choice] of Object.entries(this.votes)) {
-            results[playerId] = choice;
+        // Obtém a contagem de votos
+        const voteCounts = {};
+        const votes = Object.values(this.votes);
+        for (const choice of votes) {
+            if (!voteCounts[choice]) {
+                voteCounts[choice] = 0;
+            }
+            voteCounts[choice]++;
         }
-        return results;
+
+        // Calcula a porcentagem de votos
+        const totalVotes = votes.length;
+        const votePercentages = {};
+        for (const [choice, count] of Object.entries(voteCounts)) {
+            votePercentages[choice] = ((count / totalVotes) * 100);
+        }
+
+        return votePercentages;
     }
 }
 
@@ -226,11 +330,25 @@ class Client {
         this.handleMessages();
     }
 
+    set state(param1) {
+        this._state = param1;
+    }
+
+    get state() {
+        return {
+            ...this._state,
+            round: this.game && this.game.round ? this.game.round.getState(this) : null,
+            myEconomyIndex: this.entity && this.entity.economy ? this.entity.economy.id : null,
+            myEntityIndex: this.entity ? this.entity.id : null,
+        }
+    }
+
     set entity(param1) {
         this._entity = param1;
         this.updateState({
             entity: {
                 name: this._entity.name,
+                id: this._entity.name.toLowerCase(),
             },
             economy: {
                 country: this._entity.economy.country,
@@ -260,22 +378,27 @@ class Client {
         return this.socket.role;
     }
 
+    sendEvent(eventName, ...args) {
+        // Send an event to the client
+        this.socket.emit(eventName, ...args);
+        //console.log(`Event ${eventName} sent to client ${this.id} with args:`, args);
+    }
+
     updateState(state) {
         // Update the client state based on the received state
         this.state = { ...this.state, ...state };
-        console.log('Client state updated:', this.state);
+        //console.log('Client state updated:', this.state);
     }
 
     sendState() {
         // Send the current state to the client
         this.socket.emit('stateUpdate', this.state);
-        console.log('State sent to client:', this.state);
+        //console.log('State sent to client:', this.state);
     }
 
     handleMessages() {
-        this.socket.on('message', (message) => {
-            console.log('Received message:', message);
-            // Handle the message here
+        this.socket.on('roundOptionSelected', (option) => {
+            this.game.roundOptionSelect(this, option);
         });
     }
 }
@@ -290,6 +413,180 @@ class ServerController {
 
     handleMessages() {
 
+    }
+
+    emit(eventName, ...args) {
+        // Emit an event to the server controller
+        this.socket.emit(eventName, ...args);
+        console.log(`Event ${eventName} emitted with args:`, args);
+    }
+}
+
+class Round {
+    constructor(numRound = 1, server, economies) {
+        this.numRound = numRound;
+        this.server = server;
+        this.economies = economies;
+        this.roundEnded = false;
+    }
+
+    onOptionSelected(client, optionIndex) {
+        if (!client || !client.entity) {
+            console.error('Invalid client or entity');
+            return;
+        }
+
+        const entity = client.entity;
+
+        const economy = client.entity.economy;
+        if (!economy) {
+            console.error('Client is not associated with an economy');
+            return;
+        }
+
+        if (this.roundEnded) {
+            console.warn('Round has already ended, ignoring option selection');
+            return;
+        }
+
+        //Verificar se o cliente está no banco ou governo
+        if (!economy.event) {
+            console.error('No event to resolve');
+            return;
+        }
+
+        console.log(entity.id)
+
+        if (optionIndex < 0 || optionIndex >= economy.event.options[entity.id].length || optionIndex === null) {
+            return entity.vote.castVote(client.id, null);
+        }
+
+        // Cliente é do governo
+        const escolhaGoverno = economy.event.options[entity.id][optionIndex];
+        if (!escolhaGoverno) {
+            throw "Invalid option selected";
+        }
+
+        entity.vote.castVote(client.id, optionIndex);
+
+        entity.sendMessage("votes", entity.vote.getResults());
+    }
+
+    getLocalRandomEvent(economiaAtual) {
+        // Função auxiliar para avaliar condições do evento com base no estado atual
+        function checkConditions(conditions = [], economia) {
+            return conditions.every(cond => {
+                const { variable, operator, value } = cond;
+                const atual = economia[variable];
+
+                switch (operator) {
+                    case "<": return atual < value;
+                    case ">": return atual > value;
+                    case "<=": return atual <= value;
+                    case ">=": return atual >= value;
+                    case "==": return atual === value;
+                    case "!=": return atual !== value;
+                    default: return false;
+                }
+            });
+        }
+
+        let pool = [];
+
+        pool = data.countries[economiaAtual.id].events.filter(evento => checkConditions(evento.conditions, economiaAtual));
+
+        if (pool.length === 0) return null;
+
+        const index = Math.floor(Math.random() * pool.length);
+        return pool[index];
+    }
+
+    start() {
+        for (const economy of this.economies) {
+            const evento = this.getLocalRandomEvent(economy);
+            if (!evento) {
+                console.warn(`No valid event found for economy ${economy.country}`);
+                continue;
+            }
+            economy.event = evento;
+            console.log(`Event selected for economy ${economy.country}:`, evento.name);
+        }
+
+        this.startTimer(10);
+    }
+
+    startTimer(seconds = 90) {
+        this.server.serverController.emit('timeUpdate', seconds);
+
+        this.timer = setInterval(() => {
+            seconds--;
+            this.server.serverController.emit('timeUpdate', seconds);
+            if (seconds <= 0) {
+                clearInterval(this.timer);
+                this.resolveRound();
+            } else {
+                console.log(`Time remaining: ${seconds} seconds`);
+            }
+        }, 1000);
+    }
+
+    resolveRound() {
+        this.roundEnded = true;
+        this.server.updateSync();
+    }
+
+    getState(client) {
+        const entity = client && client.entity ? client.entity : null;
+        const economy = entity ? entity.economy : null;
+        const economyEvent = economy ? economy.event : null;
+        return {
+            numRound: this.numRound,
+            event: economyEvent ? {
+                name: economyEvent.name,
+                description: economyEvent.description,
+                options: economyEvent.options,
+                impacts: economyEvent.impacts,
+            } : null,
+            roundEnded: this.roundEnded
+        };
+    }
+
+    resolveEvent(evento, escolhaBanco, escolhaGoverno) {
+        const possiveis = evento.outcomes.filter(o =>
+            o.combo.includes(escolhaBanco) && o.combo.includes(escolhaGoverno)
+        );
+
+        if (possiveis.length === 0) return null;
+
+        // Sorteia com base na chance
+        const rand = Math.random();
+        let acumulado = 0;
+
+        for (const o of possiveis) {
+            acumulado += o.chance;
+            if (rand <= acumulado) return o;
+        }
+
+        return possiveis[possiveis.length - 1]; // fallback
+    }
+
+    calcularPontuacao(impact) {
+        return (
+            (impact.investimentoPrivado || 0) / 1000 +
+            (impact.consumoFamiliar || 0) / 1000 +
+            (impact.gastosPublicos || 0) / 1000 -
+            ((impact.taxaJuros || 0) * 5) +
+            (impact.ofertaMoeda || 0) / 10000 -
+            (impact.demandaMoeda || 0) / 10000 -
+            ((impact.nivelPrecos || 0) * 100) +
+            (impact.exportacoes || 0) / 1000 -
+            (impact.importacoes || 0) / 1000
+        );
+    }
+
+
+    applyRound() {
+        //Aplicar as mudanças do round na economia
     }
 }
 

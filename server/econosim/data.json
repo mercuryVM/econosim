@@ -1,0 +1,1344 @@
+{
+    "countries": [
+        {
+            "name": "Clodolândia",
+            "flag": "🏴‍☠️",
+            "events": [
+                {
+                    "name": "Crise no Setor Imobiliário",
+                    "conditions": [
+                        {
+                            "variable": "investimentoPrivado",
+                            "operator": "<",
+                            "value": 40
+                        }
+                    ],
+                    "description": "O mercado imobiliário colapsou, gerando um efeito dominó em toda a economia de Clodolândia.",
+                    "impacts": {
+                        "consumoFamiliar": -10,
+                        "investimentoPrivado": -25,
+                        "demandaMoeda": -5
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reduzir taxa de juros para estimular crédito"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Expandir a base monetária para injetar liquidez"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Aumentar gastos públicos em infraestrutura"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Oferecer subsídios ao setor da construção civil"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": -2,
+                                "gastosPublicos": 15,
+                                "investimentoPrivado": 20,
+                                "consumoFamiliar": 10
+                            },
+                            "resultText": "As medidas conjuntas surtiram efeito: o crédito voltou e a economia foi reaquecida."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "gastosPublicos": 15,
+                                "taxaJuros": -2,
+                                "nivelPrecos": 0.2,
+                                "demandaMoeda": 10
+                            },
+                            "resultText": "O excesso de estímulos gerou desconfiança e pressão inflacionária."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.5,
+                            "impact": {
+                                "ofertaMoeda": 20000,
+                                "investimentoPrivado": 15,
+                                "consumoFamiliar": 5
+                            },
+                            "resultText": "A liquidez extra e os subsídios impulsionaram a recuperação do setor."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.5,
+                            "impact": {
+                                "ofertaMoeda": 20000,
+                                "gastosPublicos": 10,
+                                "nivelPrecos": 0.3
+                            },
+                            "resultText": "A política foi mal recebida: o excesso de dinheiro elevou a inflação sem confiança no setor."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "investimentoPrivado": 5,
+                                "gastosPublicos": 10,
+                                "consumoFamiliar": 0
+                            },
+                            "resultText": "As medidas se sobrepuseram sem coordenação, gerando pouco efeito líquido."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 15,
+                                "ofertaMoeda": 15000,
+                                "nivelPrecos": 0.25,
+                                "consumoFamiliar": -5
+                            },
+                            "resultText": "A combinação de expansão monetária com grandes obras superaqueceu a economia e gerou inflação."
+                        }
+                    ]
+                },
+                {
+                    "name": "Ruptura no Fornecimento Local",
+                    "conditions": [
+                        {
+                            "variable": "importacoes",
+                            "operator": ">",
+                            "value": 50
+                        }
+                    ],
+                    "description": "A falência de um importante fornecedor regional aumentou os preços dos insumos básicos em Jundiaí, pressionando o custo de vida e a produção local.",
+                    "impacts": {
+                        "demandaMoeda": 5000,
+                        "consumoFamiliar": -10000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Aumentar taxa de juros para conter a inflação local"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Reduzir a oferta de moeda para controlar a pressão nos preços"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Subsidiar distribuição de produtos essenciais para a população"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Incentivar pequenos produtores locais para substituir o fornecedor perdido"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "gastosPublicos": 10000,
+                                "nivelPrecos": -0.2,
+                                "consumoFamiliar": 5000
+                            },
+                            "resultText": "A ação rápida freou os preços e garantiu acesso da população a itens básicos."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "gastosPublicos": 10000,
+                                "consumoFamiliar": -2000,
+                                "investimentoPrivado": -10000
+                            },
+                            "resultText": "O remédio foi amargo: os preços caíram, mas o consumo e os investimentos recuaram."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "ofertaMoeda": -15000,
+                                "investimentoPrivado": 10000,
+                                "nivelPrecos": -0.1,
+                                "demandaMoeda": -3000
+                            },
+                            "resultText": "O estímulo à produção local funcionou, estabilizando a inflação ao longo das semanas."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "ofertaMoeda": -15000,
+                                "gastosPublicos": 8000,
+                                "investimentoPrivado": -5000,
+                                "consumoFamiliar": -3000
+                            },
+                            "resultText": "As medidas demoraram a surtir efeito e o consumo caiu antes de haver substituição local."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "investimentoPrivado": -8000,
+                                "gastosPublicos": 7000,
+                                "nivelPrecos": -0.05
+                            },
+                            "resultText": "O aumento de juros reduziu a inflação, mas o investimento na nova produção foi sufocado."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "ofertaMoeda": -15000,
+                                "gastosPublicos": 12000,
+                                "demandaMoeda": 5000,
+                                "nivelPrecos": 0.2
+                            },
+                            "resultText": "Houve desorganização nas políticas: o subsídio ampliou o consumo antes do mercado estar estabilizado."
+                        }
+                    ]
+                },
+                {
+                    "name": "Fuga de Capitais",
+                    "conditions": [],
+                    "description": "Investidores retiram recursos dos países em desenvolvimento diante de incertezas globais.",
+                    "impacts": {
+                        "taxaJuros": 1,
+                        "investimentoPrivado": -20000,
+                        "demandaMoeda": -10000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Aumentar taxa de juros para conter fuga de capitais"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Utilizar reservas cambiais para estabilizar a economia"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Implementar incentivos fiscais para atrair capital externo"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Negociar acordos internacionais de confiança e comércio"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "gastosPublicos": 5000,
+                                "investimentoPrivado": 15000,
+                                "demandaMoeda": 7000
+                            },
+                            "resultText": "O aumento dos juros, aliado aos incentivos, atraiu parte do capital de volta."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "gastosPublicos": 5000,
+                                "consumoFamiliar": -7000,
+                                "investimentoPrivado": -5000
+                            },
+                            "resultText": "O capital não voltou e os juros altos frearam o consumo e o investimento."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "ofertaMoeda": -10000,
+                                "exportacoes": 5000,
+                                "investimentoPrivado": 10000
+                            },
+                            "resultText": "A sinalização internacional aliada ao uso das reservas trouxe estabilidade."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "ofertaMoeda": -10000,
+                                "gastosPublicos": 4000,
+                                "nivelPrecos": 0.15
+                            },
+                            "resultText": "As reservas foram mal utilizadas e os acordos não surtiram efeito imediato."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": 1.5,
+                                "investimentoPrivado": 3000,
+                                "exportacoes": 3000
+                            },
+                            "resultText": "A confiança externa melhorou, mas os juros altos ainda limitaram o crescimento interno."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 7000,
+                                "ofertaMoeda": -8000,
+                                "nivelPrecos": 0.2,
+                                "investimentoPrivado": -3000
+                            },
+                            "resultText": "Políticas desalinhadas: inflação subiu e o capital continuou saindo do país."
+                        }
+                    ]
+                },
+                {
+                    "name": "Boom Tecnológico",
+                    "conditions": [],
+                    "description": "Avanços tecnológicos impulsionam a produtividade e a confiança dos investidores.",
+                    "impacts": {
+                        "investimentoPrivado": 20000,
+                        "consumoFamiliar": 10000,
+                        "demandaMoeda": 5000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reduzir taxa de juros para acelerar o crescimento"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Manter estabilidade monetária para evitar bolhas"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Investir em educação para sustentar o crescimento"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Reduzir impostos para o setor de tecnologia"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 10000,
+                                "consumoFamiliar": 10000,
+                                "investimentoPrivado": 20000
+                            },
+                            "resultText": "A combinação de estímulo e qualificação sustentou o boom e expandiu o mercado."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "nivelPrecos": 0.15,
+                                "demandaMoeda": 3000
+                            },
+                            "resultText": "O crescimento foi forte, mas gerou pressão inflacionária e demanda por moeda."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "investimentoPrivado": 15000,
+                                "confiancaConsumidor": 7000,
+                                "renda": 10000
+                            },
+                            "resultText": "A política de confiança e incentivos fiscais reforçou o setor produtivo."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "investimentoPrivado": 5000,
+                                "gastosPublicos": 0,
+                                "confiancaConsumidor": -2000
+                            },
+                            "resultText": "O setor tecnológico cresceu, mas sem suporte público o efeito foi limitado e desigual."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "investimentoPrivado": 15000,
+                                "nivelPrecos": 0.1
+                            },
+                            "resultText": "O crédito barato e os cortes fiscais aceleraram o setor, mas começaram a surgir sinais de superaquecimento."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 10000,
+                                "investimentoPrivado": 10000,
+                                "consumoFamiliar": 5000
+                            },
+                            "resultText": "A educação foi fortalecida e o banco manteve a estabilidade, mas o crescimento foi mais gradual."
+                        }
+                    ]
+                },
+                {
+                    "name": "Confiança do Consumidor em Alta",
+                    "conditions": [],
+                    "description": "O otimismo econômico global estimula o consumo e os investimentos em diversos países.",
+                    "impacts": {
+                        "consumoFamiliar": 15000,
+                        "investimentoPrivado": 10000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Aumentar levemente a taxa de juros para evitar superaquecimento"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Aproveitar o momento para manter liquidez elevada"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Aproveitar o momento para consolidar finanças públicas"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Expandir programas sociais para ampliar o bem-estar"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": 0.5,
+                                "gastosPublicos": -10000,
+                                "renda": 5000,
+                                "confiancaConsumidor": 3000
+                            },
+                            "resultText": "A prudência fiscal e monetária fortaleceu a confiança e aumentou a resiliência da economia."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "taxaJuros": 0.5,
+                                "gastosPublicos": -10000,
+                                "investimentoPrivado": -5000
+                            },
+                            "resultText": "O ajuste foi visto como precoce demais, causando desaceleração prematura."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "ofertaMoeda": 10000,
+                                "consumoFamiliar": 10000,
+                                "confiancaConsumidor": 7000
+                            },
+                            "resultText": "A política expansionista elevou o padrão de vida e manteve o otimismo elevado."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "ofertaMoeda": 10000,
+                                "nivelPrecos": 0.15,
+                                "demandaMoeda": 5000
+                            },
+                            "resultText": "O excesso de estímulo causou sinais de inflação e desconfiança no mercado."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": 0.5,
+                                "gastosPublicos": 10000,
+                                "consumoFamiliar": 5000,
+                                "nivelPrecos": 0.1
+                            },
+                            "resultText": "O aumento de juros compensou os gastos, mas o crescimento perdeu fôlego."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": -10000,
+                                "ofertaMoeda": 10000,
+                                "renda": 3000,
+                                "demandaMoeda": 2000
+                            },
+                            "resultText": "A economia se manteve estável, mas os ganhos poderiam ter sido maiores com mais ação coordenada."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Jundiaí",
+            "flag": "🇧🇷",
+            "events": [
+                {
+                    "name": "Escândalo Político",
+                    "conditions": [],
+                    "description": "Um grande escândalo de corrupção abalou a confiança da população e dos investidores em Jundiaí.",
+                    "impacts": {
+                        "consumoFamiliar": -15000,
+                        "investimentoPrivado": -20000,
+                        "demandaMoeda": -5000,
+                        "confiancaConsumidor": -20
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Manter a taxa de juros para evitar instabilidade"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Fazer pronunciamento público garantindo a estabilidade monetária"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Lançar programa de transparência com aumento de gastos públicos"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Promover investigação oficial com suspensão de envolvidos"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "taxaJuros": 0,
+                                "gastosPublicos": 10000,
+                                "confiancaConsumidor": 15,
+                                "consumoFamiliar": 7000
+                            },
+                            "resultText": "O investimento em transparência e a postura cautelosa do banco acalmaram a população."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "gastosPublicos": 10000,
+                                "confiancaConsumidor": -5,
+                                "nivelPrecos": 0.1
+                            },
+                            "resultText": "A população considerou a resposta tímida demais e os gastos públicos levantaram suspeitas."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "confiancaConsumidor": 20,
+                                "consumoFamiliar": 8000,
+                                "investimentoPrivado": 10000
+                            },
+                            "resultText": "A postura firme de ambos os lados restaurou parte da confiança e reanimou a economia."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "confiancaConsumidor": -10,
+                                "demandaMoeda": -3000,
+                                "nivelPrecos": 0.2
+                            },
+                            "resultText": "Apesar das declarações e investigações, o escândalo dominou a mídia e piorou a confiança."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "confiancaConsumidor": 5,
+                                "investimentoPrivado": 2000
+                            },
+                            "resultText": "A investigação teve algum efeito, mas a ausência de ação econômica preocupou os investidores."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 10000,
+                                "nivelPrecos": 0.15,
+                                "confiancaConsumidor": 0
+                            },
+                            "resultText": "O governo gastou com propaganda, mas o banco foi o único a falar. O público não se convenceu."
+                        }
+                    ]
+                },
+                {
+                    "name": "Greve Geral no Setor Público",
+                    "conditions": [
+                        {
+                            "variable": "gastosPublicos",
+                            "operator": "<",
+                            "value": 30
+                        }
+                    ],
+                    "description": "Servidores públicos paralisaram suas atividades, afetando diversos serviços essenciais em Jundiaí.",
+                    "impacts": {
+                        "consumoFamiliar": -10000,
+                        "investimentoPrivado": -5000,
+                        "confiancaConsumidor": -10
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reforçar estabilidade monetária e prometer controle da inflação"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Reduzir temporariamente a taxa de juros para estimular demanda interna"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Negociar aumento salarial, elevando os gastos públicos"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Adotar medidas de contenção e corte de benefícios"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "gastosPublicos": 15000,
+                                "confiancaConsumidor": 10,
+                                "consumoFamiliar": 8000
+                            },
+                            "resultText": "A promessa de estabilidade somada à negociação salarial apaziguou a crise e reativou o consumo."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "gastosPublicos": 15000,
+                                "nivelPrecos": 0.15,
+                                "confiancaConsumidor": -5
+                            },
+                            "resultText": "O aumento de gastos gerou receio inflacionário, mesmo com o discurso de estabilidade."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.5,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "confiancaConsumidor": -5,
+                                "consumoFamiliar": 3000
+                            },
+                            "resultText": "A redução de juros deu algum fôlego à economia, mesmo com as medidas duras do governo."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.5,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "confiancaConsumidor": -15,
+                                "investimentoPrivado": -5000
+                            },
+                            "resultText": "As medidas foram vistas como fracas e impopulares, piorando o clima geral."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "confiancaConsumidor": -10,
+                                "investimentoPrivado": -3000
+                            },
+                            "resultText": "O governo apertou os cintos enquanto o banco prometia estabilidade, mas ninguém se convenceu."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 15000,
+                                "taxaJuros": -0.5,
+                                "nivelPrecos": 0.2,
+                                "confiancaConsumidor": 5
+                            },
+                            "resultText": "O consumo subiu, mas o mercado reagiu com medo de inflação futura e descontrole fiscal."
+                        }
+                    ]
+                },
+                {
+                    "name": "Quebra de Safra Agrícola",
+                    "conditions": [],
+                    "description": "Uma seca severa comprometeu a produção agrícola, reduzindo exportações e pressionando os preços internos.",
+                    "impacts": {
+                        "exportacoes": -20000,
+                        "consumoFamiliar": -5000,
+                        "demandaMoeda": 5000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reduzir a taxa de juros para estimular o consumo interno"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Aumentar a oferta de moeda para suavizar o impacto inflacionário"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Subsidiar produtores rurais"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Importar alimentos para conter alta de preços"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 8000,
+                                "exportacoes": 10000,
+                                "consumoFamiliar": 3000
+                            },
+                            "resultText": "O incentivo ao produtor e ao consumo impulsionou a recuperação do setor agro e do mercado interno."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 8000,
+                                "nivelPrecos": 0.2,
+                                "demandaMoeda": 4000
+                            },
+                            "resultText": "A medida aumentou a atividade, mas os preços internos dispararam por falta de controle da oferta."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "ofertaMoeda": 10000,
+                                "importacoes": 8000,
+                                "nivelPrecos": -0.1,
+                                "consumoFamiliar": 4000
+                            },
+                            "resultText": "A combinação de importações com política monetária evitou escassez e aliviou os preços."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "ofertaMoeda": 10000,
+                                "gastosPublicos": 5000,
+                                "nivelPrecos": 0.15,
+                                "exportacoes": -5000
+                            },
+                            "resultText": "As medidas aumentaram custos e causaram distorções no mercado, piorando o déficit comercial."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "importacoes": 8000,
+                                "consumoFamiliar": 1000,
+                                "nivelPrecos": 0.05
+                            },
+                            "resultText": "A importação segurou parte dos preços, mas os juros baixos tiveram pouco efeito imediato."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "ofertaMoeda": 10000,
+                                "gastosPublicos": 8000,
+                                "nivelPrecos": 0.25,
+                                "demandaMoeda": 6000
+                            },
+                            "resultText": "Políticas de estímulo simultâneas superaqueceram o mercado, gerando inflação e fuga de confiança."
+                        }
+                    ]
+                },
+                {
+                    "name": "Turismo em Alta",
+                    "conditions": [],
+                    "description": "Uma campanha internacional promoveu Jundiaí como destino turístico, aumentando o consumo e as exportações de serviços.",
+                    "impacts": {
+                        "consumoFamiliar": 10000,
+                        "exportacoes": 15000,
+                        "renda": 10000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reduzir taxa de juros para estimular o consumo doméstico durante o boom"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Manter a política monetária estável para evitar superaquecimento"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Investir em infraestrutura turística"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Reduzir impostos sobre o setor de serviços"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 5000,
+                                "renda": 15000,
+                                "confiancaConsumidor": 8000
+                            },
+                            "resultText": "O estímulo duplo impulsionou o turismo e aumentou a renda das famílias e empresas."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "nivelPrecos": 0.2,
+                                "demandaMoeda": 4000
+                            },
+                            "resultText": "O excesso de estímulo gerou inflação e pressões sobre a moeda."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.6,
+                            "impact": {
+                                "gastosPublicos": 0,
+                                "renda": 12000,
+                                "investimentoPrivado": 6000
+                            },
+                            "resultText": "A estabilidade e os incentivos fiscais aumentaram a atratividade do setor de serviços."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.4,
+                            "impact": {
+                                "gastosPublicos": 0,
+                                "confiancaConsumidor": -2000,
+                                "renda": 5000
+                            },
+                            "resultText": "A falta de investimento público fez o país perder parte do potencial de crescimento turístico."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "renda": 8000,
+                                "investimentoPrivado": 3000
+                            },
+                            "resultText": "O corte de impostos e os juros baixos ajudaram, mas faltou estrutura para escalar o turismo."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 5000,
+                                "renda": 10000,
+                                "nivelPrecos": 0.1
+                            },
+                            "resultText": "A infraestrutura melhorou, mas a política monetária rígida limitou os efeitos no consumo."
+                        }
+                    ]
+                },
+                {
+                    "name": "Inovação no Setor Industrial",
+                    "conditions": [],
+                    "description": "Empresas locais adotaram tecnologias avançadas, aumentando a produtividade e a atratividade de Jundiaí para investidores.",
+                    "impacts": {
+                        "investimentoPrivado": 20000,
+                        "demandaMoeda": 5000,
+                        "confiancaConsumidor": 10
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Reduzir a taxa de juros para facilitar o financiamento à inovação"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Manter juros estáveis para evitar pressões sobre os preços"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Oferecer incentivos fiscais à inovação"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Criar fundo público para pesquisa e desenvolvimento"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.8,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 10000,
+                                "investimentoPrivado": 20000,
+                                "confiancaConsumidor": 10000
+                            },
+                            "resultText": "A combinação de incentivos fiscais e juros baixos fortaleceu a inovação e animou o mercado."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.2,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 10000,
+                                "nivelPrecos": 0.1
+                            },
+                            "resultText": "O estímulo teve retorno limitado e gerou leve pressão sobre os preços."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "gastosPublicos": 12000,
+                                "investimentoPrivado": 15000,
+                                "exportacoes": 8000
+                            },
+                            "resultText": "A criação de um fundo de P&D consolidou a imagem de Jundiaí como polo tecnológico exportador."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "gastosPublicos": 12000,
+                                "investimentoPrivado": 3000,
+                                "confiancaConsumidor": -5000
+                            },
+                            "resultText": "O fundo demorou a operar e parte da população questionou os gastos sem retorno imediato."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": -0.5,
+                                "gastosPublicos": 12000,
+                                "investimentoPrivado": 10000
+                            },
+                            "resultText": "A combinação favoreceu o setor privado, mas o impacto em inovação foi mais lento."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "gastosPublicos": 10000,
+                                "investimentoPrivado": 8000,
+                                "demandaMoeda": 3000
+                            },
+                            "resultText": "Os incentivos ajudaram, mas a postura conservadora do banco limitou o efeito total."
+                        }
+                    ]
+                },
+                {
+                    "name": "Acordo de Integração Regional",
+                    "conditions": [],
+                    "description": "Jundiaí firmou um novo tratado comercial com países vizinhos, estimulando as exportações e reduzindo custos de importação.",
+                    "impacts": {
+                        "exportacoes": 20000,
+                        "importacoes": -10000,
+                        "renda": 10000
+                    },
+                    "options": {
+                        "banco": [
+                            {
+                                "id": "b1",
+                                "description": "Ajustar política monetária para estimular ainda mais o comércio"
+                            },
+                            {
+                                "id": "b2",
+                                "description": "Manter política neutra para observar os efeitos do tratado"
+                            }
+                        ],
+                        "governo": [
+                            {
+                                "id": "g1",
+                                "description": "Reduzir tarifas de importação como parte do acordo"
+                            },
+                            {
+                                "id": "g2",
+                                "description": "Lançar campanha para fomentar exportações regionais"
+                            }
+                        ]
+                    },
+                    "outcomes": [
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.8,
+                            "impact": {
+                                "importacoes": 10000,
+                                "confiancaConsumidor": 5000,
+                                "exportacoes": 15000,
+                                "taxaJuros": -0.25
+                            },
+                            "resultText": "O mercado respondeu positivamente ao estímulo monetário e à abertura comercial. Comércio em alta."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g1"
+                            ],
+                            "chance": 0.2,
+                            "impact": {
+                                "importacoes": 10000,
+                                "nivelPrecos": 0.15,
+                                "renda": 3000
+                            },
+                            "resultText": "A abertura excessiva sem preparo interno elevou os preços e limitou o ganho de renda."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "exportacoes": 20000,
+                                "renda": 12000,
+                                "investimentoPrivado": 7000
+                            },
+                            "resultText": "A campanha deu visibilidade aos produtos locais e atraiu investimento externo."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.3,
+                            "impact": {
+                                "exportacoes": 5000,
+                                "gastosPublicos": 5000,
+                                "demandaMoeda": 2000
+                            },
+                            "resultText": "A campanha não teve tanto alcance e o efeito no comércio foi limitado."
+                        },
+                        {
+                            "combo": [
+                                "b1",
+                                "g2"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "taxaJuros": -0.25,
+                                "exportacoes": 15000,
+                                "renda": 8000
+                            },
+                            "resultText": "A política monetária deu impulso inicial e a campanha ajudou nas exportações, mas sem grande boom."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g1"
+                            ],
+                            "chance": 1.0,
+                            "impact": {
+                                "importacoes": 10000,
+                                "confiancaConsumidor": 5000,
+                                "renda": 7000
+                            },
+                            "resultText": "A abertura comercial agradou o mercado interno, mas faltou ação do banco para explorar todo o potencial."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "globalEvents": [
+        {
+            "name": "Crise Financeira Internacional",
+            "description": "Uma crise bancária em grandes economias gerou pânico nos mercados e fuga de capitais de países emergentes.",
+            "impact": {
+                "investimentoPrivado": -20000,
+                "taxaJuros": 1.0,
+                "demandaMoeda": -10000
+            }
+        },
+        {
+            "name": "Boom de Commodities",
+            "description": "O preço internacional de alimentos e minérios disparou, beneficiando países exportadores.",
+            "impact": {
+                "exportacoes": 15000,
+                "nivelPrecos": 0.1
+            }
+        },
+        {
+            "name": "Alta Global no Petróleo",
+            "description": "O aumento nos preços do petróleo pressionou os custos de transporte e energia no mundo todo.",
+            "impact": {
+                "nivelPrecos": 0.25,
+                "consumoFamiliar": -10000,
+                "importacoes": 5000
+            }
+        },
+        {
+            "name": "Estabilidade Econômica Global",
+            "description": "Confiança nos mercados e crescimento moderado trouxeram estabilidade e otimismo global.",
+            "impact": {
+                "investimentoPrivado": 10000,
+                "consumoFamiliar": 5000
+            }
+        },
+        {
+            "name": "Acordo Global de Livre Comércio",
+            "description": "Novos tratados internacionais reduziram barreiras comerciais, aumentando o fluxo de bens e serviços.",
+            "impact": {
+                "exportacoes": 10000,
+                "importacoes": 10000,
+                "investimentoPrivado": 5000
+            }
+        },
+        {
+            "name": "Choque Climático Global",
+            "description": "Eventos climáticos extremos em vários países afetam a produção agrícola e pressionam preços.",
+            "impact": {
+                "exportacoes": -5000,
+                "nivelPrecos": 0.2,
+                "consumoFamiliar": -5000
+            }
+        }
+    ]
+}

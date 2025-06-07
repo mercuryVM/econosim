@@ -14,9 +14,8 @@ export function Lobby({ client, playerState, gameState }) {
     }
 
     return (
-        <div className={styles.lobbyContainer}>
-            <div className={styles.bg} />
-
+        <>
+    
             <div className={styles.lobbyContent}>
                 {
                 playerState && playerState.inLobby ? (
@@ -26,14 +25,14 @@ export function Lobby({ client, playerState, gameState }) {
                 )
             }
             </div>
-        </div>
+        </>
     )
 }
 
 function LobbyContent({ client, playerState, gameState }) {
-    console.log('LobbyContent rendered with client:', client);
-    console.log('Player state:', playerState);
-    console.log('Game state:', gameState);
+    const myEntity = playerState?.gameState?.economies?.[playerState.myEconomyIndex]?.[playerState.myEntityIndex];
+
+    console.log(myEntity);
 
     return (
         <>
@@ -53,7 +52,7 @@ function LobbyContent({ client, playerState, gameState }) {
                     </Typography>
                 </Paper>
 
-                <PlayerList players={gameState.clients} />
+                <PlayerList players={myEntity.players} />
 
 
             </Box>

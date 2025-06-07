@@ -18,7 +18,7 @@ import { stringToEmoji } from "../utils"
 import styles from "./Server.module.css"
 
 export function Server() {
-    const { client } = useServer()
+    const { client, gameState } = useServer()
     const [countdown, setCountdown] = useState(null)
 
     function handleStartGame() {
@@ -53,7 +53,6 @@ export function Server() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "linear-gradient(135deg, #e3f2fd 0%, #fffde7 100%)",
                     py: 6,
                 }}
             >
@@ -101,7 +100,7 @@ export function Server() {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {eco.bank.players.map((player, index) => {
+                                                    {eco.banco.players.map((player, index) => {
                                                         const emoji = stringToEmoji(player.nickname)
 
                                                         return (
@@ -152,7 +151,7 @@ export function Server() {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {eco.government.players.map((player, index) => (
+                                                    {eco.governo.players.map((player, index) => (
                                                         <TableRow
                                                             key={player.id}
                                                             sx={{
@@ -177,7 +176,7 @@ export function Server() {
                                 </Grid>
                                 
                                 <Typography variant="subtitle1" align="center" sx={{ mt: 2, fontWeight: 500 }}>
-                                    Jogadores Conectados: {eco.bank.players.length + eco.government.players.length}
+                                    Jogadores Conectados: {eco.banco.players.length + eco.governo.players.length}
                                 </Typography>
                             </Paper>
                         </Grid>
@@ -254,13 +253,7 @@ export function Server() {
     function renderGame(client) {
         return (
             <Box sx={{ p: 2, flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 2 }}>
-                    Jogo em Andamento
-                </Typography>
-                <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                    Partida iniciada! Boa sorte a todos!
-                </Typography>
-                {/* Aqui você pode adicionar mais componentes para o jogo em si */}
+                
             </Box>
         )
     }

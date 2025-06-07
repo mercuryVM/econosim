@@ -21,8 +21,17 @@
 }
 
 .content {
-  background-color: white;
-  flex: 1;
-  display: flex;
-  position: relative;
+    flex: 1;
+    padding: 5%;
+    z-index: 1;
+}
+
+.bg {
+    background: linear-gradient(135deg, #cbdae5 0%, #e9e7d1 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
 }
