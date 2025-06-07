@@ -5,6 +5,7 @@ import { Lobby } from './screens/Lobby';
 import { Logo } from './components/logo';
 import { BrowserRouter, Route, Router, Routes } from 'react-router';
 import { Server } from './screens/Server';
+import { Client } from './screens/Client';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <div className='content'>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Lobby />} />
+            <Route path="/" element={<Client />} />
             <Route path="/server" element={<Server />} />
           </Routes>
         </BrowserRouter>
@@ -23,6 +24,8 @@ function App() {
 }
 
 function Header() {
+  return null;
+
   return (
     <div className="header">
       <Logo />

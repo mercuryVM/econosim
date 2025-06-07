@@ -168,8 +168,9 @@ class Economy {
 }
 
 class Entity {
-    constructor(economy) {
+    constructor(economy, name) {
         this.economy = economy;
+        this.name = name;
         this.players = {};
     }
 
@@ -184,9 +185,15 @@ class Entity {
 }
 
 class Banco extends Entity {
+    constructor(economy) {
+        super(economy, 'Banco');
+    }
 }
 
 class Governo extends Entity {
+    constructor(economy) {
+        super(economy, 'Governo');
+    }
 }
 
 class VoteInstance {
@@ -217,6 +224,23 @@ class Client {
             gameState: game.state || {}, // Initialize with game state if available
         }
         this.handleMessages();
+    }
+
+    set entity(param1) {
+        this._entity = param1;
+        this.updateState({
+            entity: {
+                name: this._entity.name,
+            },
+            economy: {
+                country: this._entity.economy.country,
+                flag: this._entity.economy.flag,
+            }
+        })
+    }
+
+    get entity() {
+        return this._entity;
     }
 
     get id() {
