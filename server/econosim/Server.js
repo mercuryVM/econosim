@@ -85,6 +85,15 @@ class Server {
                     })),
                 },
                 stats: economy.state,
+                event: economy.event ? {
+                    name: economy.event.name,
+                    description: economy.event.description,
+                    options: economy.event.options,
+                    impacts: economy.event.impacts,
+                    asset: economy.event.asset,
+                    goodEvent: economy.event.goodEvent,
+                } : null,
+                score: economy.score
             })),
             started: this.started,
             tutorial: this.tutorial,
@@ -189,16 +198,19 @@ class Economy {
         this.banco = new Banco(this);
         this.governo = new Governo(this);
 
-        this.taxaDeJuros = 0.03;             // Juros baixos, incentivando consumo e investimento
-        this.consumoFamiliar = 70000;        // Nível de consumo nominal em moeda
-        this.investimentoPrivado = 90000;    // Investimento inicial razoável, abaixo do pico histórico
-        this.gastosPublicos = 50000;         // Estado neutro, pronto para estímulos
-        this.exportacoes = 20000;            // Saldo de exportação estável
-        this.importacoes = 20000;            // Equilíbrio comercial inicial
+        this.taxaDeJuros = 0.1;
+        this.consumoFamiliar = 0.5;
+        this.investimentoPrivado = 1.2;
+        this.gastosPublicos = 0.8;
+        this.ofertaMoeda = 0.1;     // Ajustado para cruzar com LM
+        this.nivelPrecos = 1.2;
+        this.demandaMoeda = 0.1;   // Opcional, só se for exibido
+        this.sensibilidadeInvestimentoAoJuros = 5; // Sensibilidade da demanda de moeda à taxa de juros
+        this.sensibilidadeDaMoedaAosJuros = 0.9; // Sensibilidade da oferta de moeda à taxa de juros
+        this.sensibilidadeDaMoedaARenda = 1; // Sensibilidade da oferta de moeda à renda
 
-        this.ofertaMoeda = 100000;           // Base monetária neutra
-        this.nivelPrecos = 1.0;              // Índice-base de preços (100%)
-        this.demandaMoeda = 110000;          // Levemente acima da oferta: espaço para política monetária
+        this.score = 0;
+
     }
 
     get state() {
@@ -207,16 +219,12 @@ class Economy {
             consumoFamiliar: this.consumoFamiliar,
             investimentoPrivado: this.investimentoPrivado,
             gastosPublicos: this.gastosPublicos,
-            exportacoes: this.exportacoes,
-            importacoes: this.importacoes,
             ofertaMoeda: this.ofertaMoeda,
             nivelPrecos: this.nivelPrecos,
             demandaMoeda: this.demandaMoeda,
-
-            ofertaRealMoeda: this.ofertaRealMoeda,
-            pib: this.pib,
-            demandaAgregada: this.demandaAgregada,
-            demandaMoedaAjustada: this.demandaMoedaAjustada,
+            sensibilidadeInvestimentoAoJuros: this.sensibilidadeInvestimentoAoJuros,
+            sensibilidadeDaMoedaAosJuros: this.sensibilidadeDaMoedaAosJuros,
+            sensibilidadeDaMoedaARenda: this.sensibilidadeDaMoedaARenda,
         }
     }
 
@@ -225,7 +233,7 @@ class Economy {
     }
 
     get pib() {
-        return (this.consumoFamiliar * (1 + this.confiancaConsumidor) + this.investimentoPrivado + this.gastosPublicos + (this.exportacoes - this.importacoes));
+        return (this.consumoFamiliar + this.investimentoPrivado + this.gastosPublicos + (this.exportacoes - this.importacoes));
     }
 
     get demandaAgregada() {
@@ -571,13 +579,16 @@ class Round {
                 description: economyEvent.description,
                 options: economyEvent.options,
                 impacts: economyEvent.impacts,
+                asset: economyEvent.asset,
+                goodEvent: economyEvent.goodEvent,
             } : null,
             roundEnded: this.roundEnded,
             globalEvent: this.globalEvent ? {
                 name: this.globalEvent.name,
                 description: this.globalEvent.description,
                 impact: this.globalEvent.impact,
-                asset: this.globalEvent.asset
+                asset: this.globalEvent.asset,
+                goodEvent: this.globalEvent.goodEvent,
             } : null,
         };
     }

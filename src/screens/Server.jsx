@@ -18,7 +18,16 @@ import { stringToEmoji } from "../utils"
 import styles from "./Server.module.css"
 import { motion, useAnimation } from "framer-motion";
 import UpEvent from '../images/upEvent.gif';
+import Backface from '../images/backFace.png'
 import DownEvent from '../images/badEvent.gif';
+import PercentIcon from '@mui/icons-material/Percent';
+
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import { LineChart } from '@mui/x-charts/LineChart';
+import { Scatter, ScatterChart } from "@mui/x-charts"
 
 export function Server() {
     const { client, gameState } = useServer()
@@ -265,18 +274,325 @@ export function Server() {
 }
 
 function RenderGame({ client, gameState }) {
+    const [state, setState] = useState(0);
+
+    useEffect(() => {
+        if (state === 0) {
+            setTimeout(() => {
+                setState(1);
+            }, 10 * 1000);
+        }
+    }, [state]);
+
+    return (
+        <>
+            {state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
+            {state === 1 && <Dashboard client={client} gameState={gameState} />}
+        </>
+    )
+}
+
+function Dashboard({ client, gameState }) {
+    const round = gameState?.round || {};
+
+    return (
+        <Box gridTemplateColumns={"1fr 1fr 1fr"} display={"grid"} flex={1} gap={2}>
+            <Country economy={gameState.economies[0]} />
+            <GlobalData gameState={gameState} />
+            <Country economy={gameState.economies[1]} />
+        </Box>
+    )
+}
+
+function GlobalData({ gameState }) {
+    const round = gameState?.round;
+    const globalEvent = round?.globalEvent || null;
+
+    return (
+        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>
+            <Paper sx={{
+                padding: "16px",
+                fontWeight: 700,
+                fontSize: "24px",
+                textAlign: "center",
+            }}> Round {round.numRound}</Paper>
+
+            <Paper sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "75%" }}>
+
+            </Paper>
+
+            <Paper sx={{ flex: "28%" }}>
+
+            </Paper>
+        </Box>
+    )
+}
+
+function Country({ economy }) {
+    return (
+        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>
+            <Paper sx={{
+                padding: "16px",
+                fontWeight: 700,
+                fontSize: "24px",
+                textAlign: "center",
+            }}>
+                {economy.flag}{" "}
+                {economy.country}
+            </Paper>
+
+            <Paper sx={{ flex: "25%", paddingBottom: 3 }}>
+                <Typography variant="h6" sx={{ padding: 1, fontWeight: 700, textAlign: "center" }}>
+                    Dados
+                </Typography>
+                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
+                    padding: "0px 16px"
+                }}>
+                    <Dado label={"Taxa de Juros"} value={(economy.stats.taxaDeJuros * 100).toFixed(1) + "%"} icon={PercentIcon} />
+                    <Dado label={"Gastos públicos"} value={"R$ " + (economy.stats.gastosPublicos * 10) + " bi"} icon={AccountBalanceIcon} />
+                    <Dado label={"Investimentos privados"} value={"R$ " + (economy.stats.investimentoPrivado * 10) + " bi"} icon={PriceCheckIcon} />
+                    <Dado label={"Oferta por moeda"} value={"R$ " + (economy.stats.ofertaMoeda * 10) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Demanda por moeda"} value={"R$ " + (economy.stats.demandaMoeda * 10) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Consumo familiar"} value={"R$ " + (economy.stats.consumoFamiliar * 10) + " bi"} icon={FamilyRestroomIcon} />
+                </Box>
+            </Paper>
+
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr", // Divide em duas colunas iguais
+                    flex: "35%",
+                    gap: 2,
+                }}
+            >
+                {/* Coluna da esquerda: Event */}
+                <CountryCard economy={economy} />
+
+                {/* Coluna da direita: Score e Chart */}
+                <Box
+                    sx={{
+                        gridColumn: "span 1",
+                        display: "grid",
+                        gridTemplateRows: "1fr 3fr", // Divide em duas linhas iguais
+                        gap: 2
+                    }}
+                >
+                    {/* Score */}
+                    <CountryScore economy={economy} />
+
+                    {/* Chart */}
+
+                    <CountryCurves economy={economy} />
+
+                </Box>
+            </Box>
+
+
+        </Box>
+    )
+}
+
+function CountryCard({ economy }) {
+    const event = economy?.event || null;
+
+    if (!event) return null;
+
+    return (
+        <img src={economy.event.asset} style={{
+            width: 0,
+            gridColumn: "span 1",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            aspectRatio: "644 / 967"
+        }} />
+    )
+}
+
+function CountryScore({ economy }) {
+    return (
+        <Paper
+            sx={{
+                padding: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                gap: 1
+            }}
+        >
+            Score
+
+            <Box sx={{
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                width: "80%",
+                borderRadius: 2,
+                textAlign: "center",
+            }}>
+                <Typography variant="h4" sx={{
+                    fontWeight: 700,
+                }}>
+                    {economy.score}
+                </Typography>
+            </Box>
+        </Paper>
+    )
+}
+function CountryCurves({ economy }) {
+    const [height, setHeight] = useState(0);
+    const containerRef = useRef(null);
+
+    const {
+        taxaDeJuros,
+        consumoFamiliar,
+        investimentoPrivado,
+        gastosPublicos,
+        ofertaMoeda,
+        nivelPrecos,
+        demandaMoeda,
+        sensibilidadeInvestimentoAoJuros,
+        sensibilidadeDaMoedaAosJuros,
+        sensibilidadeDaMoedaARenda
+    } = economy.stats;
+
+    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    const calcularIS = (i) => {
+        return consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+    };
+
+    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    const calcularLM = (i) => {
+        return (
+            ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
+        )
+    };
+
+    function calcularY({ A, b, a, h, L, M, P, k }) {
+        const parte1 = (L - M / P) / h;
+        const parte2 = A / b;
+        const numerador = parte1 - parte2;
+
+        const denominador = -(1 / a) - (k / h);
+
+        const Y = numerador / denominador;
+        return Y;
+    }
+
+    // Gerar dados para o gráfico
+    const xValues = [];
+    const isCurve = [];
+    const lmCurve = [];
+
+    for (let i = 0.0; i <= 0.2; i += 0.005) {
+        const roundedI = parseFloat(i.toFixed(3));
+        xValues.push(roundedI);
+        isCurve.push(calcularIS(roundedI));
+        lmCurve.push(calcularLM(roundedI));
+    }
+
+    let equilibrio = null;
+
+    console.log("Equilíbrio encontrado:", equilibrio);
+
+    // Capturar altura do container para ajustar o gráfico
+    useEffect(() => {
+        if (containerRef.current) {
+            setHeight(containerRef.current.offsetHeight);
+        }
+    }, []);
+
+    return (
+        <Paper
+            ref={containerRef}
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <LineChart
+                xAxis={[
+                    {
+                        data: xValues,
+                        label: "Taxa de Juros (i)",
+                        position: 'none',
+                    }
+                ]}
+                yAxis={[
+                    {
+                        label: "Produto (Y)",
+                        position: 'none',
+                    }
+                ]}
+                series={[
+                    {
+                        data: isCurve, label: "Curva IS", color: 'blue', showMark: ({ index }) => {
+                            return Number(lmCurve[index]).toFixed(2) === Number(isCurve[index]).toFixed(2) || isCurve[index] === calcularIS(taxaDeJuros)
+                        },
+                    },
+                    {
+                        data: lmCurve, label: "Curva LM", color: 'green', showMark: ({ index }) => {
+                            return Number(lmCurve[index]).toFixed(2) === Number(isCurve[index]).toFixed(2) || lmCurve[index] === calcularLM(taxaDeJuros);
+                        },
+                    },
+     
+                ]}
+                height={height * 1}
+                grid={{ vertical: false, horizontal: true }}
+
+                legend={{ position: 'top' }}
+            >
+            </LineChart>
+
+        </Paper>
+    );
+}
+
+function Dado({ label, value, icon: Icon }) {
+    return (
+        <>
+            <Icon />
+            <Typography fontSize={14}>
+                {label}
+            </Typography>
+            <Typography fontSize={14} fontWeight={400}>
+                {value}
+            </Typography>
+        </>
+    )
+}
+
+function GlobalEventAnnouncement({ client, gameState }) {
+    const [parar, setParar] = useState(false);
+    const [hideGlobalEvent, setHideGlobalEvent] = useState(false);
     const globalEvent = gameState?.round?.globalEvent || null;
+
+    useEffect(() => {
+        if (globalEvent && !parar) {
+            const sound = client.playSound("drumRoll", 0.1);
+            setTimeout(() => {
+                setParar(true)
+                sound.stop();
+
+                if (globalEvent.goodEvent) {
+                    client.playSound("goodEvent", 0.1);
+                } else {
+                    client.playSound("badEvent", 0.1);
+                }
+            }, 5500);
+        }
+    }, [globalEvent, parar]);
 
     if (!globalEvent) return null;
 
     return (
         <>
-            <Box key={globalEvent.name} sx={{ p: 2, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, minHeight: 0 }} className={styles.globalEventContainer}>
+            <motion.div key={globalEvent.name} style={{ p: 2, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, minHeight: 0 }} className={styles.globalEventContainer}>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.globalflipCard}>
                     <motion.div
                         className={styles.globalflipCardInner}
-                        initial={{ rotateY: 0 }}
-                        animate={{ rotateY: 1080 * 1 }}
+                        initial={{ rotateY: 0, translateY: "100%" }}
+                        animate={{ rotateY: 1080 * 1, translateY: 0 }}
                         transition={{
                             type: "spring",
                             stiffness: 100, // quanto maior, mais rápido no início
@@ -284,7 +600,9 @@ function RenderGame({ client, gameState }) {
                         }}
                     >
                         <div className={styles.globalEventCard}>
-                            <img src={globalEvent.asset} alt={globalEvent.name} className={styles.globalEventImage} />
+                            <img src={
+                                parar ? globalEvent.asset : Backface
+                            } alt={globalEvent.name} className={styles.globalEventImage} />
                         </div>
                         <div className={styles.globalEventCardBack}></div>
                     </motion.div>
@@ -293,13 +611,13 @@ function RenderGame({ client, gameState }) {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.8, duration: 0.5 }}
+                    transition={{ delay: 5.5, duration: 0.5 }}
                 >
-                    <Typography variant="h6" textAlign="center">
+                    <Typography variant="h5" textAlign="center" marginTop={5} fontWeight={700} sx={{ color: "black" }}>
                         {globalEvent.description}
                     </Typography>
                 </motion.div>
-            </Box>
+            </motion.div>
             <Canvas globalEvent={globalEvent} />
         </>
 
@@ -308,6 +626,7 @@ function RenderGame({ client, gameState }) {
 
 function Canvas({ globalEvent }) {
     const parentRef = useRef(null);
+    const [showEvents, setShowEvents] = useState(false);
 
     const events = useMemo(() => {
         if (!globalEvent) return [];
@@ -317,18 +636,29 @@ function Canvas({ globalEvent }) {
         }));
     }, [globalEvent]);
 
+    useEffect(() => {
+        if (globalEvent) {
+            const timer = setTimeout(() => {
+                setShowEvents(true);
+            }, 6000); // Delay de 5.5 segundos
+
+            return () => clearTimeout(timer); // Limpa o timer ao desmontar
+        }
+    }, [globalEvent]);
+
     return (
         <Box ref={parentRef} sx={{ position: "relative", width: "100%", height: "100%" }}>
-            {events.map(({ id, up }) => (
-                <EventHumor
-                    key={id}
-                    up={up}
-                    parent={parentRef}
-                    onClose={() => {
-                        // Adicione lógica para manipular o fechamento, se necessário
-                    }}
-                />
-            ))}
+            {showEvents &&
+                events.map(({ id, up }) => (
+                    <EventHumor
+                        key={id}
+                        up={up}
+                        parent={parentRef}
+                        onClose={() => {
+                            // Adicione lógica para manipular o fechamento, se necessário
+                        }}
+                    />
+                ))}
         </Box>
     );
 }

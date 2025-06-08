@@ -3,6 +3,9 @@ import { EventEmitter } from 'events';
 import { SoundManager } from './useClient';
 import RoundStart from '../sounds/econosim round start.mp3';
 import BgSound from '../sounds/econosim_bg.mp3';
+import DrumRollSound from '../sounds/drumroll.mp3';
+import BadSound from '../sounds/badEvent.ogg';
+import GoodEventSound from '../sounds/goodEvent.mp3';
 
 let client = undefined;
 
@@ -59,6 +62,9 @@ class Server extends EventSource {
         this.soundManager = new SoundManager();
         this.soundManager.loadSound('roundStart', RoundStart);
         this.soundManager.loadSound('bgSound', BgSound);
+        this.soundManager.loadSound('drumRoll', DrumRollSound);
+        this.soundManager.loadSound('badEvent', BadSound);
+        this.soundManager.loadSound('goodEvent', GoodEventSound);
 
         this.handleMessages();
     }

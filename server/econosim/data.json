@@ -5,6 +5,7 @@
             "flag": "🏴‍☠️",
             "events": [
                 {
+                    "asset": "/localEvents/clodolandia/criseImovel.png",
                     "name": "Crise no Setor Imobiliário",
                     "conditions": [
                         {
@@ -126,6 +127,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/clodolandia/fornecimentoLocal.png",
                     "name": "Ruptura no Fornecimento Local",
                     "conditions": [
                         {
@@ -249,6 +251,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/clodolandia/fugaCapital.png",
                     "name": "Fuga de Capitais",
                     "conditions": [],
                     "description": "Investidores retiram recursos dos países em desenvolvimento diante de incertezas globais.",
@@ -364,6 +367,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/clodolandia/boomTecnologico.png",
                     "name": "Boom Tecnológico",
                     "conditions": [],
                     "description": "Avanços tecnológicos impulsionam a produtividade e a confiança dos investidores.",
@@ -477,6 +481,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/clodolandia/confiancaConsumidor.png",
                     "name": "Confiança do Consumidor em Alta",
                     "conditions": [],
                     "description": "O otimismo econômico global estimula o consumo e os investimentos em diversos países.",
@@ -597,6 +602,7 @@
             "flag": "🇧🇷",
             "events": [
                 {
+                    "asset":"/localEvents/jundiai/escandaloPolitico.png",
                     "name": "Escândalo Político",
                     "conditions": [],
                     "description": "Um grande escândalo de corrupção abalou a confiança da população e dos investidores em Jundiaí.",
@@ -710,6 +716,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/jundiai/greveGeral.png",
                     "name": "Greve Geral no Setor Público",
                     "conditions": [
                         {
@@ -828,6 +835,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/jundiai/quebraSafra.png",
                     "name": "Quebra de Safra Agrícola",
                     "conditions": [],
                     "description": "Uma seca severa comprometeu a produção agrícola, reduzindo exportações e pressionando os preços internos.",
@@ -946,6 +954,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/jundiai/turismoAlta.png",
                     "name": "Turismo em Alta",
                     "conditions": [],
                     "description": "Uma campanha internacional promoveu Jundiaí como destino turístico, aumentando o consumo e as exportações de serviços.",
@@ -1059,6 +1068,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/jundiai/inovacaoSetor.png",
                     "name": "Inovação no Setor Industrial",
                     "conditions": [],
                     "description": "Empresas locais adotaram tecnologias avançadas, aumentando a produtividade e a atratividade de Jundiaí para investidores.",
@@ -1172,6 +1182,7 @@
                     ]
                 },
                 {
+                    "asset":"/localEvents/jundiai/acordoRegional.png",
                     "name": "Acordo de Integração Regional",
                     "conditions": [],
                     "description": "Jundiaí firmou um novo tratado comercial com países vizinhos, estimulando as exportações e reduzindo custos de importação.",
@@ -1291,6 +1302,7 @@
         {
             "asset": "/globalEvents/criseFinanceira.png",
             "name": "Crise Financeira Internacional",
+            "goodEvent": false,
             "description": "Uma crise bancária em grandes economias gerou pânico nos mercados e fuga de capitais de países emergentes.",
             "impact": {
                 "investimentoPrivado": -20000,
@@ -1301,6 +1313,7 @@
         {
             "asset": "/globalEvents/boomCommodities.png",
             "name": "Boom de Commodities",
+            "goodEvent": true,
             "description": "O preço internacional de alimentos e minérios disparou, beneficiando países exportadores.",
             "impact": {
                 "exportacoes": 15000,
@@ -1310,6 +1323,7 @@
         {
             "asset": "/globalEvents/altaPetroleo.png",
             "name": "Alta Global no Petróleo",
+            "goodEvent": false,
             "description": "O aumento nos preços do petróleo pressionou os custos de transporte e energia no mundo todo.",
             "impact": {
                 "nivelPrecos": 0.25,
@@ -1320,6 +1334,7 @@
         {
             "asset": "/globalEvents/estabilidadeGlobal.png",
             "name": "Estabilidade Econômica Global",
+            "goodEvent": true,
             "description": "Confiança nos mercados e crescimento moderado trouxeram estabilidade e otimismo global.",
             "impact": {
                 "investimentoPrivado": 10000,
@@ -1329,6 +1344,7 @@
         {
             "asset": "/globalEvents/livreComercio.png",
             "name": "Acordo Global de Livre Comércio",
+            "goodEvent": true,
             "description": "Novos tratados internacionais reduziram barreiras comerciais, aumentando o fluxo de bens e serviços.",
             "impact": {
                 "exportacoes": 10000,
@@ -1339,6 +1355,7 @@
         {
             "asset": "/globalEvents/choqueClimatico.png",
             "name": "Choque Climático Global",
+            "goodEvent": false,
             "description": "Eventos climáticos extremos em vários países afetam a produção agrícola e pressionam preços.",
             "impact": {
                 "exportacoes": -5000,

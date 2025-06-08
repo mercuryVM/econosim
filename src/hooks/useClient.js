@@ -67,7 +67,7 @@ class Client extends EventSource {
     }
 
     playSound(name, volume = 1) {
-        this.soundManager.playSound(name, volume);
+        return this.soundManager.playSound(name, volume);
     }
 
     get nickname() {
@@ -143,6 +143,13 @@ export class SoundManager {
             this.sounds[name].play().catch(error => {
                 console.error(`Error playing sound ${name}:`, error);
             });
+
+            return {
+                stop: () => {
+                    this.sounds[name].pause();
+                    this.sounds[name].currentTime = 0; // Reset to start
+                }
+            }
         } else {
             console.warn(`Sound ${name} not found`);
         }
