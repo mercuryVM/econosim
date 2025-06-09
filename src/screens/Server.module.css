@@ -18,6 +18,10 @@
     width: 24px;
 }
 
+.circularProgressCircle {
+    background-color: red;
+}
+
 .globalEventImage {
     width: 256px;
     object-fit: cover;

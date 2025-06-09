@@ -4,7 +4,7 @@ import RoundStart from '../sounds/econosim round start.mp3';
 
 let client = undefined;
 
-export function useClient() {
+export function useClient(role, economy) {
     const [socket, setSocket] = useState(client);
     const [playerState, setPlayerState] = useState(null);
     const [gameState, setGameState] = useState(null);
@@ -17,7 +17,8 @@ export function useClient() {
                     transports: ['websocket'],
                     auth: {
                         nickname: 'User' + Math.floor(Math.random() * 1000),
-                        role: 0 // 0 for bank, 1 for government
+                        role: Number(role), // 0 for bank, 1 for government,
+                        economy: Number(economy) // 0 for capitalist,
                     }
                 })
             );
@@ -40,6 +41,10 @@ export class EventSource {
 
     on(event, listener) {
         this.events.on(event, listener);
+    }
+
+    off(event, listener) {
+        this.events.off(event, listener);
     }
 
     emit(event, data) {

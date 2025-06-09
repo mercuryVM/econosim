@@ -2,9 +2,14 @@ import { useClient } from "../hooks/useClient";
 import { Lobby } from "./Lobby";
 import styles from './Client.module.css';
 import { Round } from "./Client/Round";
+import { useSearchParams } from "react-router";
 
 export function Client() {
-    const { client, playerState, gameState } = useClient();
+    const [searchParams] = useSearchParams();
+    const role = searchParams.get("role");
+    const economy = searchParams.get("economy");
+
+    const { client, playerState, gameState } = useClient(role, economy);
 
     return (
         <>

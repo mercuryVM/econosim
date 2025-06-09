@@ -54,6 +54,8 @@ class Server {
     }
 
     nextRound() {
+        this.serverController?.emit('nextRound', this.currentRound + 1);
+
         this.round = new Round(++this.currentRound, this, this.economies);
         this.round.start();
         console.log('New round started:', this.round.numRound);
@@ -98,6 +100,7 @@ class Server {
             started: this.started,
             tutorial: this.tutorial,
             round: this.round ? this.round.getState() : null,
+            votes: this.round ? this.round.votes : undefined,
         }
     }
 
@@ -126,23 +129,25 @@ class Server {
     handleConnections() {
         //socket io middleware
         this.app.use((socket, next) => {
-            const { nickname, role } = socket.handshake.auth;
-            if (!nickname || isNaN(role)) {
-                return next(new Error('Invalid nickname or role'));
+            const { nickname, role, economy } = socket.handshake.auth;
+            if (!nickname || isNaN(role) || isNaN(economy)) {
+                return next(new Error('Invalid nickname, role or economy'));
             }
             socket.nickname = nickname;
             socket.role = role;
+            socket.economy = economy;
             next();
         });
 
         this.app.on('connection', (socket) => {
             const client = new Client(socket, this);
+
+            this.addPlayer(client, socket.economy % this.economies.length, socket.role);
+
+
             this.clients[socket.id] = client;
 
             console.log('New client connected:', socket.id);
-
-            this.addPlayer(client, Object.keys(this.clients).length % this.economies.length, socket.role);
-
 
             this.updateSync();
 
@@ -198,19 +203,90 @@ class Economy {
         this.banco = new Banco(this);
         this.governo = new Governo(this);
 
-        this.taxaDeJuros = 0.1;
-        this.consumoFamiliar = 0.5;
-        this.investimentoPrivado = 1.2;
-        this.gastosPublicos = 0.8;
-        this.ofertaMoeda = 0.1;     // Ajustado para cruzar com LM
-        this.nivelPrecos = 1.2;
-        this.demandaMoeda = 0.1;   // Opcional, só se for exibido
-        this.sensibilidadeInvestimentoAoJuros = 5; // Sensibilidade da demanda de moeda à taxa de juros
-        this.sensibilidadeDaMoedaAosJuros = 0.9; // Sensibilidade da oferta de moeda à taxa de juros
-        this.sensibilidadeDaMoedaARenda = 1; // Sensibilidade da oferta de moeda à renda
+        this.taxaDeJuros = 0.1; // 10%
+        this.consumoFamiliar = 20; // R$ 20 bi
+        this.investimentoPrivado = 15; // R$ 15 bi
+        this.gastosPublicos = 30; // R$ 30 bi
+        this.ofertaMoeda = 3;     // R$ 3 bi
+        this.nivelPrecos = 60; // Índice de preços (base 100)
+        this.demandaMoeda = 7;   // R$ 7 bi
+        this.sensibilidadeInvestimentoAoJuros = 250; // Sensibilidade da demanda de moeda à taxa de juros
+        this.sensibilidadeDaMoedaAosJuros = 200; // Sensibilidade da oferta de moeda à taxa de juros
+        this.sensibilidadeDaMoedaARenda = 12; // Sensibilidade da oferta de moeda à renda
 
         this.score = 0;
+    }
 
+    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    calcularIS(i) {
+        const consumoFamiliar = this.consumoFamiliar;
+        const investimentoPrivado = this.investimentoPrivado;
+        const gastosPublicos = this.gastosPublicos;
+        const sensibilidadeInvestimentoAoJuros = this.sensibilidadeInvestimentoAoJuros;
+
+        return consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+    };
+
+    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    calcularLM(i) {
+        const ofertaMoeda = this.ofertaMoeda;
+        const nivelPrecos = this.nivelPrecos;
+        const demandaMoeda = this.demandaMoeda;
+        const sensibilidadeDaMoedaAosJuros = this.sensibilidadeDaMoedaAosJuros;
+        const sensibilidadeDaMoedaARenda = this.sensibilidadeDaMoedaARenda;
+
+        return (
+            ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
+        )
+    };
+
+    get taxaDeJurosEquilibrio() {
+        // IS: Y = C * (((G + I) / b) - i)
+        // LM: Y = ((k/h) * i) - ((1/h) * (L - (M/P)))
+        //
+        // Igualando:
+        // C * (((G + I) / b) - i) = ((k/h) * i) - ((1/h) * (L - (M/P)))
+        //
+        // Isolando i:
+        // C * ((G + I)/b) - C*i = (k/h)*i - (1/h)*(L - (M/P))
+        // C * ((G + I)/b) + (1/h)*(L - (M/P)) = (k/h)*i + C*i
+        // C * ((G + I)/b) + (1/h)*(L - (M/P)) = i * (k/h + C)
+        // i = [C * ((G + I)/b) + (1/h)*(L - (M/P))] / [ (k/h) + C ]
+        const C = this.consumoFamiliar;
+        const G = this.gastosPublicos;
+        const I = this.investimentoPrivado;
+        const b = this.sensibilidadeInvestimentoAoJuros;
+        const k = this.sensibilidadeDaMoedaAosJuros;
+        const h = this.sensibilidadeDaMoedaARenda;
+        const L = this.demandaMoeda;
+        const M = this.ofertaMoeda;
+        const P = this.nivelPrecos;
+        const denom = (k / h) + C;
+        const numer = C * ((G + I) / b) + (1 / h) * (L - (M / P));
+        const iEquilibrio = numer / denom;
+        return Number(iEquilibrio.toFixed(4));
+    }
+
+    get pibEquilibrio() {
+        // PIB de equilíbrio é o valor de Y quando a taxa de juros está em equilíbrio
+        const iEquilibrio = this.taxaDeJurosEquilibrio;
+        return this.calcularIS(iEquilibrio);
+    }
+
+    get distanciaIS() {
+        const a = this.pibEquilibrio - this.calcularIS(this.taxaDeJuros);
+        const b = (this.taxaDeJurosEquilibrio - this.taxaDeJuros);
+        return Math.sqrt(a * a + b * b);
+    }
+
+    get distanciaLM() {
+        const a = this.pibEquilibrio - this.calcularLM(this.taxaDeJuros);
+        const b = (this.taxaDeJurosEquilibrio - this.taxaDeJuros);
+        return Math.sqrt(a * a + b * b);
+    }
+
+    get distanciaDoEquilibrio() {
+        return this.distanciaIS + this.distanciaLM;
     }
 
     get state() {
@@ -307,8 +383,9 @@ class Governo extends Entity {
 }
 
 class VoteInstance {
-    constructor(options) {
+    constructor(optionsLength = 0) {
         this.votes = {};
+        this.optionsLength = optionsLength;
     }
 
     castVote(playerId, choice) {
@@ -340,6 +417,31 @@ class VoteInstance {
         }
 
         return votePercentages;
+    }
+
+    getResult() {
+        // Obtém o resultado da votação
+        const results = this.getResults();
+        let maxVotes = -1;
+        let winningChoice = null;
+
+        for (const [choice, percentage] of Object.entries(results)) {
+            if (percentage > maxVotes) {
+                maxVotes = percentage;
+                winningChoice = choice;
+            }
+        }
+
+        // Se não houver votos, sorteia um resultado aleatório
+        if (winningChoice === null) {
+            const choices = Object.keys(this.votes);
+            if (choices.length === 0) {
+                return Math.floor(Math.random() * this.optionsLength); // No votes cast
+            }
+            winningChoice = choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        return winningChoice;
     }
 }
 
@@ -437,7 +539,17 @@ class ServerController {
     }
 
     handleMessages() {
+        this.socket.on("startTimer", () => {
+            this.server.round?.startTimer(60) || console.warn("No round to start timer for");
+        })
 
+        this.socket.on("nextRound", () => {
+            if (this.server.round && !this.server.round.roundEnded) {
+                console.warn("Cannot start next round while current round is still active");
+                return;
+            }
+            this.server.nextRound();
+        });
     }
 
     emit(eventName, ...args) {
@@ -453,6 +565,7 @@ class Round {
         this.server = server;
         this.economies = economies;
         this.roundEnded = false;
+        this.votes = [];
     }
 
     onOptionSelected(client, optionIndex) {
@@ -463,38 +576,44 @@ class Round {
 
         const entity = client.entity;
 
-        const economy = client.entity.economy;
-        if (!economy) {
-            console.error('Client is not associated with an economy');
+        try {
+            const economy = client.entity.economy;
+            if (!economy) {
+                throw new Error('Client is not associated with an economy');
+            }
+
+            if (this.roundEnded) {
+                throw ('Round has already ended, ignoring option selection');
+                return;
+            }
+
+            //Verificar se o cliente está no banco ou governo
+            if (!economy.event) {
+                throw ('No event to resolve');
+                return;
+            }
+
+            console.log(entity.id)
+
+            if (optionIndex < 0 || optionIndex >= economy.event.options[entity.id].length || optionIndex === null) {
+                return entity.vote.castVote(client.id, null);
+            }
+
+            // Cliente é do governo
+            const escolhaGoverno = economy.event.options[entity.id][optionIndex];
+            if (!escolhaGoverno) {
+                throw "Invalid option selected";
+            }
+
+            entity.vote.castVote(client.id, optionIndex);
+        } catch (e) {
+            console.error('Error processing option selection:', e);
             return;
+        } finally {
+            entity.sendMessage("votes", entity.vote.getResults());
         }
 
-        if (this.roundEnded) {
-            console.warn('Round has already ended, ignoring option selection');
-            return;
-        }
 
-        //Verificar se o cliente está no banco ou governo
-        if (!economy.event) {
-            console.error('No event to resolve');
-            return;
-        }
-
-        console.log(entity.id)
-
-        if (optionIndex < 0 || optionIndex >= economy.event.options[entity.id].length || optionIndex === null) {
-            return entity.vote.castVote(client.id, null);
-        }
-
-        // Cliente é do governo
-        const escolhaGoverno = economy.event.options[entity.id][optionIndex];
-        if (!escolhaGoverno) {
-            throw "Invalid option selected";
-        }
-
-        entity.vote.castVote(client.id, optionIndex);
-
-        entity.sendMessage("votes", entity.vote.getResults());
     }
 
     getLocalRandomEvent(economiaAtual) {
@@ -516,18 +635,14 @@ class Round {
             });
         }
 
-        let pool = economiaAtual.possibleLocalEvents.filter(evento => {
-            // Verifica se o evento tem condições e se elas são atendidas
-            // Se não tiver condições, sempre retorna true
-            // Se tiver condições, verifica se todas são atendidas
-            return !evento.conditions || checkConditions(evento.conditions, economiaAtual);
-        });
+        let pool = economiaAtual.possibleLocalEvents;
 
         if (pool.length === 0) return null;
 
         const index = Math.floor(Math.random() * pool.length);
         const evento = pool[index];
-        economiaAtual.possibleLocalEvents.splice(index, 1); // Remove o evento do pool para não repetir
+        const realIndex = economiaAtual.possibleLocalEvents.indexOf(evento);
+        economiaAtual.possibleLocalEvents.splice(realIndex, 1); // Remove o evento do pool para não repetir
         return evento;
     }
 
@@ -542,20 +657,29 @@ class Round {
                 continue;
             }
             economy.event = evento;
+            economy.banco.vote = new VoteInstance(
+                evento.options[economy.banco.id].length
+            );
+
+            economy.governo.vote = new VoteInstance(
+                evento.options[economy.governo.id].length
+            );
+
             console.log(`Event selected for economy ${economy.country}:`, evento.name);
         }
-
-        this.startTimer(10);
     }
 
     startTimer(seconds = 90) {
+        if (this.timer) return console.warn("Timer already running");
+
         this.server.serverController.emit('timeUpdate', seconds);
 
         this.timer = setInterval(() => {
             seconds--;
-            this.server.serverController.emit('timeUpdate', seconds);
+            this.server.serverController?.emit('timeUpdate', seconds);
             if (seconds <= 0) {
                 clearInterval(this.timer);
+                this.timer = null;
                 this.resolveRound();
             } else {
                 console.log(`Time remaining: ${seconds} seconds`);
@@ -564,7 +688,11 @@ class Round {
     }
 
     resolveRound() {
+        this.applyRound();
+        this.server.updateSync();
+
         this.roundEnded = true;
+        this.calculateScores();
         this.server.updateSync();
     }
 
@@ -606,29 +734,73 @@ class Round {
 
         for (const o of possiveis) {
             acumulado += o.chance;
-            if (rand <= acumulado) return o;
+            if (rand <= acumulado) return {
+                eventResult: o,
+                option: {
+                    banco: evento.options['banco'].find(opt => opt.id === escolhaBanco),
+                    governo: evento.options['governo'].find(opt => opt.id === escolhaGoverno),
+                }
+            };
         }
 
-        return possiveis[possiveis.length - 1]; // fallback
+        return {
+            eventResult: possiveis[possiveis.length - 1],
+            option: {
+                banco: evento.options['banco'].find(opt => opt.id === escolhaBanco),
+                governo: evento.options['governo'].find(opt => opt.id === escolhaGoverno),
+            }
+        }; // fallback
     }
-
-    calcularPontuacao(impact) {
-        return (
-            (impact.investimentoPrivado || 0) / 1000 +
-            (impact.consumoFamiliar || 0) / 1000 +
-            (impact.gastosPublicos || 0) / 1000 -
-            ((impact.taxaJuros || 0) * 5) +
-            (impact.ofertaMoeda || 0) / 10000 -
-            (impact.demandaMoeda || 0) / 10000 -
-            ((impact.nivelPrecos || 0) * 100) +
-            (impact.exportacoes || 0) / 1000 -
-            (impact.importacoes || 0) / 1000
-        );
-    }
-
 
     applyRound() {
-        //Aplicar as mudanças do round na economia
+        let i = -1;
+        for (const economy of this.economies) {
+            i++;
+            const evento = economy.event;
+            if (!evento) {
+                console.warn(`No event to apply for economy ${economy.country}`);
+                continue;
+            }
+
+            const bancoVote = evento.options['banco'][economy.banco.vote.getResult()].id;
+            const governoVote = evento.options['governo'][economy.governo.vote.getResult()].id;
+
+            const { eventResult, option } = this.resolveEvent(evento, bancoVote, governoVote);
+            if (!eventResult) {
+                console.warn(`No valid outcome found for event ${evento.name} in economy ${economy.country}`);
+                continue;
+            }
+
+            this.votes[i] = {
+                option,
+                eventResult,
+            };
+
+            const outcome = eventResult.impact;
+
+            console.log(`Applying outcome for economy ${economy.country}:`, outcome);
+
+            // Aplicação dos impactos com escala reduzida
+            economy.taxaDeJuros += (outcome.taxaJuros ? outcome.taxaJuros * 0.01 : 0);
+            economy.consumoFamiliar += (outcome.consumoFamiliar ? outcome.consumoFamiliar : 0);
+            economy.investimentoPrivado += (outcome.investimentoPrivado ? outcome.investimentoPrivado : 0);
+            economy.gastosPublicos += (outcome.gastosPublicos ? outcome.gastosPublicos : 0);
+            economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda : 0);
+            economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos : 0);
+            economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda : 0);
+        }
+    }
+
+    calculateScores() {
+        // Calcular score para cada economia
+
+        const k = 350;
+
+        for (const economy of this.economies) {
+            const score = Math.max(0, 1000 - (economy.distanciaDoEquilibrio * k));
+            economy.score += Math.floor(score);
+            console.log(`Score for economy ${economy.country}:`, score);
+        }
     }
 }
 

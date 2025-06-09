@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
   typography: {
     fontFamily: [
-      "Changa",
+      "Special Elite", 
       "sans-serif",
     ].join(','),
   },

@@ -12,6 +12,8 @@ import {
     Grid,
     Button,
     TableHead,
+    CircularProgress,
+    Divider
 } from "@mui/material"
 import Twemoji from "react-twemoji"
 import { stringToEmoji } from "../utils"
@@ -26,8 +28,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
-import { LineChart } from '@mui/x-charts/LineChart';
-import { Scatter, ScatterChart } from "@mui/x-charts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
 
 export function Server() {
     const { client, gameState } = useServer()
@@ -163,24 +164,32 @@ export function Server() {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {eco.governo.players.map((player, index) => (
-                                                        <TableRow
-                                                            key={player.id}
-                                                            sx={{
-                                                                backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
-                                                            }}
-                                                        >
-                                                            <TableCell
-                                                                align="center"
+                                                    {eco.governo.players.map((player, index) => {
+                                                        const emoji = stringToEmoji(player.nickname)
+
+                                                        return (
+                                                            <TableRow
+                                                                key={player.id}
                                                                 sx={{
-                                                                    fontWeight: 500,
-                                                                    borderBottom: "none",
+                                                                    backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
                                                                 }}
                                                             >
-                                                                {player.nickname}
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))}
+                                                                <TableCell
+                                                                    align="center"
+                                                                    sx={{
+                                                                        fontWeight: 500,
+                                                                        borderBottom: "none",
+                                                                        display: "flex",
+                                                                        alignItems: "center",
+                                                                        gap: "5px"
+                                                                    }}
+                                                                >
+                                                                    <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
+                                                                    {player.nickname}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })}
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
@@ -275,6 +284,8 @@ export function Server() {
 
 function RenderGame({ client, gameState }) {
     const [state, setState] = useState(0);
+    const [localGameState, setLocalGameState] = useState(gameState);
+    const [canUpdate, setCanUpdate] = useState(true);
 
     useEffect(() => {
         if (state === 0) {
@@ -284,10 +295,552 @@ function RenderGame({ client, gameState }) {
         }
     }, [state]);
 
+    useEffect(() => {
+        if (gameState && canUpdate) {
+            setLocalGameState(gameState);
+            setCanUpdate(false);
+        }
+    }, [gameState, canUpdate]);
+
+    useEffect(() => {
+        if (gameState && localGameState) {
+            if (gameState.round && localGameState.round && gameState.round.numRound !== localGameState.round.numRound) {
+                setState(0);
+                setCanUpdate(true);
+            }
+        }
+    }, [gameState, localGameState])
+
     return (
         <>
-            {state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
-            {state === 1 && <Dashboard client={client} gameState={gameState} />}
+            {state === 0 && <GlobalEventAnnouncement client={client} gameState={localGameState} />}
+            {state === 1 && <Dashboard client={client} gameState={localGameState} />}
+
+            {
+                gameState && gameState.round && gameState.round.roundEnded && (<RoundEnd client={client} gameState={gameState} oldGameState={localGameState} />)
+            }
+        </>
+    )
+}
+
+function RoundEnd({ client, gameState, oldGameState }) {
+    const [state, setState] = useState(0);
+    const [currentEconomy, setCurrentEconomy] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (state === 0) {
+            return;
+        }
+
+        if (gameState && gameState.economies && gameState.economies.length > 0 && currentIndex < gameState.economies.length) {
+            setCurrentEconomy(selectEconomy(currentIndex));
+            setState(1);
+        } else {
+            client.sendMessage("nextRound");
+        }
+    }, [currentIndex, state])
+
+    function goBackEconomy() {
+        if (currentIndex > 0) {
+            setCurrentIndex((prev) => prev - 1);
+            setCurrentEconomy(selectEconomy(currentIndex - 1));
+        }
+    }
+
+    function selectEconomy(index) {
+        return {
+            old: oldGameState.economies[index],
+            new: gameState.economies[index],
+            index: index
+        }
+    }
+
+    useEffect(() => {
+        if (state >= 2) {
+            setCurrentIndex((prev) => prev + 1);
+        }
+    }, [state])
+
+    useEffect(() => {
+        if (state === 0) {
+            setTimeout(() => {
+                setState(1);
+            }, 4 * 1000);
+        }
+    }, [state])
+
+    function State0() {
+        useEffect(() => {
+            if(client) {
+                client.playSound("roundEnd", 0.1);
+            }
+        }, [client])
+
+        return (
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.9)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999,
+                }}
+            >
+                <Typography
+                    variant="h1"
+                    sx={{
+                        color: "white",
+                        fontWeight: 700,
+                        fontSize: "6rem",
+                        animation: "fadeScale 1s ease-in-out",
+                        "@keyframes fadeScale": {
+                            "0%": { transform: "scale(0.5)", opacity: 0 },
+                            "50%": { transform: "scale(1.2)", opacity: 1 },
+                            "100%": { transform: "scale(1)", opacity: 1 },
+                        },
+                    }}
+                >
+                    FIM DE RODADA
+                </Typography>
+            </Box>
+        )
+    }
+
+    function State1({ economy, votes }) {
+        const [localState, setLocalState] = useState(0);
+        const [stats, setStats] = useState(economy.old.stats || {});
+
+        const event = economy.old.event || null;
+        const bancoOptions = event.options.banco || [];
+        const governoOptions = event.options.governo || [];
+        const selectedBancoOption = votes[economy.index].option.banco;
+        const selectedGovernoOption = votes[economy.index].option.governo;
+        const outcomeEvent = votes[economy.index].eventResult || null;
+
+        useEffect(() => {
+
+            if (localState === 2) {
+                const duration = 2000; // Duration of the transition in milliseconds
+                const steps = 60; // Number of steps for the transition
+                const interval = duration / steps;
+
+                const oldStats = {
+                    ...economy.old.stats,
+                    score: economy.old.score || 0,
+                } || {};
+                const newStats = {
+                    ...economy.new.stats,
+                    score: economy.new.score || 0,
+                } || {};
+
+                const keys = Object.keys(oldStats);
+                const deltas = keys.map(key => (newStats[key] - oldStats[key]) / steps);
+
+                let currentStep = 0;
+                const intervalId = setInterval(() => {
+                    if (currentStep >= steps) {
+                        clearInterval(intervalId);
+                        setStats(newStats); // Ensure final state is set
+                        return;
+                    }
+
+                    const updatedStats = { ...stats };
+                    keys.forEach((key, index) => {
+                        updatedStats[key] = oldStats[key] + deltas[index] * currentStep;
+                    });
+
+                    setStats(updatedStats);
+                    currentStep++;
+                }, interval);
+
+                return () => clearInterval(intervalId); // Cleanup on unmount or state change
+            }
+        }, [localState, economy]);
+
+        useEffect(() => {
+            const onClick = (e) => {
+                e.preventDefault();
+                const isRightClick = e.button === -1; // Right click
+                console.log(e)
+
+                if (!isRightClick) {
+                    if (localState === 0) {
+                        setLocalState(1);
+                    }
+                    if (localState === 1) {
+                        setLocalState(2);
+                    }
+                    if (localState === 2) {
+                        setState(2);
+                    }
+                } else {
+                    if (localState === 0) {
+                        goBackEconomy();
+                        setLocalState(2);
+                    }
+                    if (localState === 1) {
+                        setLocalState(0);
+                    }
+                    if (localState === 2) {
+                        setLocalState(1);
+                    }
+                }
+            }
+
+            const handleContextMenu = (e) => {
+                e.preventDefault(); // Prevent the context menu from appearing
+                onClick(e); // Call the same function to handle right click
+            }
+
+            window.addEventListener("click", onClick);
+            window.addEventListener("contextmenu", handleContextMenu);
+
+            return () => {
+                window.removeEventListener("click", onClick);
+                window.removeEventListener("contextmenu", handleContextMenu);
+            }
+        }, [localState])
+
+        function Decision({ entityName, decision }) {
+            return (
+                <Paper sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    backdropFilter: "blur(10px)",
+                    borderRadius: 2,
+                    padding: "1rem 0",
+                    flexDirection: "column"
+                }}>
+                    <Typography fontSize={24} sx={{ fontWeight: 500, fontwcolor: "black", margin: "auto" }}>
+                        {entityName} tomou a decisão:
+                    </Typography>
+
+                    <Divider sx={{ width: "100%" }} />
+
+                    <Box>
+                        <Typography fontSize={16} sx={{ color: "black", margin: "auto" }}>
+                            {decision ? decision.description : "Nenhuma opção selecionada"}
+                        </Typography>
+                    </Box>
+                </Paper>
+            )
+        }
+
+        return (
+            <Box sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                flex: 1,
+                zIndex: 9999,
+                display: "flex",
+                flexDirection: "column",
+                padding: 2,
+                gap: 2,
+                borderRadius: "20px",
+                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+            }} className="bg">
+                {
+                    //NOME DA ECONOMIA
+                    localState === 0 && (
+                        <>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    backgroundColor: "#f5a623", // cor de fundo laranja
+                                    color: "#fff",              // texto branco
+                                    padding: "4px 16px",        // espaço interno
+                                    borderRadius: "4px",        // cantos levemente arredondados
+                                    fontWeight: "bold",         // negrito
+                                    display: "inline-block",    // para ajustar ao conteúdo
+                                    textAlign: "center",        // centraliza o texto
+                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // leve sombra
+                                    textTransform: "uppercase", // tudo em maiúsculas, se desejar
+                                }}
+                            >
+                                {economy.old.country}
+                            </Typography>
+                        </>
+                    )
+                }
+
+                {
+                    //MOSTRAR SITUAÇÃO LOCAL
+                    localState === 1 && (
+                        <>
+
+                            <Typography variant="h3" sx={{
+                                backgroundColor: "#f5a623", // cor de fundo laranja
+                                color: "#fff",              // texto branco
+                                padding: "4px 16px",        // espaço interno
+                                borderRadius: "4px",        // cantos levemente arredondados
+                                fontWeight: "bold",         // negrito
+                                display: "inline-block",    // para ajustar ao conteúdo
+                                textAlign: "center",        // centraliza o texto
+                                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // leve sombra
+                                textTransform: "uppercase", // tudo em maiúsculas, se desejar
+                            }}>
+                                {economy.old.country}
+                            </Typography>
+
+                            <Box display="grid" gridTemplateColumns={{ xs: "1fr", md: "2fr 1fr" }} gap={3} alignItems="center" justifyItems="center">
+                                <Box display="flex" flexDirection="column" gap={3}>
+                                    <Paper sx={{
+                                        display: "flex",
+
+                                        background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
+                                        boxShadow: "0 4px 16px 0 rgba(31, 38, 135, 0.10)",
+                                        borderRadius: "15px",
+                                        padding: 4,
+                                        flexDirection: "column",
+                                        animation: "fadeIn 1s ease-in-out",
+                                    }}>
+                                        <Typography fontSize={32} sx={{
+                                            color: "#263238",
+                                            fontWeight: 400,
+                                            lineHeight: 0.7,
+                                            textShadow: "1px 1px 3px rgba(0, 0, 0, 0.3)",
+                                        }}>
+                                            Situação Problema:
+                                        </Typography>
+                                        <Typography fontSize={32} sx={{ fontWeight: 900, color: "#263238", mb: 1 }}>{event.name}</Typography>
+                                        <Typography fontSize={20} sx={{
+                                            color: "#37474f",
+                                            margin: "auto",
+
+                                            textAlign: "center",
+                                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
+                                        }}>
+                                            {event.description}
+                                        </Typography>
+                                    </Paper>
+                                    <Decision entityName={"Banco"} decision={selectedBancoOption} />
+                                    <Decision entityName={"Governo"} decision={selectedGovernoOption} />
+                                </Box>
+                                <img src={event.asset} alt={event.description} style={{
+                                    maxHeight: 400,
+                                    borderRadius: "30px",
+
+                                    objectFit: "contain",
+                                    width: "100%",
+                                    maxWidth: 350,
+                                    animation: "zoomIn 0.8s ease-in-out",
+                                }} />
+                            </Box>
+
+                            <Paper sx={{
+                                p: 2,
+                                mt: "auto",
+                                display: "flex",
+                                background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
+                                boxShadow: "0 2px 8px 0 rgba(31, 38, 135, 0.08)",
+                                borderRadius: "15px",
+
+                                animation: "fadeIn 1s ease-in-out",
+                            }}>
+                                <Typography variant="h5" textAlign={"center"} margin={"auto"} sx={{
+                                    color: "#263238",
+                                    fontWeight: 600,
+                                    textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
+                                }}>
+                                    {outcomeEvent.resultText}
+                                </Typography>
+                            </Paper>
+                        </>
+
+                    )
+                }
+
+                {
+                    //MOSTRAR DADOS E GRÁFICO
+                    localState === 2 && (
+                        <>
+
+                            <Typography variant="h4" sx={{
+                                padding: 2,
+                                backgroundColor: "#f5a623",
+                                color: "#fff",
+                                padding: "4px 16px",
+                                borderRadius: "4px",
+                                fontWeight: "bold",
+                                display: "inline-block",
+                                textAlign: "center",
+                                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                                textTransform: "uppercase",
+                                width: "calc(100% - 32px)",
+                                pt: "10px",
+                            }}>
+                                RESULTADOS
+                            </Typography>
+                            <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
+                                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
+                                    padding: "16px",
+                                    background: "white",
+                                    borderRadius: "20px",
+                                    width: "50%"
+                                }}>
+                                    <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
+                                    <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                                    <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                                    <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                                    <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                                    <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
+                                </Box>
+
+                                <CountryScore economy={{
+                                    score: stats.score || 0,
+                                }} />
+
+                                <Paper sx={{ padding: 2, flex: 1, width: "50%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                                    <RoundEndGraph economy={{ stats }} />
+                                </Paper>
+                            </Box>
+
+                        </>
+                    )
+                }
+            </Box>
+        )
+    }
+
+    return (
+        <>
+
+            {state === 0 && <State0 />}
+            {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} />}
+
+        </>
+    )
+}
+
+function RoundEndGraph({ economy }) {
+    const {
+        taxaDeJuros,
+        consumoFamiliar,
+        investimentoPrivado,
+        gastosPublicos,
+        ofertaMoeda,
+        nivelPrecos,
+        demandaMoeda,
+        sensibilidadeInvestimentoAoJuros,
+        sensibilidadeDaMoedaAosJuros,
+        sensibilidadeDaMoedaARenda
+    } = economy.stats;
+
+    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    const calcularIS = (i) => {
+        return consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+    };
+
+    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    const calcularLM = (i) => {
+        return (
+            ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
+        )
+    };
+
+    // Calcula o ponto de equilíbrio (IS = LM) usando o range definido pelas margens, sem depender de xValues externo
+    function calcularEquilibrio() {
+        // Resolver algebricamente IS = LM
+        const iEquilibrio = (((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - ofertaMoeda / nivelPrecos) + (consumoFamiliar * (investimentoPrivado + gastosPublicos)) / (sensibilidadeInvestimentoAoJuros))) / (consumoFamiliar + (sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda));
+        const yEquilibrio = calcularIS(iEquilibrio); // Ou calcularLM(iEquilibrio), já que IS = LM
+
+        return { i: iEquilibrio, y: yEquilibrio };
+    }
+
+    // Defina as constantes de margem
+    const MARGEM_MIN = 0.03;
+    const MARGEM_MAX = 0.03;
+    // Calcule minX e maxX antes de gerar xValues
+    const minX = 0;
+    // Para maxX, precisamos de equilibrio.i, então calculamos antes
+    const equilibrioTemp = calcularEquilibrio(minX, Number(taxaDeJuros)); // range amplo só para pegar o equilíbrio
+    const maxX = 0.5;
+    // Agora gere xValues, isCurve, lmCurve com o range correto
+    const xValues = [];
+    const isCurve = [];
+    const lmCurve = [];
+    for (let i = minX; i <= maxX; i += 0.01) {
+        const roundedI = parseFloat(i.toFixed(4));
+        xValues.push(roundedI);
+        isCurve.push(calcularIS(roundedI));
+        lmCurve.push(calcularLM(roundedI));
+    }
+    // Agora calcule o equilibrio final no range correto
+    const equilibrio = calcularEquilibrio(minX, maxX);
+
+    // Prepare data for Recharts
+    const chartData = xValues.map((x, i) => ({
+        x: x,
+        IS: isCurve[i],
+        LM: lmCurve[i],
+    }));
+
+    return (
+        <>
+            <Box style={{ width: "100%", height: "75%", padding: "5px" }} flex={1} display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
+                <ResponsiveContainer>
+                    <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+                        <XAxis
+                            dataKey="x"
+                            tick={{ fontSize: 12, fill: "#444" }}
+                            label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
+                            axisLine={{ stroke: "#ccc" }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fontSize: 12, fill: "#444" }}
+                            label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
+                            axisLine={{ stroke: "#ccc" }}
+                            tickLine={false}
+                        />
+                        <RechartsLegend
+                            verticalAlign="top"
+                            align="center"
+                            iconType="circle"
+                            wrapperStyle={{ fontSize: 12 }}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="IS"
+                            stroke="#1f77b4"
+                            strokeWidth={2.5}
+                            dot={false}
+                            name="Curva IS"
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="LM"
+                            stroke="#d62728"
+                            strokeWidth={2.5}
+                            dot={false}
+                            name="Curva LM"
+                        />
+                        <ReferenceDot
+                            x={Number(taxaDeJuros.toFixed(2))}
+                            y={calcularIS(taxaDeJuros)}
+                            stroke="#1f77b4"
+                            fill="#1f77b4"
+                            r={5}
+                        />
+                        <ReferenceDot
+                            x={Number(taxaDeJuros.toFixed(2))}
+                            y={calcularLM(taxaDeJuros)}
+                            stroke="#d62728"
+                            fill="#d62728"
+                            r={5}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </Box>
         </>
     )
 }
@@ -295,18 +848,32 @@ function RenderGame({ client, gameState }) {
 function Dashboard({ client, gameState }) {
     const round = gameState?.round || {};
 
+    useEffect(() => {
+        if (client)
+            client.sendMessage("startTimer");
+    }, [client])
+
+    useEffect(() => {
+        if (round?.roundEnded) {
+            client.sendMessage("nextRound");
+        }
+    }, [round])
+
     return (
-        <Box gridTemplateColumns={"1fr 1fr 1fr"} display={"grid"} flex={1} gap={2}>
+        <Box gridTemplateColumns={"2fr 1fr 2fr"} display={"grid"} flex={1} gap={2}>
             <Country economy={gameState.economies[0]} />
-            <GlobalData gameState={gameState} />
+            <GlobalData client={client} gameState={gameState} />
             <Country economy={gameState.economies[1]} />
         </Box>
     )
 }
 
-function GlobalData({ gameState }) {
+function GlobalData({ client, gameState }) {
+
     const round = gameState?.round;
     const globalEvent = round?.globalEvent || null;
+
+
 
     return (
         <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>
@@ -317,14 +884,88 @@ function GlobalData({ gameState }) {
                 textAlign: "center",
             }}> Round {round.numRound}</Paper>
 
-            <Paper sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "75%" }}>
-
+            <Paper sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src={globalEvent ? globalEvent.asset : Backface} alt="Global Event" style={{ width: "100%", height: "100%", objectFit: "contain", aspectRatio: "644 / 967" }} />
             </Paper>
 
-            <Paper sx={{ flex: "28%" }}>
-
+            <Paper sx={{ flex: "28%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 2 }}>
+                <RoundTimer client={client} />
             </Paper>
         </Box>
+    )
+}
+
+const roundTime = 300;
+
+function RoundTimer({ client }) {
+    const [timeLeft, setTimeLeft] = useState(null);
+
+    useEffect(() => {
+        if (client) {
+            const handleTimeUpdate = (time) => {
+                setTimeLeft(time);
+            }
+
+            client.on("timeUpdate", handleTimeUpdate);
+
+            return () => {
+                client.off("timeUpdate", handleTimeUpdate);
+
+            }
+        }
+    }, [client]);
+
+
+    const progress = (timeLeft / roundTime) * 100;
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function getTimeKey(timeLeft) {
+        if (timeLeft == null) return '';
+        if (timeLeft > 60 && timeLeft % 60 === 0) {
+            // Minutos cheios acima de 1 min (ex: 3:00, 2:00)
+            return `${Math.floor(timeLeft / 60)}:00`;
+        }
+        if (timeLeft <= 60) {
+            // Último minuto: cada segundo é uma key
+            return timeLeft;
+        }
+        // Caso geral: não anima
+        return '';
+    }
+
+    return (
+        <>
+            <Box flex={1} display="flex" alignItems="center" justifyContent="center" position="relative" sx={{ height: 150 }}>
+                <CircularProgress color={"success"} classes={{
+                    circle: styles.circularProgressCircle,
+                }} variant="determinate" value={progress} size={120} />
+                <Box
+                    top={0}
+                    left={0}
+                    bottom={0}
+                    right={0}
+                    position="absolute"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <motion.span key={getTimeKey(timeLeft)}
+                        initial={{ scale: 1.5 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <Typography variant="h4" component="div" color="textSecondary">
+                            {formatTime(timeLeft)}
+                        </Typography>
+                    </motion.span>
+                </Box>
+            </Box>
+        </>
     )
 }
 
@@ -336,37 +977,44 @@ function Country({ economy }) {
                 fontWeight: 700,
                 fontSize: "24px",
                 textAlign: "center",
+                background: "#f5a623",
+                color: "#fff",
+                padding: "4px 16px",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
             }}>
-                {economy.flag}{" "}
-                {economy.country}
+                <Typography fontSize={32} mt={"10px"}>
+                    {economy.flag}{" "}
+                    {economy.country}
+                </Typography>
             </Paper>
 
             <Paper sx={{ flex: "25%", paddingBottom: 3 }}>
                 <Typography variant="h6" sx={{ padding: 1, fontWeight: 700, textAlign: "center" }}>
                     Dados
                 </Typography>
-                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
+                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 2fr"} sx={{
                     padding: "0px 16px"
                 }}>
-                    <Dado label={"Taxa de Juros"} value={(economy.stats.taxaDeJuros * 100).toFixed(1) + "%"} icon={PercentIcon} />
-                    <Dado label={"Gastos públicos"} value={"R$ " + (economy.stats.gastosPublicos * 10) + " bi"} icon={AccountBalanceIcon} />
-                    <Dado label={"Investimentos privados"} value={"R$ " + (economy.stats.investimentoPrivado * 10) + " bi"} icon={PriceCheckIcon} />
-                    <Dado label={"Oferta por moeda"} value={"R$ " + (economy.stats.ofertaMoeda * 10) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Demanda por moeda"} value={"R$ " + (economy.stats.demandaMoeda * 10) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Consumo familiar"} value={"R$ " + (economy.stats.consumoFamiliar * 10) + " bi"} icon={FamilyRestroomIcon} />
+                    <Dado label={"Taxa de Juros"} value={(economy.stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
+                    <Dado label={"Gastos públicos"} value={"R$ " + (economy.stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                    <Dado label={"Investimentos privados"} value={"R$ " + (economy.stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                    <Dado label={"Oferta por moeda"} value={"R$ " + (economy.stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Demanda por moeda"} value={"R$ " + (economy.stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Consumo familiar"} value={"R$ " + (economy.stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
                 </Box>
             </Paper>
 
             <Box
                 sx={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr", // Divide em duas colunas iguais
-                    flex: "35%",
+                    gridTemplateColumns: "1fr", // Divide em duas colunas iguais
+                    flex: "1",
                     gap: 2,
                 }}
             >
-                {/* Coluna da esquerda: Event */}
-                <CountryCard economy={economy} />
 
                 {/* Coluna da direita: Score e Chart */}
                 <Box
@@ -431,8 +1079,13 @@ function CountryScore({ economy }) {
             }}>
                 <Typography variant="h4" sx={{
                     fontWeight: 700,
+                    marginTop: "10px",
+                    padding: "0 10px",
+                    paddingRight: "30px"
                 }}>
-                    {economy.score}
+                    {
+                        Math.floor(economy.score)
+                    }
                 </Typography>
             </Box>
         </Paper>
@@ -467,32 +1120,52 @@ function CountryCurves({ economy }) {
         )
     };
 
-    function calcularY({ A, b, a, h, L, M, P, k }) {
-        const parte1 = (L - M / P) / h;
-        const parte2 = A / b;
-        const numerador = parte1 - parte2;
-
-        const denominador = -(1 / a) - (k / h);
-
-        const Y = numerador / denominador;
-        return Y;
+    // Calcula o ponto de equilíbrio (IS = LM) usando o range definido pelas margens, sem depender de xValues externo
+    function calcularEquilibrio(minX, maxX) {
+        let minDiff = Infinity;
+        let iEquilibrio = null;
+        let yEquilibrio = null;
+        for (let i = minX; i <= maxX; i += 0.005) {
+            const roundedI = parseFloat(i.toFixed(4));
+            const isY = calcularIS(roundedI);
+            const lmY = calcularLM(roundedI);
+            const diff = Math.abs(isY - lmY);
+            if (diff < minDiff) {
+                minDiff = diff;
+                iEquilibrio = roundedI;
+                yEquilibrio = isY; // ou lmY
+            }
+        }
+        return { i: iEquilibrio, y: yEquilibrio };
     }
 
-    // Gerar dados para o gráfico
+    // Defina as constantes de margem
+    const MARGEM_MIN = 0.03;
+    const MARGEM_MAX = 0.03;
+    // Calcule minX e maxX antes de gerar xValues
+    const minX = Math.max(0, Number(taxaDeJuros) - MARGEM_MIN);
+    // Para maxX, precisamos de equilibrio.i, então calculamos antes
+    const equilibrioTemp = calcularEquilibrio(minX, Number(taxaDeJuros) + 0.2); // range amplo só para pegar o equilíbrio
+    const maxX = Number(equilibrioTemp.i) + MARGEM_MAX;
+    // Agora gere xValues, isCurve, lmCurve com o range correto
     const xValues = [];
     const isCurve = [];
     const lmCurve = [];
-
-    for (let i = 0.0; i <= 0.2; i += 0.005) {
-        const roundedI = parseFloat(i.toFixed(3));
+    for (let i = minX; i <= maxX; i += 0.005) {
+        const roundedI = parseFloat(i.toFixed(4));
         xValues.push(roundedI);
         isCurve.push(calcularIS(roundedI));
         lmCurve.push(calcularLM(roundedI));
     }
+    // Agora calcule o equilibrio final no range correto
+    const equilibrio = calcularEquilibrio(minX, maxX);
 
-    let equilibrio = null;
-
-    console.log("Equilíbrio encontrado:", equilibrio);
+    // Prepare data for Recharts
+    const chartData = xValues.map((x, i) => ({
+        x: x,
+        IS: isCurve[i],
+        LM: lmCurve[i],
+    }));
 
     // Capturar altura do container para ajustar o gráfico
     useEffect(() => {
@@ -501,6 +1174,8 @@ function CountryCurves({ economy }) {
         }
     }, []);
 
+
+
     return (
         <Paper
             ref={containerRef}
@@ -508,42 +1183,64 @@ function CountryCurves({ economy }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+
             }}
         >
-            <LineChart
-                xAxis={[
-                    {
-                        data: xValues,
-                        label: "Taxa de Juros (i)",
-                        position: 'none',
-                    }
-                ]}
-                yAxis={[
-                    {
-                        label: "Produto (Y)",
-                        position: 'none',
-                    }
-                ]}
-                series={[
-                    {
-                        data: isCurve, label: "Curva IS", color: 'blue', showMark: ({ index }) => {
-                            return Number(lmCurve[index]).toFixed(2) === Number(isCurve[index]).toFixed(2) || isCurve[index] === calcularIS(taxaDeJuros)
-                        },
-                    },
-                    {
-                        data: lmCurve, label: "Curva LM", color: 'green', showMark: ({ index }) => {
-                            return Number(lmCurve[index]).toFixed(2) === Number(isCurve[index]).toFixed(2) || lmCurve[index] === calcularLM(taxaDeJuros);
-                        },
-                    },
-     
-                ]}
-                height={height * 1}
-                grid={{ vertical: false, horizontal: true }}
-
-                legend={{ position: 'top' }}
-            >
-            </LineChart>
-
+            <Box style={{ width: "100%", height: "75%" }}>
+                <ResponsiveContainer >
+                    <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+                        <XAxis
+                            dataKey="x"
+                            tick={{ fontSize: 12, fill: "#444" }}
+                            label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
+                            axisLine={{ stroke: "#ccc" }}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            tick={{ fontSize: 12, fill: "#444" }}
+                            label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
+                            axisLine={{ stroke: "#ccc" }}
+                            tickLine={false}
+                        />
+                        <RechartsLegend
+                            verticalAlign="top"
+                            align="center"
+                            iconType="circle"
+                            wrapperStyle={{ fontSize: 12 }}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="IS"
+                            stroke="#1f77b4"
+                            strokeWidth={2.5}
+                            dot={false}
+                            name="Curva IS"
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="LM"
+                            stroke="#d62728"
+                            strokeWidth={2.5}
+                            dot={false}
+                            name="Curva LM"
+                        />
+                        <ReferenceDot
+                            x={Number(taxaDeJuros.toFixed(2))}
+                            y={calcularIS(taxaDeJuros)}
+                            stroke="#1f77b4"
+                            fill="#1f77b4"
+                            r={5}
+                        />
+                        <ReferenceDot
+                            x={Number(taxaDeJuros.toFixed(2))}
+                            y={calcularLM(taxaDeJuros)}
+                            stroke="#d62728"
+                            fill="#d62728"
+                            r={5}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </Box>
         </Paper>
     );
 }
@@ -713,3 +1410,4 @@ function EventHumor({ up, parent, onClose }) {
         </motion.span>
     );
 }
+

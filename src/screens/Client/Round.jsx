@@ -1,6 +1,10 @@
 import { Box, LinearProgress, Paper, Typography } from '@mui/material';
-import { LineChart } from '@mui/x-charts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useEffect, useState } from 'react';
+import banco from '../assets/bancoCentral.png'
+import bancoBg from '../assets/bancoBg.png'
+import governo from '../assets/governo.png'
+import governoBg from '../assets/governoBg.png'
 
 export function Round({ client, gameState, playerState }) {
     return (
@@ -38,20 +42,48 @@ function RoundBody({ client, gameState, playerState }) {
     }
 
     return (
-        <>
-            <Typography variant="h3" sx={{ padding: 2 }}>
+        <Box display={"flex"} flexDirection={"column"} gap={2} sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            padding: 2,
+            backgroundImage: `url(${playerState.entity.id === "banco" ? bancoBg : governoBg})`,
+            backgroundSize: "cover",
+            overflowY: "auto",
+        }}>
+            <Typography variant="h4" sx={{
+                padding: 2,
+                backgroundColor: "#f5a623",
+                color: "#fff",
+                padding: "4px 16px",
+                borderRadius: "4px",
+                fontWeight: "bold",
+                display: "inline-block",
+                textAlign: "center",
+                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                textTransform: "uppercase",
+                width: "calc(100% - 32px)",
+                pt: "10px",
+            }}>
+
                 Rodada {roundData.numRound}
             </Typography>
-            <Paper>
-                <Typography variant="h4" sx={{ padding: 2 }}>
+            <Paper sx={{
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+            }}>
+                <Typography variant="h4" sx={{ padding: 2 }} textAlign={"center"} marginTop={3}>
                     {
                         event.name
                     }
                 </Typography>
 
-                <Typography variant="subtitle1" sx={{ padding: 2 }}>
+                <Typography variant="subtitle1" sx={{ padding: 2 }} textAlign={"center"}>
                     {event.description}
                 </Typography>
+
 
                 {
                     roundData.roundEnded ? (
@@ -61,7 +93,7 @@ function RoundBody({ client, gameState, playerState }) {
                     )
                 }
             </Paper>
-        </>
+        </Box>
     )
 }
 
@@ -78,19 +110,29 @@ function RoundGameActions({ client, gameState, playerState, event }) {
 
     useEffect(() => {
         if (client) {
-            client.on("votes", (data) => {
-                setVoteDistribution(data);
-            })
+            const onVotes = (votes) => {
+                setVoteDistribution(votes);
+            }
+            client.on("votes", onVotes);
+
+            return () => {
+                client.off("votes", onVotes);
+            }
         }
     }, [client]);
 
     return (
         <>
-            <Typography variant="h6" sx={{ padding: 2 }}>
-                Você é o {playerState.entity.name} do país {playerState.economy.country}.
-            </Typography>
-
-            <Typography variant="h6" sx={{ padding: 2 }}>
+            <Box sx={{ textAlign: "center", padding: 2 }}>
+                <img
+                    src={playerState.entity.id === "banco" ? banco : governo}
+                    style={{ width: "100px", height: "100px", marginBottom: "16px", borderRadius:"5px" }}
+                />
+                <Typography variant="h6">
+                    Você é o {playerState.entity.name} do país {playerState.economy.country}.
+                </Typography>
+            </Box>
+            <Typography variant="h6" sx={{ padding: 2, textAlign: "center" }}>
                 Qual decisão você vai tomar?
             </Typography>
 
@@ -100,7 +142,7 @@ function RoundGameActions({ client, gameState, playerState, event }) {
                     console.log(voteDistribution)
 
                     return (
-                        <RoundOption onClick={() => {
+                        <RoundOption playerState={playerState} onClick={() => {
                             if (selectedOption === index) {
                                 setSelectedOption(null);
                                 return;
@@ -117,7 +159,7 @@ function RoundGameActions({ client, gameState, playerState, event }) {
 function RoundGameEnd({ gameState }) {
     return (
         <>
-            <Typography variant="subtitle1" sx={{ padding: 2 }}>
+            <Typography variant="subtitle1" sx={{ padding: 2,  textAlign: "center"}}>
                 Olhe o resultado da rodada no projetor e veja como as decisões afetaram o país.
             </Typography>
         </>
@@ -158,7 +200,7 @@ function RoundNumber({ playerState }) {
                             sx={{
                                 color: "white",
                                 fontWeight: 700,
-                                fontSize: "6rem",
+                                fontSize: "4rem",
                                 animation: "fadeScale 1s ease-in-out",
                                 "@keyframes fadeScale": {
                                     "0%": { transform: "scale(0.5)", opacity: 0 },
@@ -177,7 +219,7 @@ function RoundNumber({ playerState }) {
     )
 }
 
-function RoundOption({ onClick, description, selected, voteValue = 0 }) {
+function RoundOption({ playerState, onClick, description, selected, voteValue = 0 }) {
     return (
         <Box sx={{
             margin: 1,
@@ -186,18 +228,26 @@ function RoundOption({ onClick, description, selected, voteValue = 0 }) {
             gap: "5px"
         }}>
             <Paper onClick={onClick} sx={{
-                padding: 2, backgroundColor: selected ? 'lightblue' : 'white', '&:hover': {
+                padding: 2, backgroundColor: selected ? (
+                    playerState.entity.id === "banco" ? 'rgba(191, 216, 185, 0.8)' : 'rgba(155, 186, 211, 0.8)'
+                ) : 'white', '&:hover': {
                     cursor: "pointer"
                 }
             }}>
-                <Typography variant="h6">
+                <Typography sx={{
+                    fontSize: "15px"
+                }}>
                     {description}
                 </Typography>
 
 
             </Paper>
 
-            <LinearProgress variant="determinate" value={voteValue} />
+            <LinearProgress variant="determinate" color={playerState.entity.id == "banco" ? "success" : "primary"}
+            value={voteValue} sx={{
+                height: "12px",
+                borderRadius: "30px"
+            }} />
 
             <Typography variant="subtitle1" sx={{ marginTop: 1 }}>
                 {voteValue.toFixed(2)}% de votos
@@ -205,3 +255,4 @@ function RoundOption({ onClick, description, selected, voteValue = 0 }) {
         </Box>
     );
 }
+

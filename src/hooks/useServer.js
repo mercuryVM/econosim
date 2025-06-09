@@ -6,6 +6,7 @@ import BgSound from '../sounds/econosim_bg.mp3';
 import DrumRollSound from '../sounds/drumroll.mp3';
 import BadSound from '../sounds/badEvent.ogg';
 import GoodEventSound from '../sounds/goodEvent.mp3';
+import RoundEndSound from '../sounds/roundEnd.mp3';
 
 let client = undefined;
 
@@ -45,6 +46,10 @@ export class EventSource {
         this.events.on(event, listener);
     }
 
+    off(event, listener) {
+        this.events.off(event, listener);
+    }
+
     emit(event, data) {
         this.events.emit(event, data);
     }
@@ -65,6 +70,7 @@ class Server extends EventSource {
         this.soundManager.loadSound('drumRoll', DrumRollSound);
         this.soundManager.loadSound('badEvent', BadSound);
         this.soundManager.loadSound('goodEvent', GoodEventSound);
+        this.soundManager.loadSound('roundEnd', RoundEndSound);
 
         this.handleMessages();
     }
@@ -78,6 +84,16 @@ class Server extends EventSource {
             console.log('State update received:', data);
             this.updateState(data);
         });
+
+        this.socket.on("timeUpdate", (data) => {
+            console.log('Timer update received:', data);
+            this.emit('timeUpdate', data);
+        });
+    }
+
+    sendMessage(event, data) {
+        console.log('Sending message:', event, data);
+        this.socket.emit(event, data);
     }
 
     updateState(data) {
