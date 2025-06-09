@@ -18,6 +18,6 @@ app.get('/', (req, res) => {
 const {Server} = require('./econosim/Server.js');
 var server = new Server(io);
 
-http.listen(3001, () => {
-    console.log('Econosim API is running on http://localhost:3001');
+http.listen(process.env.PORT || 3001, () => {
+    console.log(`Econosim API is running on http://localhost:${process.env.PORT || 3001}`);
 });
