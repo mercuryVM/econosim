@@ -19,7 +19,7 @@ export function useServer() {
         if (!client) {
             const socketIo = require('socket.io-client');
             client = new Server(
-                socketIo('http://localhost:3001/server', {
+                socketIo(process.env.REACT_APP_API_PATH + '/server', {
                     transports: ['websocket'],
                     auth: {
                     }

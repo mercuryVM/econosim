@@ -13,7 +13,7 @@ export function useClient(role, economy) {
         if (!client) {
             const socketIo = require('socket.io-client');
             client = new Client(
-                socketIo('http://localhost:3001', {
+                socketIo(process.env.REACT_APP_API_PATH, {
                     transports: ['websocket'],
                     auth: {
                         nickname: 'User' + Math.floor(Math.random() * 1000),
