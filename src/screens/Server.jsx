@@ -90,6 +90,56 @@ function PreServer({ client, setPreIntro }) {
     )
 }
 
+function StatusBar() {
+    const messages = [
+        "Você sabia que o EconoSim é um projeto open-source? Contribua no nosso repositório do GitHub!",
+        "Participe e ajude a construir o futuro da economia simulada!",
+        "Essa é provavelmente a primeira e única versão do EconoSim, então aproveite!",
+        "O Econosim foi desenvolvido em um fim de semana maluco!",
+        "Curva IS-LM? Mais como Curva IS-LMAO!",
+        "A cada rodada, o jogo se torna mais emocionante!",
+        "Você sabia que o EconoSim é inspirado em jogos clássicos de simulação econômica?",
+        "A economia é complexa, mas o EconoSim torna tudo mais divertido!",
+    ];
+    const [currentIdx, setCurrentIdx] = useState(0);
+    const boxRef = useRef(null);
+
+    const handleAnimationEnd = () => {
+        setCurrentIdx(prev => (prev + 1) % messages.length);
+    };
+
+    return (
+        <Box ref={boxRef} sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            overflow: "hidden"
+        }}>
+            <Typography variant="body2" component="div" sx={{ color: "white" }}>
+                <Box
+                    component="div"
+                    key={currentIdx}
+                    onAnimationEnd={handleAnimationEnd}
+                    sx={{
+                        display: "inline-block",
+                        whiteSpace: "nowrap",
+                        animation: "marquee 15s linear",
+                        '@keyframes marquee': {
+                            '0%': { transform: 'translateX(' + (boxRef.current?.clientWidth || 1024) + 'px)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
+                    }}
+                >
+                    {messages[currentIdx]}
+                </Box>
+            </Typography>
+        </Box>
+    )
+}
+
 function RenderLobby({ client, countdown, handleStartGame }) {
     const [countdownLocal, setCountdownLocal] = useState(countdown);
     const [selectedQr, setSelectedQrCode] = useState(null);
@@ -112,7 +162,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                 sound.stop?.();
             };
         }
-    }, []); // sem dependências: roda só uma vez
+    }, [countdownLocal]); // sem dependências: roda só uma vez
 
     useEffect(() => {
         setCountdownLocal(countdown);
@@ -132,6 +182,8 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                 margin: "auto"
             }}
         >
+            <StatusBar />
+
             <Dialog onClose={() => setSelectedQrCode(null)} open={Boolean(selectedQr)}>
                 <DialogTitle textAlign={"center"}>QR Code para {selectedQr?.role === 0 ? "Banco" : "Governo"} de {economies[selectedQr?.economy]?.country}</DialogTitle>
                 <DialogContent>
