@@ -33,7 +33,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
-import CooktopLogo from './assets/cooktop.webp';
+import CooktopLogo from './assets/cooktop.png';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import { useLocation } from "react-router"
 import QRCode from "react-qr-code"
