@@ -111,7 +111,7 @@ export function Server() {
 
             if (counter === 0) {
                 clearInterval(interval)
-                setCountdown(null)
+                setCountdown(undefined)
 
                 // Envia o evento para iniciar a partida
                 if (client && client.socket) {
@@ -123,7 +123,7 @@ export function Server() {
 
     function RenderLobby({client, countdown}) {
         useEffect(() => {
-            if (client && !countdown) {
+            if (client && countdown === null) {
                 let timeout, data;
                 function play() {
                     data = client.playSound("lobby", 0.1);
