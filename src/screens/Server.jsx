@@ -18,21 +18,87 @@ import {
 import Twemoji from "react-twemoji"
 import { stringToEmoji } from "../utils"
 import styles from "./Server.module.css"
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import UpEvent from '../images/upEvent.gif';
 import Backface from '../images/backFace.png'
 import DownEvent from '../images/badEvent.gif';
 import PercentIcon from '@mui/icons-material/Percent';
-
+import Logo from './assets/logo.png';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
+import CooktopLogo from './assets/cooktop.webp';
+
+function PreServer({ client, setPreIntro }) {
+    useEffect(() => {
+        client.playSound("preIntro", 0.1);
+        const timer = setTimeout(() => {
+            setPreIntro(false);
+        }, 4 * 1000); // Duração do pre-intro em milissegundos
+    }, [])
+
+    return (
+        <Box sx={{
+            background: "rgba(0, 0, 0, 1)",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+        }}>
+            <motion.div style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                color: "white"
+            }} initial={{
+                opacity: 0,
+                y: -50
+            }} animate={{
+                opacity: 1,
+                y: 0
+            }} transition={{ duration: 5, ease: "easeInOut" }}
+                exit={{
+                    opacity: 0,
+                    y: -50,
+                    transition: { duration: 1, ease: "easeInOut" }
+                }}
+            >
+                <img src={CooktopLogo} alt="Cooktop Logo" style={{ width: "200px", marginBottom: "20px" }} />
+
+                <Typography color={"white"} variant="h4">
+                    Grupo Cooktop apresenta
+                </Typography>
+            </motion.div>
+        </Box>
+
+    )
+}
 
 export function Server() {
     const { client, gameState } = useServer()
+    const [preIntro, setPreIntro] = useState(true)
+    const [firstInteraction, setFirstInteraction] = useState(false)
     const [countdown, setCountdown] = useState(null)
+
+    useEffect(() => {
+        const handleInteraction = () => {
+            if (!firstInteraction) {
+                setFirstInteraction(true);
+                document.body.style.overflow = "auto"; // Permite rolagem após a interação
+            }
+        }
+        document.body.style.overflow = "hidden"; // Impede rolagem até a interação
+        window.addEventListener("click", handleInteraction);
+    }, [])
 
     function handleStartGame() {
         let counter = 5
@@ -55,7 +121,30 @@ export function Server() {
         }, 1000)
     }
 
-    function renderLobby(client) {
+    function RenderLobby({client}) {
+        useEffect(() => {
+            if (client) {
+                let timeout, data;
+                function play() {
+                    data = client.playSound("lobby", 0.1);
+
+                    timeout = setTimeout(() => {
+                        if (data && data.stop) {
+                            play();
+                        }
+                    }, 64 * 1000); // Repetir a cada 64 segundos
+                }
+
+                play();
+                return () => {
+                    clearTimeout(timeout);
+                    if (data && data.stop) {
+                        data.stop();
+                    }
+                }
+            }
+        }, [client])
+
         const economies = client.state.economies || []
         return (
             <Box
@@ -67,8 +156,10 @@ export function Server() {
                     alignItems: "center",
                     justifyContent: "center",
                     py: 6,
+                    margin: "auto"
                 }}
             >
+                <img src={Logo} alt="EconoSim Logo" style={{ width: "200px", marginBottom: "20px" }} />
                 <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
                     Lobby das Economias
                 </Typography>
@@ -271,13 +362,69 @@ export function Server() {
         )
     }
 
+    if (!firstInteraction) {
+        return (
+            <Box sx={{
+                background: "rgba(0, 0, 0, 1)",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+            }}></Box>
+        );
+    }
 
     return (
         <Box sx={{ p: 0, minHeight: 0, display: "flex", flexDirection: "column", flex: 1, color: "black" }}>
             {countdown !== null && renderCountdown()}
             {!client && (<div>Connecting to server...</div>)}
-            {client && !client.state.started ? renderLobby(client) : null}
-            {client && client.state.started && (<RenderGame client={client} gameState={gameState} />)}
+
+            <AnimatePresence exitBeforeEnter>
+                {preIntro && client && !client.state?.started && (
+                    <motion.div
+                        key="pre"
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <PreServer client={client} setPreIntro={setPreIntro} />
+                    </motion.div>
+                )}
+
+                {client && !client.state.started && !preIntro && (
+                    <motion.div
+                        key="lobby"
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <RenderLobby client={client} />
+                    </motion.div>
+                )}
+
+                {client && client.state.started && (
+                    <motion.div
+                        key="game"
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <RenderGame client={client} gameState={gameState} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </Box>
     )
 }
@@ -372,7 +519,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
 
     function State0() {
         useEffect(() => {
-            if(client) {
+            if (client) {
                 client.playSound("roundEnd", 0.1);
             }
         }, [client])
@@ -713,6 +860,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
 
     return (
         <>
+
 
             {state === 0 && <State0 />}
             {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} />}

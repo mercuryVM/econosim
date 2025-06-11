@@ -134,29 +134,37 @@ class Game {
 
 export class SoundManager {
     constructor() {
-        this.sounds = {};
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.buffers = {};
     }
 
-    loadSound(name, url) {
-        const audio = new Audio(url);
-        this.sounds[name] = audio;
+    // Carrega e decodifica o áudio via AudioContext
+    async loadSound(name, url) {
+        const res = await fetch(url);
+        const arrayBuffer = await res.arrayBuffer();
+        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        this.buffers[name] = audioBuffer;
     }
 
+    // Cria um BufferSource + GainNode para tocar instantaneamente
     playSound(name, volume = 1) {
-        if (this.sounds[name]) {
-            this.sounds[name].volume = volume;
-            this.sounds[name].play().catch(error => {
-                console.error(`Error playing sound ${name}:`, error);
-            });
-
-            return {
-                stop: () => {
-                    this.sounds[name].pause();
-                    this.sounds[name].currentTime = 0; // Reset to start
-                }
-            }
-        } else {
+        const buffer = this.buffers[name];
+        if (!buffer) {
             console.warn(`Sound ${name} not found`);
+            return;
         }
+        const source = this.audioContext.createBufferSource();
+        source.buffer = buffer;
+        const gainNode = this.audioContext.createGain();
+        gainNode.gain.value = volume;
+        source.connect(gainNode).connect(this.audioContext.destination);
+        source.start(0);
+
+        return {
+            stop: () => {
+                source.stop();
+            },
+            length: buffer.duration
+        };
     }
 }

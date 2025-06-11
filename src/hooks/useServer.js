@@ -7,6 +7,8 @@ import DrumRollSound from '../sounds/drumroll.mp3';
 import BadSound from '../sounds/badEvent.ogg';
 import GoodEventSound from '../sounds/goodEvent.mp3';
 import RoundEndSound from '../sounds/roundEnd.mp3';
+import PreIntroSound from '../sounds/preIntro.wav';
+import LobbySound from '../sounds/econosim_lobby.mp3';
 
 let client = undefined;
 
@@ -71,6 +73,8 @@ class Server extends EventSource {
         this.soundManager.loadSound('badEvent', BadSound);
         this.soundManager.loadSound('goodEvent', GoodEventSound);
         this.soundManager.loadSound('roundEnd', RoundEndSound);
+        this.soundManager.loadSound('preIntro', PreIntroSound);
+        this.soundManager.loadSound('lobby', LobbySound);
 
         this.handleMessages();
     }
