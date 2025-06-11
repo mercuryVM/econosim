@@ -83,67 +83,32 @@ function PreServer({ client, setPreIntro }) {
     )
 }
 
-export function Server() {
-    const { client, gameState } = useServer()
-    const [preIntro, setPreIntro] = useState(true)
-    const [firstInteraction, setFirstInteraction] = useState(false)
-    const [countdown, setCountdown] = useState(null)
+    function RenderLobby({client, countdown, handleStartGame}) {
+        const [countdownLocal, setCountdownLocal] = useState(countdown);
 
-    useEffect(() => {
-        const handleInteraction = () => {
-            if (!firstInteraction) {
-                setFirstInteraction(true);
-                document.body.style.overflow = "auto"; // Permite rolagem após a interação
-            }
-        }
-        document.body.style.overflow = "hidden"; // Impede rolagem até a interação
-        window.addEventListener("click", handleInteraction);
-    }, [])
-
-    function handleStartGame() {
-        let counter = 5
-        client.playSound("roundStart", 0.5)
-        setCountdown(counter)
-
-        const interval = setInterval(() => {
-            counter -= 1
-            setCountdown(counter)
-
-            if (counter === 0) {
-                clearInterval(interval)
-                setCountdown(undefined)
-
-                // Envia o evento para iniciar a partida
-                if (client && client.socket) {
-                    client.socket.emit("startGame")
-                }
-            }
-        }, 1000)
-    }
-
-    function RenderLobby({client, countdown}) {
         useEffect(() => {
-            if (client && countdown === null) {
-                let timeout, data;
-                function play() {
-                    data = client.playSound("lobby", 0.1);
-
-                    timeout = setTimeout(() => {
-                        if (data && data.stop) {
-                            play();
-                        }
-                    }, 64 * 1000); // Repetir a cada 64 segundos
-                }
-
-                play();
+            // dispara música de lobby apenas uma vez no mount
+            if (client && countdownLocal === null) {
+                let intervalId;
+                let sound;
+                const startLoop = () => {
+                    sound = client.playSound("lobby", 0.1);
+                    intervalId = setInterval(() => {
+                        sound.stop?.();
+                        sound = client.playSound("lobby", 0.1);
+                    }, 64 * 1000);
+                };
+                startLoop();
                 return () => {
-                    clearTimeout(timeout);
-                    if (data && data.stop) {
-                        data.stop();
-                    }
-                }
+                    clearInterval(intervalId);
+                    sound.stop?.();
+                };
             }
-        }, [client, countdown])
+        }, []); // sem dependências: roda só uma vez
+
+        useEffect(() => {
+            setCountdownLocal(countdown);
+        }, [countdown]);
 
         const economies = client.state.economies || []
         return (
@@ -185,6 +150,7 @@ export function Server() {
                                 <Grid container spacing={2}>
                                     <Grid item xs={6} style={{ flex: 1, }}>
                                         <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
+                                            
                                             Banco
                                         </Typography>
                                         <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -325,6 +291,46 @@ export function Server() {
         )
     }
 
+export function Server() {
+    const { client, gameState } = useServer()
+    const [preIntro, setPreIntro] = useState(true)
+    const [firstInteraction, setFirstInteraction] = useState(false)
+    const [countdown, setCountdown] = useState(null)
+
+    useEffect(() => {
+        const handleInteraction = () => {
+            if (!firstInteraction) {
+                setFirstInteraction(true);
+                document.body.style.overflow = "auto"; // Permite rolagem após a interação
+            }
+        }
+        document.body.style.overflow = "hidden"; // Impede rolagem até a interação
+        window.addEventListener("click", handleInteraction);
+    }, [])
+
+    function handleStartGame() {
+        let counter = 5
+        client.playSound("roundStart", 0.5)
+        setCountdown(counter)
+
+        const interval = setInterval(() => {
+            counter -= 1
+            setCountdown(counter)
+
+            if (counter === 0) {
+                clearInterval(interval)
+                setCountdown(undefined)
+
+                // Envia o evento para iniciar a partida
+                if (client && client.socket) {
+                    client.socket.emit("startGame")
+                }
+            }
+        }, 1000)
+    }
+
+
+
     function renderCountdown() {
         return (
             <Box
@@ -409,7 +415,7 @@ export function Server() {
                             flexDirection: "column",
                         }}
                     >
-                        <RenderLobby client={client} countdown={countdown} />
+                        <RenderLobby handleStartGame={handleStartGame} client={client} countdown={countdown} />
                     </motion.div>
                 )}
 
