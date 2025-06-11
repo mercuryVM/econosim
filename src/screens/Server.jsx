@@ -381,7 +381,7 @@ export function Server() {
 
     return (
         <Box sx={{ p: 0, minHeight: 0, display: "flex", flexDirection: "column", flex: 1, color: "black" }}>
-            {countdown !== null && renderCountdown()}
+            {(countdown !== null && countdown !== undefined) && renderCountdown()}
             {!client && (<div>Connecting to server...</div>)}
 
             <AnimatePresence exitBeforeEnter>
