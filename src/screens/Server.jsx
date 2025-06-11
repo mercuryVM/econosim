@@ -13,7 +13,11 @@ import {
     Button,
     TableHead,
     CircularProgress,
-    Divider
+    Divider,
+    Modal,
+    Dialog,
+    DialogContent,
+    DialogTitle
 } from "@mui/material"
 import Twemoji from "react-twemoji"
 import { stringToEmoji } from "../utils"
@@ -30,6 +34,9 @@ import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
 import CooktopLogo from './assets/cooktop.webp';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+import { useLocation } from "react-router"
+import QRCode from "react-qr-code"
 
 function PreServer({ client, setPreIntro }) {
     useEffect(() => {
@@ -83,213 +90,202 @@ function PreServer({ client, setPreIntro }) {
     )
 }
 
-    function RenderLobby({client, countdown, handleStartGame}) {
-        const [countdownLocal, setCountdownLocal] = useState(countdown);
+function RenderLobby({ client, countdown, handleStartGame }) {
+    const [countdownLocal, setCountdownLocal] = useState(countdown);
+    const [selectedQr, setSelectedQrCode] = useState(null);
 
-        useEffect(() => {
-            // dispara música de lobby apenas uma vez no mount
-            if (client && countdownLocal === null) {
-                let intervalId;
-                let sound;
-                const startLoop = () => {
-                    sound = client.playSound("lobby", 0.1);
-                    intervalId = setInterval(() => {
-                        sound.stop?.();
-                        sound = client.playSound("lobby", 0.1);
-                    }, 64 * 1000);
-                };
-                startLoop();
-                return () => {
-                    clearInterval(intervalId);
+    useEffect(() => {
+        // dispara música de lobby apenas uma vez no mount
+        if (client && countdownLocal === null) {
+            let intervalId;
+            let sound;
+            const startLoop = () => {
+                sound = client.playSound("lobby", 0.1);
+                intervalId = setInterval(() => {
                     sound.stop?.();
-                };
-            }
-        }, []); // sem dependências: roda só uma vez
+                    sound = client.playSound("lobby", 0.1);
+                }, 64 * 1000);
+            };
+            startLoop();
+            return () => {
+                clearInterval(intervalId);
+                sound.stop?.();
+            };
+        }
+    }, []); // sem dependências: roda só uma vez
 
-        useEffect(() => {
-            setCountdownLocal(countdown);
-        }, [countdown]);
+    useEffect(() => {
+        setCountdownLocal(countdown);
+    }, [countdown]);
 
-        const economies = client.state.economies || []
-        return (
-            <Box
-                sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    py: 6,
-                    margin: "auto"
-                }}
-            >
-                <img src={Logo} alt="EconoSim Logo" style={{ width: "200px", marginBottom: "20px" }} />
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
-                    Lobby das Economias
-                </Typography>
-                <Grid container spacing={4} justifyContent="center">
-                    {economies.map((eco, idx) => (
-                        <Grid item xs={12} md={6} key={idx} sx={{ display: "flex", justifyContent: "center" }}>
-                            <Paper
-                                elevation={6}
-                                sx={{
-                                    p: 3,
-                                    borderRadius: 4,
-                                    minWidth: 320,
-                                    maxWidth: 400,
-                                    width: "100%",
-                                    boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-                                    background: "rgba(255,255,255,0.95)",
-                                }}
-                            >
-                                <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 600 }}>
-                                    <span style={{ fontSize: 36, marginRight: 10 }}>{eco.flag}</span>
-                                    {eco.country}
-                                </Typography>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6} style={{ flex: 1, }}>
-                                        <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
-                                            
-                                            Banco
-                                        </Typography>
-                                        <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
-                                            <Table size={"small"}>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell
-                                                            align="center"
-                                                            sx={{
-                                                                fontWeight: 600,
-                                                                borderBottom: "none",
-                                                                backgroundColor: "#e3f2fd",
-                                                            }}
-                                                        >
-                                                            Jogadores
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {eco.banco.players.map((player, index) => {
-                                                        const emoji = stringToEmoji(player.nickname)
+    const economies = client.state.economies || []
+    return (
+        <Box
+            sx={{
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                py: 6,
+                margin: "auto"
+            }}
+        >
+            <Dialog onClose={() => setSelectedQrCode(null)} open={Boolean(selectedQr)}>
+                <DialogTitle textAlign={"center"}>QR Code para {selectedQr?.role === 0 ? "Banco" : "Governo"} de {economies[selectedQr?.economy]?.country}</DialogTitle>
+                <DialogContent>
+                    {
+                        selectedQr && (
+                            <QRCode style={{
+                                width: 512,
+                                height: 512,
+                            }} width={512} height={512} value={
+                                window.location.origin + "/?" + new URLSearchParams({
+                                    role: selectedQr.role,
+                                    economy: selectedQr.economy
+                                }).toString()
+                            } />
+                        )
+                    }
+                </DialogContent>
+            </Dialog >
 
-                                                        return (
-                                                            <TableRow
-                                                                key={player.id}
+            <img src={Logo} alt="EconoSim Logo" style={{ width: "200px", marginBottom: "20px" }} />
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
+                Lobby das Economias
+            </Typography>
+            <Grid container spacing={4} justifyContent="center">
+                {economies.map((eco, idx) => (
+                    <Grid item xs={12} md={6} key={idx} sx={{ display: "flex", justifyContent: "center" }}>
+                        <Paper
+                            elevation={6}
+                            sx={{
+                                p: 3,
+                                borderRadius: 4,
+                                minWidth: 320,
+                                maxWidth: 400,
+                                width: "100%",
+                                boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
+                                background: "rgba(255,255,255,0.95)",
+                            }}
+                        >
+                            <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 600 }}>
+                                <span style={{ fontSize: 36, marginRight: 10 }}>{eco.flag}</span>
+                                {eco.country}
+                            </Typography>
+                            <Grid container spacing={2}>
+                                {
+                                    [
+                                        {
+                                            name: "Banco",
+                                            players: eco.banco.players,
+                                        },
+                                        {
+                                            name: "Governo",
+                                            players: eco.governo.players,
+                                        }
+                                    ].map((entity, index) => (
+                                        <Grid item xs={6} style={{ flex: 1, }}>
+                                            <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
+                                                <Box display={"flex"} alignItems="center" justifyContent="center">
+                                                    <QrCodeIcon onClick={() => setSelectedQrCode({
+                                                        role: index,
+                                                        economy: idx
+                                                    })} />
+                                                    {
+                                                        entity.name
+                                                    }
+                                                </Box>
+                                            </Typography>
+                                            <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
+                                                <Table size={"small"}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell
+                                                                align="center"
                                                                 sx={{
-                                                                    backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
+                                                                    fontWeight: 600,
+                                                                    borderBottom: "none",
+                                                                    backgroundColor: "#e3f2fd",
                                                                 }}
                                                             >
-                                                                <TableCell
-                                                                    align="center"
+                                                                Jogadores
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {entity.players.map((player, index) => {
+                                                            const emoji = stringToEmoji(player.nickname)
+
+                                                            return (
+                                                                <TableRow
+                                                                    key={player.id}
                                                                     sx={{
-                                                                        fontWeight: 500,
-                                                                        borderBottom: "none",
-                                                                        display: "flex",
-                                                                        alignItems: "center",
-                                                                        gap: "5px"
+                                                                        backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
                                                                     }}
                                                                 >
-                                                                    <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
-                                                                    {player.nickname}
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    })}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Grid>
-                                    <Grid item xs={6} style={{ flex: 1, }}>
-                                        <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
-                                            Governo
-                                        </Typography>
-                                        <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden", flex: 1 }}>
-                                            <Table sx={{ flex: 1 }} size={"small"}>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell
-                                                            align="center"
-                                                            sx={{
-                                                                fontWeight: 600,
-                                                                borderBottom: "none",
-                                                                backgroundColor: "#e3f2fd",
-                                                            }}
-                                                        >
-                                                            Jogadores
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {eco.governo.players.map((player, index) => {
-                                                        const emoji = stringToEmoji(player.nickname)
+                                                                    <TableCell
+                                                                        align="center"
+                                                                        sx={{
+                                                                            fontWeight: 500,
+                                                                            borderBottom: "none",
+                                                                            display: "flex",
+                                                                            alignItems: "center",
+                                                                            gap: "5px"
+                                                                        }}
+                                                                    >
+                                                                        <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
+                                                                        {player.nickname}
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </Grid>
+                                    ))
+                                }
+                            </Grid>
 
-                                                        return (
-                                                            <TableRow
-                                                                key={player.id}
-                                                                sx={{
-                                                                    backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
-                                                                }}
-                                                            >
-                                                                <TableCell
-                                                                    align="center"
-                                                                    sx={{
-                                                                        fontWeight: 500,
-                                                                        borderBottom: "none",
-                                                                        display: "flex",
-                                                                        alignItems: "center",
-                                                                        gap: "5px"
-                                                                    }}
-                                                                >
-                                                                    <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
-                                                                    {player.nickname}
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    })}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Grid>
-                                </Grid>
+                            <Typography variant="subtitle1" align="center" sx={{ mt: 2, fontWeight: 500 }}>
+                                Jogadores Conectados: {eco.banco.players.length + eco.governo.players.length}
+                            </Typography>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+            <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 4, mb: 2 }}>
+                Aguardando início da partida...
+            </Typography>
+            {!client.state.started && (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    sx={{
+                        mt: 2,
+                        px: 5,
+                        py: 1.5,
+                        borderRadius: 3,
+                        fontWeight: 700,
+                        fontSize: 18,
+                        boxShadow: "0 4px 20px 0 rgba(33, 150, 243, 0.15)",
+                        textTransform: "none",
+                    }}
+                    onClick={handleStartGame}
+                >
+                    Iniciar Partida
+                </Button>
+            )}
 
-                                <Typography variant="subtitle1" align="center" sx={{ mt: 2, fontWeight: 500 }}>
-                                    Jogadores Conectados: {eco.banco.players.length + eco.governo.players.length}
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                    ))}
-                </Grid>
-                <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 4, mb: 2 }}>
-                    Aguardando início da partida...
-                </Typography>
-                {!client.state.started && (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        sx={{
-                            mt: 2,
-                            px: 5,
-                            py: 1.5,
-                            borderRadius: 3,
-                            fontWeight: 700,
-                            fontSize: 18,
-                            boxShadow: "0 4px 20px 0 rgba(33, 150, 243, 0.15)",
-                            textTransform: "none",
-                        }}
-                        onClick={handleStartGame}
-                    >
-                        Iniciar Partida
-                    </Button>
-                )}
-
-                <Typography sx={{ mt: 4, color: "text.secondary", textAlign: "center" }}>
-                    Desenvolvido com ❤️ por Cooktop
-                </Typography>
-            </Box>
-        )
-    }
+            <Typography sx={{ mt: 4, color: "text.secondary", textAlign: "center" }}>
+                Desenvolvido com ❤️ por Cooktop
+            </Typography>
+        </Box>
+    )
+}
 
 export function Server() {
     const { client, gameState } = useServer()
@@ -460,11 +456,11 @@ function RenderGame({ client, gameState }) {
             if ((
                 gameState.round && localGameState.round && gameState.round.numRound !== localGameState.round.numRound
             )
-            ||
-            (
-                gameState.round && !localGameState.round
-            )
-        ) {
+                ||
+                (
+                    gameState.round && !localGameState.round
+                )
+            ) {
                 setState(0);
                 setCanUpdate(true);
             }
