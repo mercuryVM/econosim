@@ -121,9 +121,9 @@ export function Server() {
         }, 1000)
     }
 
-    function RenderLobby({client}) {
+    function RenderLobby({client, countdown}) {
         useEffect(() => {
-            if (client) {
+            if (client && !countdown) {
                 let timeout, data;
                 function play() {
                     data = client.playSound("lobby", 0.1);
@@ -143,7 +143,7 @@ export function Server() {
                     }
                 }
             }
-        }, [client])
+        }, [client, countdown])
 
         const economies = client.state.economies || []
         return (
@@ -409,7 +409,7 @@ export function Server() {
                             flexDirection: "column",
                         }}
                     >
-                        <RenderLobby client={client} />
+                        <RenderLobby client={client} countdown={countdown} />
                     </motion.div>
                 )}
 
@@ -451,7 +451,14 @@ function RenderGame({ client, gameState }) {
 
     useEffect(() => {
         if (gameState && localGameState) {
-            if (gameState.round && localGameState.round && gameState.round.numRound !== localGameState.round.numRound) {
+            if ((
+                gameState.round && localGameState.round && gameState.round.numRound !== localGameState.round.numRound
+            )
+            ||
+            (
+                gameState.round && !localGameState.round
+            )
+        ) {
                 setState(0);
                 setCanUpdate(true);
             }
