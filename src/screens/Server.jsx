@@ -189,7 +189,12 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                                         <Grid item xs={6} style={{ flex: 1, }}>
                                             <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
                                                 <Box display={"flex"} alignItems="center" justifyContent="center">
-                                                    <QrCodeIcon onClick={() => setSelectedQrCode({
+                                                    <QrCodeIcon sx={{
+                                                        cursor: "pointer",
+                                                        "&:hover": {
+                                                            opacity: 0.5
+                                                        }
+                                                    }} onClick={() => setSelectedQrCode({
                                                         role: index,
                                                         economy: idx
                                                     })} />
