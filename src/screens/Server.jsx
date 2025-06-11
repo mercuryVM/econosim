@@ -203,7 +203,13 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                 </DialogContent>
             </Dialog >
 
-            <img src={Logo} alt="EconoSim Logo" style={{ width: "200px", marginBottom: "20px" }} />
+            <motion.img
+                src={Logo}
+                alt="EconoSim Logo"
+                style={{ width: "200px", marginBottom: "20px" }}
+                animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
                 Lobby das Economias
             </Typography>
