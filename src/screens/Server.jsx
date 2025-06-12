@@ -90,6 +90,7 @@ function PreServer({ client, setPreIntro }) {
     )
 }
 
+
 function StatusBar() {
     const messages = [
         "Você sabia que o EconoSim é um projeto open-source? Contribua no nosso repositório do GitHub!",
