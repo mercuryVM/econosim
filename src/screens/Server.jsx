@@ -27,7 +27,7 @@ import UpEvent from '../images/upEvent.gif';
 import Backface from '../images/backFace.png'
 import DownEvent from '../images/badEvent.gif';
 import PercentIcon from '@mui/icons-material/Percent';
-import Logo from './assets/logo.png';
+import Logo from './assets/econosim_logo_1.svg';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
@@ -231,7 +231,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                 <motion.img
                     src={Logo}
                     alt="EconoSim Logo"
-                    style={{ width: "200px", marginBottom: "20px" }}
+                    style={{ width: "300px", marginBottom: "20px" }}
                     animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
