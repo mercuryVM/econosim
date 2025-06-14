@@ -37,6 +37,7 @@ import CooktopLogo from './assets/cooktop.png';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import { useLocation } from "react-router"
 import QRCode from "react-qr-code"
+import TutorialVideo from './assets/tutorial.mp4';
 
 function PreServer({ client, setPreIntro }) {
     useEffect(() => {
@@ -512,10 +513,62 @@ export function Server() {
     )
 }
 
+function Tutorial({setTutorial, tutorial}) {
+    const ref = useRef(null);
+
+    useEffect(() => {
+        if (ref.current) {
+            //on end
+            ref.current.onended = () => {
+                // Remove the video element from the DOM
+                setTutorial(false);
+            };
+        }
+    }, [ref]);
+
+    if(!tutorial) {
+        return null;
+    }
+
+    return (
+        <Box
+            sx={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+            }}>
+                <video ref={ref} src={TutorialVideo} autoPlay style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    zIndex: -1,
+                }} />
+
+                <Button sx={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    zIndex: 1000,
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    color: "black",
+                    fontWeight: "bold",
+                    "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 1)",
+                    }
+                }} onClick={() => setTutorial(false)}>Skip Tutorial</Button>
+            </Box>
+    )
+}
+
 function RenderGame({ client, gameState }) {
     const [state, setState] = useState(0);
-    const [localGameState, setLocalGameState] = useState(gameState);
-    const [canUpdate, setCanUpdate] = useState(true);
+    const [localGameState, setLocalGameState] = useState(null);
+    const [canUpdate, setCanUpdate] = useState(false);
+    const [tutorial, setTutorial] = useState(true);
 
     useEffect(() => {
         if (state === 0) {
@@ -548,13 +601,22 @@ function RenderGame({ client, gameState }) {
         }
     }, [gameState, localGameState])
 
+    useEffect(() => {
+        if(!tutorial) {
+            setCanUpdate(true);
+        }
+    }, [tutorial])
+
     return (
         <>
-            {state === 0 && <GlobalEventAnnouncement client={client} gameState={localGameState} />}
-            {state === 1 && <Dashboard client={client} gameState={localGameState} />}
+            {!tutorial && localGameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={localGameState} />}
+            {!tutorial && localGameState && state === 1 && <Dashboard client={client} gameState={localGameState} />}
+            {tutorial && (
+                <Tutorial tutorial={tutorial} setTutorial={setTutorial} />
+            )}
 
             {
-                gameState && gameState.round && gameState.round.roundEnded && (<RoundEnd client={client} gameState={gameState} oldGameState={localGameState} />)
+                !tutorial && gameState && gameState.round && gameState.round.roundEnded && (<RoundEnd client={client} gameState={gameState} oldGameState={localGameState} />)
             }
         </>
     )
