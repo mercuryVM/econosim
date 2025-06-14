@@ -80,7 +80,7 @@ function PreServer({ client, setPreIntro }) {
                     transition: { duration: 1, ease: "easeInOut" }
                 }}
             >
-                <img src={CooktopLogo} alt="Cooktop Logo" style={{ width: "200px", marginBottom: "20px" }} />
+                <img src={CooktopLogo} alt="Cooktop Logo" style={{ width: "640px", marginBottom: "20px" }} />
 
                 <Typography color={"white"} variant="h4">
                     Grupo Cooktop apresenta
