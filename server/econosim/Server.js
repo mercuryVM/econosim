@@ -190,6 +190,7 @@ class Server {
             this.round.onOptionSelected(client, optionIndex);
         }
     }
+
 }
 
 class Economy {
@@ -214,7 +215,12 @@ class Economy {
         this.sensibilidadeDaMoedaAosJuros = 200; // Sensibilidade da oferta de moeda à taxa de juros
         this.sensibilidadeDaMoedaARenda = 12; // Sensibilidade da oferta de moeda à renda
 
+        this.score_factor = 1; // Fator de multiplicação do score
         this.score = 0;
+    }
+
+    get pib() {
+        return (this.consumoFamiliar + this.investimentoPrivado + this.gastosPublicos);
     }
 
     // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
@@ -274,23 +280,16 @@ class Economy {
     }
 
     get distanciaIS() {
-        const a = this.pibEquilibrio - this.calcularIS(this.taxaDeJuros);
-        const b = (this.taxaDeJurosEquilibrio - this.taxaDeJuros);
-        return Math.sqrt(a * a + b * b);
+        return Math.abs(this.pib / 100 - this.calcularIS(this.taxaDeJuros));
     }
 
     get distanciaLM() {
-        const a = this.pibEquilibrio - this.calcularLM(this.taxaDeJuros);
-        const b = (this.taxaDeJurosEquilibrio - this.taxaDeJuros);
-        return Math.sqrt(a * a + b * b);
-    }
-
-    get distanciaDoEquilibrio() {
-        return this.distanciaIS + this.distanciaLM;
+        return Math.abs(this.pib / 100 - this.calcularLM(this.taxaDeJuros));
     }
 
     get state() {
         return {
+            pib: this.pib,
             taxaDeJuros: this.taxaDeJuros,
             consumoFamiliar: this.consumoFamiliar,
             investimentoPrivado: this.investimentoPrivado,
@@ -306,10 +305,6 @@ class Economy {
 
     get ofertaRealMoeda() {
         return this.ofertaMoeda / this.nivelPrecos;
-    }
-
-    get pib() {
-        return (this.consumoFamiliar + this.investimentoPrivado + this.gastosPublicos + (this.exportacoes - this.importacoes));
     }
 
     get demandaAgregada() {
@@ -540,7 +535,7 @@ class ServerController {
 
     handleMessages() {
         this.socket.on("startTimer", () => {
-            this.server.round?.startTimer(60) || console.warn("No round to start timer for");
+            this.server.round?.startTimer(3) || console.warn("No round to start timer for");
         })
 
         this.socket.on("nextRound", () => {
@@ -644,11 +639,63 @@ class Round {
         const realIndex = economiaAtual.possibleLocalEvents.indexOf(evento);
         economiaAtual.possibleLocalEvents.splice(realIndex, 1); // Remove o evento do pool para não repetir
         return evento;
-    }
+    }        applyGlobalEvent() {
+        if (!this.globalEvent || !this.globalEvent.impact) {
+            console.log('No global event or impact to apply');
+            return;
+        }
 
+        const impact = this.globalEvent.impact;
+        console.log(`Applying global event impact: ${this.globalEvent.name}`, impact);
+
+        for (const economy of this.economies) {
+            // Aplicar impactos do evento global com escala reduzida
+            if (impact.taxaDeJuros) economy.taxaDeJuros += impact.taxaDeJuros * 0.01;
+            if (impact.consumoFamiliar) economy.consumoFamiliar += impact.consumoFamiliar;
+            if (impact.investimentoPrivado) economy.investimentoPrivado += impact.investimentoPrivado;
+            if (impact.gastosPublicos) economy.gastosPublicos += impact.gastosPublicos;
+            if (impact.ofertaMoeda) economy.ofertaMoeda += impact.ofertaMoeda;
+            if (impact.nivelPrecos) economy.nivelPrecos += impact.nivelPrecos;
+            if (impact.demandaMoeda) economy.demandaMoeda += impact.demandaMoeda;
+
+            // Aplicar mudanças nas sensibilidades do evento global
+            if (impact.sensibilidadeInvestimentoAoJuros_change) {
+                economy.sensibilidadeInvestimentoAoJuros += impact.sensibilidadeInvestimentoAoJuros_change;
+            }
+            if (impact.sensibilidadeInvestimentoAoJuros_factor) {
+                economy.sensibilidadeInvestimentoAoJuros *= impact.sensibilidadeInvestimentoAoJuros_factor;
+            }
+            if (impact.sensibilidadeDaMoedaAosJuros_change) {
+                economy.sensibilidadeDaMoedaAosJuros += impact.sensibilidadeDaMoedaAosJuros_change;
+            }
+            if (impact.sensibilidadeDaMoedaAosJuros_factor) {
+                economy.sensibilidadeDaMoedaAosJuros *= impact.sensibilidadeDaMoedaAosJuros_factor;
+            }
+            if (impact.sensibilidadeDaMoedaARenda_change) {
+                economy.sensibilidadeDaMoedaARenda += impact.sensibilidadeDaMoedaARenda_change;
+            }
+            if (impact.sensibilidadeDaMoedaARenda_factor) {
+                economy.sensibilidadeDaMoedaARenda *= impact.sensibilidadeDaMoedaARenda_factor;
+            }
+
+            // Aplicar restrições para manter realismo econômico
+            economy.demandaMoeda = Math.max(0.1, economy.demandaMoeda); // Mínimo de 0.1 bi
+            economy.ofertaMoeda = Math.max(0.1, economy.ofertaMoeda); // Mínimo de 0.1 bi
+            economy.nivelPrecos = Math.max(10, economy.nivelPrecos); // Mínimo índice 10
+            economy.consumoFamiliar = Math.max(1, economy.consumoFamiliar); // Mínimo 1 bi
+            economy.investimentoPrivado = Math.max(0, economy.investimentoPrivado); // Pode ser 0
+            economy.gastosPublicos = Math.max(1, economy.gastosPublicos); // Mínimo 1 bi
+
+            console.log(`Global event impact applied to economy ${economy.country}`);
+        }
+    }
+    
     start() {
         this.globalEvent = this.server.getGlobalRandomEvent();
         console.log(`Global event selected for round ${this.numRound}:`, this.globalEvent ? this.globalEvent.name : 'None');
+
+        // Aplicar impactos do evento global
+        this.applyGlobalEvent();
 
         for (const economy of this.economies) {
             const evento = this.getLocalRandomEvent(economy);
@@ -781,25 +828,62 @@ class Round {
             console.log(`Applying outcome for economy ${economy.country}:`, outcome);
 
             // Aplicação dos impactos com escala reduzida
-            economy.taxaDeJuros += (outcome.taxaJuros ? outcome.taxaJuros * 0.01 : 0);
+            economy.taxaDeJuros += (outcome.taxaDeJuros ? outcome.taxaDeJuros * 0.01 : 0);
             economy.consumoFamiliar += (outcome.consumoFamiliar ? outcome.consumoFamiliar : 0);
             economy.investimentoPrivado += (outcome.investimentoPrivado ? outcome.investimentoPrivado : 0);
             economy.gastosPublicos += (outcome.gastosPublicos ? outcome.gastosPublicos : 0);
             economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda : 0);
             economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos : 0);
             economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda : 0);
+
+            // Aplicar restrições para manter realismo econômico
+            economy.demandaMoeda = Math.max(0.1, economy.demandaMoeda); // Mínimo de 0.1 bi
+            economy.ofertaMoeda = Math.max(0.1, economy.ofertaMoeda); // Mínimo de 0.1 bi
+            economy.nivelPrecos = Math.max(10, economy.nivelPrecos); // Mínimo índice 10
+            economy.consumoFamiliar = Math.max(1, economy.consumoFamiliar); // Mínimo 1 bi
+            economy.investimentoPrivado = Math.max(0, economy.investimentoPrivado); // Pode ser 0
+            economy.gastosPublicos = Math.max(1, economy.gastosPublicos); // Mínimo 1 bi
+
+            // Aplicar mudanças nas sensibilidades
+            if (outcome.sensibilidadeInvestimentoAoJuros_change) {
+                economy.sensibilidadeInvestimentoAoJuros += outcome.sensibilidadeInvestimentoAoJuros_change;
+            }
+            if (outcome.sensibilidadeInvestimentoAoJuros_factor) {
+                economy.sensibilidadeInvestimentoAoJuros *= outcome.sensibilidadeInvestimentoAoJuros_factor;
+            }
+            if (outcome.sensibilidadeDaMoedaAosJuros_change) {
+                economy.sensibilidadeDaMoedaAosJuros += outcome.sensibilidadeDaMoedaAosJuros_change;
+            }
+            if (outcome.sensibilidadeDaMoedaAosJuros_factor) {
+                economy.sensibilidadeDaMoedaAosJuros *= outcome.sensibilidadeDaMoedaAosJuros_factor;
+            }
+            if (outcome.sensibilidadeDaMoedaARenda_change) {
+                economy.sensibilidadeDaMoedaARenda += outcome.sensibilidadeDaMoedaARenda_change;
+            }
+            if (outcome.sensibilidadeDaMoedaARenda_factor) {
+                economy.sensibilidadeDaMoedaARenda *= outcome.sensibilidadeDaMoedaARenda_factor;
+            }
+
+            // Aplicar modificador de score do outcome
+            if (outcome.score_factor) { // Changed from score_modifier
+                economy.score_factor = outcome.score_factor;
+            }
         }
     }
 
     calculateScores() {
         // Calcular score para cada economia
 
-        const k = 350;
+        const k = 500;
+        const scaleFactor = 2;
 
         for (const economy of this.economies) {
-            const score = Math.max(0, 1000 - (economy.distanciaDoEquilibrio * k));
-            economy.score += Math.floor(score);
+
+
+            const score = Math.max(0, 1000 - (Math.min(economy.distanciaIS, scaleFactor) * k / scaleFactor) - (Math.min(economy.distanciaLM, scaleFactor) * k / scaleFactor));
+            economy.score += Math.floor(score * economy.score_factor * (this.globalEvent?.score_factor || 1));
             console.log(`Score for economy ${economy.country}:`, score);
+            console.log("Fator de score:", economy.score_factor);
         }
     }
 }

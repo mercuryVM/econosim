@@ -578,12 +578,12 @@ function RenderGame({ client, gameState }) {
     const [tutorial, setTutorial] = useState(true);
 
     useEffect(() => {
-        if (state === 0) {
+        if (state === 0 && localGameState) {
             setTimeout(() => {
                 setState(1);
             }, 10 * 1000);
         }
-    }, [state]);
+    }, [state, localGameState]);
 
     useEffect(() => {
         if (gameState && canUpdate) {
@@ -616,7 +616,7 @@ function RenderGame({ client, gameState }) {
 
     return (
         <>
-            {!tutorial && localGameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={localGameState} />}
+            {!tutorial && gameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
             {!tutorial && localGameState && state === 1 && <Dashboard client={client} gameState={localGameState} />}
             {tutorial && (
                 <Tutorial tutorial={tutorial} setTutorial={setTutorial} />
@@ -984,7 +984,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
                                 width: "calc(100% - 32px)",
                                 pt: "10px",
                             }}>
-                                RESULTADOS
+                                RESULTADOS - Rodada {gameState.round?.numRound}
                             </Typography>
                             <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
                                 <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
@@ -993,6 +993,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
                                     borderRadius: "20px",
                                     width: "50%"
                                 }}>
+                                    <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
                                     <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
                                     <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
                                     <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
@@ -1030,6 +1031,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
 
 function RoundEndGraph({ economy }) {
     const {
+        pib,
         taxaDeJuros,
         consumoFamiliar,
         investimentoPrivado,
@@ -1143,6 +1145,13 @@ function RoundEndGraph({ economy }) {
                             y={calcularLM(taxaDeJuros)}
                             stroke="#d62728"
                             fill="#d62728"
+                            r={5}
+                        />
+                        <ReferenceDot
+                            x={Number(taxaDeJuros.toFixed(2))}
+                            y={Number((pib / 100).toFixed(2))}
+                            stroke="#1f77b4"
+                            fill="yellow"
                             r={5}
                         />
                     </LineChart>
@@ -1305,6 +1314,7 @@ function Country({ economy }) {
                 <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 2fr"} sx={{
                     padding: "0px 16px"
                 }}>
+                    <Dado label={"PIB"} value={"R$ " + (economy.stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
                     <Dado label={"Taxa de Juros"} value={(economy.stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
                     <Dado label={"Gastos públicos"} value={"R$ " + (economy.stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
                     <Dado label={"Investimentos privados"} value={"R$ " + (economy.stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
@@ -1403,6 +1413,7 @@ function CountryCurves({ economy }) {
     const containerRef = useRef(null);
 
     const {
+        pib,
         taxaDeJuros,
         consumoFamiliar,
         investimentoPrivado,
@@ -1533,16 +1544,9 @@ function CountryCurves({ economy }) {
                         />
                         <ReferenceDot
                             x={Number(taxaDeJuros.toFixed(2))}
-                            y={calcularIS(taxaDeJuros)}
+                            y={Number((pib / 100).toFixed(2))}
                             stroke="#1f77b4"
-                            fill="#1f77b4"
-                            r={5}
-                        />
-                        <ReferenceDot
-                            x={Number(taxaDeJuros.toFixed(2))}
-                            y={calcularLM(taxaDeJuros)}
-                            stroke="#d62728"
-                            fill="#d62728"
+                            fill="yellow"
                             r={5}
                         />
                     </LineChart>
@@ -1574,7 +1578,7 @@ function GlobalEventAnnouncement({ client, gameState }) {
     useEffect(() => {
         if (globalEvent && !parar) {
             const sound = client.playSound("drumRoll", 0.1);
-            setTimeout(() => {
+            let timeout = setTimeout(() => {
                 setParar(true)
                 sound.stop();
 
@@ -1584,8 +1588,13 @@ function GlobalEventAnnouncement({ client, gameState }) {
                     client.playSound("badEvent", 0.1);
                 }
             }, 5500);
+
+            return () => {
+                sound.stop();
+                clearTimeout(timeout);
+            }
         }
-    }, [globalEvent, parar]);
+    }, [globalEvent]);
 
     if (!globalEvent) return null;
 
@@ -1651,7 +1660,7 @@ function Canvas({ globalEvent }) {
     }, [globalEvent]);
 
     return (
-        <Box ref={parentRef} sx={{ position: "relative", width: "100%", height: "100%" }}>
+        <Box ref={parentRef} sx={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%" }}>
             {showEvents &&
                 events.map(({ id, up }) => (
                     <EventHumor
