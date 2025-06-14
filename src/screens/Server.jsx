@@ -91,6 +91,7 @@ function PreServer({ client, setPreIntro }) {
     )
 }
 
+
 function StatusBar() {
     const messages = [
         "Você sabia que o EconoSim é um projeto open-source? Contribua no nosso repositório do GitHub!",
@@ -101,6 +102,11 @@ function StatusBar() {
         "A cada rodada, o jogo se torna mais emocionante!",
         "Você sabia que o EconoSim é inspirado em jogos clássicos de simulação econômica?",
         "A economia é complexa, mas o EconoSim torna tudo mais divertido!",
+        "O EconoSim é um jogo de estratégia econômica onde você pode ser o Banco Central ou o Governo!",
+        "A economia é como uma montanha-russa, cheia de altos e baixos!",
+        "Lembre-se: a inflação é como um balão, se você encher demais, ele estoura!",
+        "Quando a economia vai bem, todos dançam! Quando vai mal, todos choram!",
+        "clodoaldo é o melhor jogador de EconoSim do mundo!",
     ];
     const [currentIdx, setCurrentIdx] = useState(0);
     const boxRef = useRef(null);
@@ -128,6 +134,7 @@ function StatusBar() {
                         display: "inline-block",
                         whiteSpace: "nowrap",
                         animation: "marquee 15s linear",
+                        transform: 'translateX(' + (boxRef.current?.clientWidth || 1024) + 'px)',
                         '@keyframes marquee': {
                             '0%': { transform: 'translateX(' + (boxRef.current?.clientWidth || 1024) + 'px)' },
                             '100%': { transform: 'translateX(-100%)' }
