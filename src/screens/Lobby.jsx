@@ -34,9 +34,13 @@ function LobbyContent({ client, playerState, gameState }) {
                     padding: "16px",
                     margin: "0 auto",
                     width: "fit-content",
-                    marginBottom: "10px"
+                    marginBottom: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}>
-                    <Typography variant="h4" component="h1" className={styles.title}>
+                    <Typography variant="h4" component="h1" className={styles.title} textAlign={"center"}>
                         {playerState.economy.flag} {playerState.economy.country}
                     </Typography>
 
