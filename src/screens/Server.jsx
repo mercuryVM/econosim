@@ -1047,7 +1047,7 @@ function RoundEndGraph({ economy }) {
         )
     };    // Definir range fixo para o gráfico
     const minX = 0;
-    const maxX = 0.5;
+    const maxX = 0.3;
 
     // Gerar pontos equidistantes para as curvas (sem incluir taxaDeJuros)
     const xValues = [];
@@ -1413,7 +1413,7 @@ function CountryCurves({ economy }) {
     }
 
     const minX = 0;
-    const maxX = 0.5;
+    const maxX = 0.3;
 
     // Agora gere xValues, isCurve, lmCurve com o range correto
     const xValues = [];
