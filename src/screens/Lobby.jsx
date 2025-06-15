@@ -2,6 +2,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import styles from './Lobby.module.css';
 import { stringToEmoji } from "../utils";
 import Twemoji from "react-twemoji";
+import Logo from './assets/econosim_logo_1.svg';
 
 export function Lobby({ client, playerState, gameState }) {
     if (!client) {
@@ -30,6 +31,8 @@ function LobbyContent({ client, playerState, gameState }) {
     return (
         <>
             <Box justifyContent={'center'} flex={1} className={styles.lobbyBox} display={"flex"} flexDirection={"column"} gap={2}>
+                <img src={Logo} alt="Econosim Logo" className={styles.logo} />
+
                 <Paper sx={{
                     padding: "16px",
                     margin: "0 auto",
