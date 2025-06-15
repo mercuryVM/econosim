@@ -285,10 +285,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                                 }}
                             >                <Typography variant="h5" gutterBottom align="center" sx={{
                                 fontWeight: 700,
-                                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                                backgroundClip: "text",
+                                color: "#228B22",
                                 mb: 2,
                                 fontSize: "20px"
                             }}>
