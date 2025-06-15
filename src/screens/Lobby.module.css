@@ -26,3 +26,9 @@
 .emoji {
     width: 32px;
 }
+
+.logo {
+    max-width: 20%;
+    min-width: 250px;
+    margin: 0 auto;
+}
