@@ -87,14 +87,23 @@ class Server {
         this.updateSync();
 
         this.nextRound();
-    } nextRound() {
+    }    nextRound() {
         try {
+            // Check if we've reached the maximum rounds (5)
+            if (this.currentRound >= 5) {
+                console.log('Game completed: Maximum rounds reached (5)');
+                this.serverController?.emit('gameCompleted');
+                return;
+            }
+
             // Limpar round anterior se existir
             if (this.round && typeof this.round.cleanup === 'function') {
                 this.round.cleanup();
             }
 
-            this.serverController?.emit('nextRound', this.currentRound + 1); this.round = new Round(++this.currentRound, this, this.economies);
+            this.serverController?.emit('nextRound', this.currentRound + 1);
+
+            this.round = new Round(++this.currentRound, this, this.economies);
             this.healthMonitor.onNewRound(); // Registrar novo round no monitor de saúde
             this.round.start();
 

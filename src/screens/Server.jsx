@@ -709,12 +709,12 @@ function RenderGame({ client, gameState }) {
         if (!tutorial) {
             setCanUpdate(true);
         }
-    }, [tutorial])
+    }, [tutorial]);
 
     return (
         <>
             {!tutorial && gameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
-            {!tutorial && localGameState && state === 1 && <Dashboard client={client} gameState={localGameState} />}            {tutorial && (
+            {!tutorial && localGameState && state === 1 && !gameState.round.roundEnded && <Dashboard client={client} gameState={localGameState} />}            {tutorial && (
                 <Tutorial tutorial={tutorial} setTutorial={setTutorial} client={client} />
             )}
 
@@ -723,6 +723,251 @@ function RenderGame({ client, gameState }) {
             }
         </>
     )
+}
+
+function GameSummary({ gameState, client }) {
+    const [showWinner, setShowWinner] = useState(false);
+    
+    // Calculate final scores and determine winner
+    const finalScores = gameState.economies.map(economy => ({
+        country: economy.country,
+        flag: economy.flag,
+        score: Math.floor(economy.score || 0),
+        stats: economy.stats
+    })).sort((a, b) => b.score - a.score);
+    
+    const winner = finalScores[0];
+    
+    useEffect(() => {
+        // Show winner after a delay
+        const timer = setTimeout(() => {
+            setShowWinner(true);
+            if (client) {
+                client.playSound("goodEvent", 0.3);
+            }
+        }, 3000);
+        
+        return () => clearTimeout(timer);
+    }, [client]);    
+    
+    return (
+        <Box sx={{
+            flex: 1,
+            position: "relative",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 1
+        }}>
+            {/* Header com Logo - Compacto */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    background: 'linear-gradient(135deg, rgba(34, 139, 34, 0.95) 0%, rgba(46, 125, 50, 0.95) 100%)',
+                    backdropFilter: 'blur(15px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: 0.8,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <motion.img
+                    src={Logo}
+                    alt="EconoSim Logo"
+                    style={{ height: '32px', maxWidth: '200px', objectFit: 'contain' }}
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+            </Box>
+
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                style={{
+                    background: "rgba(255, 255, 255, 0.95)",
+                    backdropFilter: "blur(20px)",
+                    borderRadius: 15,
+                    padding: 20,
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                    boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
+                    maxWidth: 800,
+                    width: "100%",
+                    textAlign: "center",
+                    marginTop: 45
+                }}
+            >
+                <Typography variant="h4" sx={{
+                    fontWeight: 900,
+                    background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    mb: 1.5,
+                    fontSize: "1.8rem"
+                }}>
+                    🏆 FIM DE JOGO! 🏆
+                </Typography>
+
+                <Typography variant="h6" sx={{
+                    color: "#2d3748",
+                    fontWeight: 600,
+                    mb: 2.5,
+                    fontSize: "1.1rem"
+                }}>
+                    Resumo Final - 5 Rodadas Completas
+                </Typography>
+
+                {/* Ranking Final - Compacto */}
+                <Paper sx={{
+                    p: 2,
+                    mb: 2.5,
+                    background: "rgba(255,255,255,0.8)",
+                    borderRadius: 3
+                }}>
+                    <Typography variant="h6" sx={{ 
+                        fontWeight: 700, 
+                        mb: 2,
+                        color: "#2d3748",
+                        fontSize: "1.1rem"
+                    }}>
+                        📊 Ranking Final das Economias
+                    </Typography>
+                    
+                    {finalScores.map((economy, index) => (
+                        <motion.div
+                            key={economy.country}
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.2, duration: 0.4 }}
+                        >
+                            <Box sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                p: 1.2,
+                                mb: 1,
+                                background: index === 0 ? 
+                                    "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)" :
+                                    index === 1 ? 
+                                    "linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%)" :
+                                    index === 2 ?
+                                    "linear-gradient(135deg, #CD7F32 0%, #B8860B 100%)" :
+                                    "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                                borderRadius: 2,
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                            }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                                    <Typography variant="h6" sx={{
+                                        fontWeight: 900,
+                                        color: index < 3 ? "white" : "#2d3748",
+                                        fontSize: "1.2rem"
+                                    }}>
+                                        {index + 1}º
+                                    </Typography>
+                                    <Typography variant="body1" sx={{
+                                        color: index < 3 ? "white" : "#2d3748",
+                                        fontWeight: 700,
+                                        fontSize: "1rem"
+                                    }}>
+                                        {economy.flag} {economy.country}
+                                    </Typography>
+                                </Box>
+                                <Typography variant="h6" sx={{
+                                    fontWeight: 900,
+                                    color: index < 3 ? "white" : "#2d3748",
+                                    fontSize: "1.1rem"
+                                }}>
+                                    {economy.score} pts
+                                </Typography>
+                            </Box>
+                        </motion.div>
+                    ))}
+                </Paper>
+
+                {/* Winner Announcement - Compacto */}
+                {showWinner && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
+                        <Paper sx={{
+                            p: 2.5,
+                            background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                            borderRadius: 4,
+                            border: "2px solid #FFD700",
+                            boxShadow: "0 10px 25px rgba(255, 215, 0, 0.3)"
+                        }}>
+                            <Typography variant="h5" sx={{
+                                fontWeight: 900,
+                                color: "white",
+                                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                                mb: 1,
+                                fontSize: "1.4rem"
+                            }}>
+                                🎉 PARABÉNS! 🎉
+                            </Typography>
+                            <Typography variant="h6" sx={{
+                                fontWeight: 800,
+                                color: "white",
+                                textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                                fontSize: "1.1rem"
+                            }}>
+                                {winner.flag} {winner.country} é o VENCEDOR!
+                            </Typography>
+                            <Typography variant="body1" sx={{
+                                fontWeight: 600,
+                                color: "white",
+                                textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                                mt: 0.5,
+                                fontSize: "0.95rem"
+                            }}>
+                                Com {winner.score} pontos!
+                            </Typography>
+                        </Paper>
+                    </motion.div>
+                )}
+
+                {/* Game Stats - Compacto */}
+                <Box sx={{ mt: 2.5, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 1.5 }}>
+                    <Paper sx={{ p: 1.5, textAlign: "center", borderRadius: 3 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 900, color: "#228B22", fontSize: "1.3rem" }}>
+                            5
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#2d3748", fontSize: "0.8rem" }}>
+                            Rodadas Jogadas
+                        </Typography>
+                    </Paper>
+               
+                    <Paper sx={{ p: 1.5, textAlign: "center", borderRadius: 3 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 900, color: "#228B22", fontSize: "1.3rem" }}>
+                            {finalScores.reduce((total, economy) => total + economy.score, 0)}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#2d3748", fontSize: "0.8rem" }}>
+                            Pontos Totais
+                        </Typography>
+                    </Paper>
+                </Box>
+
+                <Typography sx={{
+                    mt: 2,
+                    color: "#6c757d",
+                    fontSize: 14,
+                    fontWeight: 500
+                }}>
+                    Obrigado por jogar EconoSim! 🎮✨
+                </Typography>
+            </motion.div>
+        </Box>
+    );
 }
 
 function RoundEnd({ client, gameState, oldGameState }) {
@@ -734,9 +979,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
         return {
             old: oldGameState.economies[index],
             new: gameState.economies[index],
-            index: index
-        }
-    }, [gameState, oldGameState])
+            index: index        }
+    }, [gameState, oldGameState]);
 
     useEffect(() => {
         if (state === 0) {
@@ -747,7 +991,12 @@ function RoundEnd({ client, gameState, oldGameState }) {
             setCurrentEconomy(selectEconomy(currentIndex));
             setState(1);
         } else {
-            client.sendMessage("nextRound");
+            // Check if we've reached the maximum rounds (5)
+            if (gameState.round.numRound >= 5) {
+                setState(2); // Go to game summary state
+            } else {
+                client.sendMessage("nextRound");
+            }
         }
     }, [client, currentIndex, gameState, selectEconomy, state])
 
@@ -812,7 +1061,9 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 </Typography>
             </Box>
         )
-    } function State1({ economy, votes }) {
+    } 
+    
+    function State1({ economy, votes }) {
         const [localState, setLocalState] = useState(0);
         const [stats, setStats] = useState(economy.old.stats || {});
 
@@ -1070,9 +1321,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
                             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                             textTransform: "uppercase",
                             width: "calc(100% - 32px)",
-                            pt: "10px",
-                        }}>
-                            RESULTADOS - Rodada {gameState.round?.numRound}
+                            pt: "10px",                        }}>
+                            RESULTADOS - Rodada {gameState.round?.numRound}/5
                         </Typography>
                             <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
                                 <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
@@ -1104,15 +1354,13 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 }
             </Box>
         )
-    }
-
+    }    
+    
     return (
         <>
-
-
             {state === 0 && <State0 />}
             {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} />}
-
+            {state === 2 && <GameSummary gameState={gameState} client={client} />}
         </>
     )
 }
@@ -1282,9 +1530,8 @@ function GlobalData({ client, gameState }) {
                 color: "white",
                 borderRadius: 3,
                 boxShadow: "0 6px 20px rgba(34, 139, 34, 0.3)",
-                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"
-            }}>
-                🎯 Round {round.numRound}
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"            }}>
+                🎯 Round {round.numRound}/5
             </Paper>
 
             {/* Global Event Card - Compacto */}

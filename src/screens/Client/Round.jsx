@@ -334,9 +334,8 @@ function RoundBody({ client, gameState, playerState }) {
                 textTransform: "uppercase",
                 width: "calc(100% - 32px)",
                 pt: "10px",
-                marginTop: 2
-            }}>
-                Rodada {roundData.numRound}
+                marginTop: 2            }}>
+                Rodada {roundData.numRound}/5
             </Typography>
             <Paper sx={{
                 backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -472,9 +471,8 @@ function RoundNumber({ playerState }) {
                                     "100%": { transform: "scale(1)", opacity: 1 },
                                 },
                             }}
-                            key={roundNumber}
-                        >
-                            Rodada {roundNumber}
+                            key={roundNumber}                        >
+                            Rodada {roundNumber}/5
                         </Typography>
                     </Box>
                 )
