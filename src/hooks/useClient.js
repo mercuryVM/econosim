@@ -4,30 +4,31 @@ import RoundStart from '../sounds/econosim round start.mp3';
 
 let client = undefined;
 
-export function useClient(role, economy) {
+export function useClient(role, economy, nickname) {
     const [socket, setSocket] = useState(client);
     const [playerState, setPlayerState] = useState(null);
     const [gameState, setGameState] = useState(null);
 
     useEffect(() => {
-        if (!client) {
+        if (!client && nickname) {
             const socketIo = require('socket.io-client');
             client = new Client(
                 socketIo(process.env.REACT_APP_API_PATH, {
                     transports: ['websocket'],
                     auth: {
-                        nickname: 'User' + Math.floor(Math.random() * 1000),
+                        nickname: nickname,
                         role: Number(role), // 0 for bank, 1 for government,
                         economy: Number(economy) // 0 for capitalist,
                     }
                 })
             );
-            setSocket(client); client.on('stateUpdate', (state) => {
+            setSocket(client); 
+            client.on('stateUpdate', (state) => {
                 setPlayerState(state);
                 setGameState(state.gameState);
             });
         }
-    }, [role, economy]);
+    }, [role, economy, nickname]);
 
     return { client: socket, playerState, gameState };
 }

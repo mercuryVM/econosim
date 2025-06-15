@@ -1393,26 +1393,7 @@ function CountryCurves({ economy }) {
         )
     };
 
-    // Calcula o ponto de equilíbrio (IS = LM) usando o range definido pelas margens, sem depender de xValues externo
-    function calcularEquilibrio(minX, maxX) {
-        let minDiff = Infinity;
-        let iEquilibrio = null;
-        let yEquilibrio = null;
-        for (let i = minX; i <= maxX; i += 0.005) {
-            const roundedI = parseFloat(i.toFixed(4));
-            const isY = calcularIS(roundedI);
-            const lmY = calcularLM(roundedI);
-            const diff = Math.abs(isY - lmY);
-            if (diff < minDiff) {
-                minDiff = diff;
-                iEquilibrio = roundedI;
-                yEquilibrio = isY; // ou lmY
-            }
-        }
-        return { i: iEquilibrio, y: yEquilibrio };
-    }
-
-    const minX = 0;
+        const minX = 0;
     const maxX = 0.3;
 
     // Agora gere xValues, isCurve, lmCurve com o range correto
