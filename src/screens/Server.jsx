@@ -1,5 +1,5 @@
 import { useServer } from "../hooks/useServer"
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import {
     Box,
     Typography,
@@ -7,14 +7,12 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    TableContainer,
-    Paper,
+    TableContainer, Paper,
     Grid,
     Button,
     TableHead,
     CircularProgress,
     Divider,
-    Modal,
     Dialog,
     DialogContent,
     DialogTitle
@@ -32,20 +30,19 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Legend as RechartsLegend, ResponsiveContainer, ReferenceDot } from 'recharts';
 import CooktopLogo from './assets/cooktop.png';
 import QrCodeIcon from '@mui/icons-material/QrCode';
-import { useLocation } from "react-router"
 import QRCode from "react-qr-code"
 import TutorialVideo from './assets/tutorial.mp4';
 
 function PreServer({ client, setPreIntro }) {
     useEffect(() => {
         client.playSound("preIntro", 0.1);
-        const timer = setTimeout(() => {
+        setTimeout(() => {
             setPreIntro(false);
         }, 4 * 1000); // Duração do pre-intro em milissegundos
-    }, [])
+    }, [client, setPreIntro])
 
     return (
         <Box sx={{
@@ -150,9 +147,7 @@ function StatusBar() {
 
 function RenderLobby({ client, countdown, handleStartGame }) {
     const [countdownLocal, setCountdownLocal] = useState(countdown);
-    const [selectedQr, setSelectedQrCode] = useState(null);
-
-    useEffect(() => {
+    const [selectedQr, setSelectedQrCode] = useState(null); useEffect(() => {
         // dispara música de lobby apenas uma vez no mount
         if (client && countdownLocal === null) {
             let intervalId;
@@ -170,7 +165,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                 sound.stop?.();
             };
         }
-    }, [countdownLocal]); // sem dependências: roda só uma vez
+    }, [client, countdownLocal]); // sem dependências: roda só uma vez
 
     useEffect(() => {
         setCountdownLocal(countdown);
@@ -391,7 +386,11 @@ export function Server() {
         }
         document.body.style.overflow = "hidden"; // Impede rolagem até a interação
         window.addEventListener("click", handleInteraction);
-    }, [])
+
+        return () => {
+            window.removeEventListener("click", handleInteraction);
+        }
+    }, [firstInteraction])
 
     function handleStartGame() {
         let counter = 5
@@ -520,7 +519,7 @@ export function Server() {
     )
 }
 
-function Tutorial({setTutorial, tutorial}) {
+function Tutorial({ setTutorial, tutorial }) {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -531,9 +530,9 @@ function Tutorial({setTutorial, tutorial}) {
                 setTutorial(false);
             };
         }
-    }, [ref]);
+    }, [ref, setTutorial]);
 
-    if(!tutorial) {
+    if (!tutorial) {
         return null;
     }
 
@@ -546,28 +545,28 @@ function Tutorial({setTutorial, tutorial}) {
                 width: "100%",
                 height: "100%",
             }}>
-                <video ref={ref} src={TutorialVideo} autoPlay style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    zIndex: -1,
-                }} />
+            <video ref={ref} src={TutorialVideo} autoPlay style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                zIndex: -1,
+            }} />
 
-                <Button sx={{
-                    position: "absolute",
-                    top: 20,
-                    right: 20,
-                    zIndex: 1000,
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    color: "black",
-                    fontWeight: "bold",
-                    "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 1)",
-                    }
-                }} onClick={() => setTutorial(false)}>Skip Tutorial</Button>
-            </Box>
+            <Button sx={{
+                position: "absolute",
+                top: 20,
+                right: 20,
+                zIndex: 1000,
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                color: "black",
+                fontWeight: "bold",
+                "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 1)",
+                }
+            }} onClick={() => setTutorial(false)}>Skip Tutorial</Button>
+        </Box>
     )
 }
 
@@ -609,7 +608,7 @@ function RenderGame({ client, gameState }) {
     }, [gameState, localGameState])
 
     useEffect(() => {
-        if(!tutorial) {
+        if (!tutorial) {
             setCanUpdate(true);
         }
     }, [tutorial])
@@ -634,6 +633,14 @@ function RoundEnd({ client, gameState, oldGameState }) {
     const [currentEconomy, setCurrentEconomy] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    const selectEconomy = useCallback((index) => {
+        return {
+            old: oldGameState.economies[index],
+            new: gameState.economies[index],
+            index: index
+        }
+    }, [gameState, oldGameState])
+
     useEffect(() => {
         if (state === 0) {
             return;
@@ -645,20 +652,12 @@ function RoundEnd({ client, gameState, oldGameState }) {
         } else {
             client.sendMessage("nextRound");
         }
-    }, [currentIndex, state])
+    }, [client, currentIndex, gameState, selectEconomy, state])
 
     function goBackEconomy() {
         if (currentIndex > 0) {
             setCurrentIndex((prev) => prev - 1);
             setCurrentEconomy(selectEconomy(currentIndex - 1));
-        }
-    }
-
-    function selectEconomy(index) {
-        return {
-            old: oldGameState.economies[index],
-            new: gameState.economies[index],
-            index: index
         }
     }
 
@@ -681,7 +680,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
             if (client) {
                 client.playSound("roundEnd", 0.1);
             }
-        }, [client])
+        }, [])
 
         return (
             <Box
@@ -716,21 +715,16 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 </Typography>
             </Box>
         )
-    }
-
-    function State1({ economy, votes }) {
+    } function State1({ economy, votes }) {
         const [localState, setLocalState] = useState(0);
         const [stats, setStats] = useState(economy.old.stats || {});
 
         const event = economy.old.event || null;
-        const bancoOptions = event.options.banco || [];
-        const governoOptions = event.options.governo || [];
         const selectedBancoOption = votes[economy.index].option.banco;
         const selectedGovernoOption = votes[economy.index].option.governo;
         const outcomeEvent = votes[economy.index].eventResult || null;
 
         useEffect(() => {
-
             if (localState === 2) {
                 const duration = 2000; // Duration of the transition in milliseconds
                 const steps = 60; // Number of steps for the transition
@@ -750,19 +744,20 @@ function RoundEnd({ client, gameState, oldGameState }) {
 
                 let currentStep = 0;
                 const intervalId = setInterval(() => {
+                    currentStep++;
+
                     if (currentStep >= steps) {
                         clearInterval(intervalId);
                         setStats(newStats); // Ensure final state is set
                         return;
                     }
 
-                    const updatedStats = { ...stats };
+                    const updatedStats = {};
                     keys.forEach((key, index) => {
                         updatedStats[key] = oldStats[key] + deltas[index] * currentStep;
                     });
 
                     setStats(updatedStats);
-                    currentStep++;
                 }, interval);
 
                 return () => clearInterval(intervalId); // Cleanup on unmount or state change
@@ -773,7 +768,6 @@ function RoundEnd({ client, gameState, oldGameState }) {
             const onClick = (e) => {
                 e.preventDefault();
                 const isRightClick = e.button === -1; // Right click
-                console.log(e)
 
                 if (!isRightClick) {
                     if (localState === 0) {
@@ -968,24 +962,21 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 {
                     //MOSTRAR DADOS E GRÁFICO
                     localState === 2 && (
-                        <>
-
-                            <Typography variant="h4" sx={{
-                                padding: 2,
-                                backgroundColor: "#f5a623",
-                                color: "#fff",
-                                padding: "4px 16px",
-                                borderRadius: "4px",
-                                fontWeight: "bold",
-                                display: "inline-block",
-                                textAlign: "center",
-                                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                                textTransform: "uppercase",
-                                width: "calc(100% - 32px)",
-                                pt: "10px",
-                            }}>
-                                RESULTADOS - Rodada {gameState.round?.numRound}
-                            </Typography>
+                        <>                            <Typography variant="h4" sx={{
+                            backgroundColor: "#f5a623",
+                            color: "#fff",
+                            padding: "4px 16px",
+                            borderRadius: "4px",
+                            fontWeight: "bold",
+                            display: "inline-block",
+                            textAlign: "center",
+                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                            textTransform: "uppercase",
+                            width: "calc(100% - 32px)",
+                            pt: "10px",
+                        }}>
+                            RESULTADOS - Rodada {gameState.round?.numRound}
+                        </Typography>
                             <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
                                 <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
                                     padding: "16px",
@@ -1054,37 +1045,21 @@ function RoundEndGraph({ economy }) {
         return (
             ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
         )
-    };
-
-    // Calcula o ponto de equilíbrio (IS = LM) usando o range definido pelas margens, sem depender de xValues externo
-    function calcularEquilibrio() {
-        // Resolver algebricamente IS = LM
-        const iEquilibrio = (((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - ofertaMoeda / nivelPrecos) + (consumoFamiliar * (investimentoPrivado + gastosPublicos)) / (sensibilidadeInvestimentoAoJuros))) / (consumoFamiliar + (sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda));
-        const yEquilibrio = calcularIS(iEquilibrio); // Ou calcularLM(iEquilibrio), já que IS = LM
-
-        return { i: iEquilibrio, y: yEquilibrio };
-    }
-
-    // Defina as constantes de margem
-    const MARGEM_MIN = 0.03;
-    const MARGEM_MAX = 0.03;
-    // Calcule minX e maxX antes de gerar xValues
+    };    // Definir range fixo para o gráfico
     const minX = 0;
-    // Para maxX, precisamos de equilibrio.i, então calculamos antes
-    const equilibrioTemp = calcularEquilibrio(minX, Number(taxaDeJuros)); // range amplo só para pegar o equilíbrio
     const maxX = 0.5;
-    // Agora gere xValues, isCurve, lmCurve com o range correto
+
+    // Gerar pontos equidistantes para as curvas (sem incluir taxaDeJuros)
     const xValues = [];
     const isCurve = [];
     const lmCurve = [];
+
     for (let i = minX; i <= maxX; i += 0.01) {
         const roundedI = parseFloat(i.toFixed(4));
         xValues.push(roundedI);
         isCurve.push(calcularIS(roundedI));
         lmCurve.push(calcularLM(roundedI));
     }
-    // Agora calcule o equilibrio final no range correto
-    const equilibrio = calcularEquilibrio(minX, maxX);
 
     // Prepare data for Recharts
     const chartData = xValues.map((x, i) => ({
@@ -1095,74 +1070,79 @@ function RoundEndGraph({ economy }) {
 
     return (
         <>
-            <Box style={{ width: "100%", height: "75%", padding: "5px" }} flex={1} display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
-                <ResponsiveContainer>
-                    <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
-                        <XAxis
-                            dataKey="x"
-                            tick={{ fontSize: 12, fill: "#444" }}
-                            label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
-                            axisLine={{ stroke: "#ccc" }}
-                            tickLine={false}
-                        />
-                        <YAxis
-                            tick={{ fontSize: 12, fill: "#444" }}
-                            label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
-                            axisLine={{ stroke: "#ccc" }}
-                            tickLine={false}
-                        />
-                        <RechartsLegend
-                            verticalAlign="top"
-                            align="center"
-                            iconType="circle"
-                            wrapperStyle={{ fontSize: 12 }}
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="IS"
-                            stroke="#1f77b4"
-                            strokeWidth={2.5}
-                            dot={false}
-                            name="Curva IS"
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="LM"
-                            stroke="#d62728"
-                            strokeWidth={2.5}
-                            dot={false}
-                            name="Curva LM"
-                        />
+            <Box style={{ width: "100%", height: "75%", padding: "5px" }} flex={1} display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>                <ResponsiveContainer>
+                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+                    <XAxis
+                        dataKey="x"
+                        domain={[minX, maxX]}
+                        type="number"
+                        tick={{ fontSize: 12, fill: "#444" }}
+                        label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
+                        axisLine={{ stroke: "#ccc" }}
+                        tickLine={false}
+                    />
+                    <YAxis
+                        tick={{ fontSize: 12, fill: "#444" }}
+                        label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
+                        axisLine={{ stroke: "#ccc" }}
+                        tickLine={false}
+                    />
+                    <RechartsLegend
+                        verticalAlign="top"
+                        align="center"
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: 12 }}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="IS"
+                        stroke="#1f77b4"
+                        strokeWidth={2.5}
+                        dot={false}
+                        name="Curva IS"
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="LM"
+                        stroke="#d62728"
+                        strokeWidth={2.5}
+                        dot={false}
+                        name="Curva LM" />
+                    {/* Pontos de referência */}
+                    <ReferenceDot
+                        x={Number(taxaDeJuros.toFixed(4))}
+                        y={calcularIS(taxaDeJuros)}
+                        stroke="#1f77b4"
+                        fill="#1f77b4"
+                        r={5}
+                    />
+                    <ReferenceDot
+                        x={Number(taxaDeJuros.toFixed(4))}
+                        y={calcularLM(taxaDeJuros)}
+                        stroke="#d62728"
+                        fill="#d62728"
+                        r={5}
+                    />
+                    {/* Ponto do PIB real (com validação) */}
+                    {pib > 0 && (
                         <ReferenceDot
-                            x={Number(taxaDeJuros.toFixed(2))}
-                            y={calcularIS(taxaDeJuros)}
-                            stroke="#1f77b4"
-                            fill="#1f77b4"
-                            r={5}
-                        />
-                        <ReferenceDot
-                            x={Number(taxaDeJuros.toFixed(2))}
-                            y={calcularLM(taxaDeJuros)}
-                            stroke="#d62728"
-                            fill="#d62728"
-                            r={5}
-                        />
-                        <ReferenceDot
-                            x={Number(taxaDeJuros.toFixed(2))}
+                            x={Number(taxaDeJuros.toFixed(4))}
                             y={Number((pib / 100).toFixed(2))}
-                            stroke="#1f77b4"
-                            fill="yellow"
-                            r={5}
+                            stroke="#FFD700"
+                            fill="#FFD700"
+                            r={6}
+                            name={"PIB Real"}
                         />
-                    </LineChart>
-                </ResponsiveContainer>
+                    )}
+                </LineChart>
+            </ResponsiveContainer>
             </Box>
         </>
     )
 }
 
 function Dashboard({ client, gameState }) {
-    const round = gameState?.round || {};
+    const round = useMemo(() => gameState?.round || {}, [gameState?.round]);
 
     useEffect(() => {
         if (client)
@@ -1173,7 +1153,7 @@ function Dashboard({ client, gameState }) {
         if (round?.roundEnded) {
             client.sendMessage("nextRound");
         }
-    }, [round])
+    }, [client, round])
 
     return (
         <Box gridTemplateColumns={"2fr 1fr 2fr"} display={"grid"} flex={1} gap={2}>
@@ -1222,15 +1202,11 @@ function RoundTimer({ client }) {
                 setTimeLeft(time);
             }
 
-            client.on("timeUpdate", handleTimeUpdate);
-
-            return () => {
+            client.on("timeUpdate", handleTimeUpdate); return () => {
                 client.off("timeUpdate", handleTimeUpdate);
-
             }
         }
     }, [client]);
-
 
     const progress = (timeLeft / roundTime) * 100;
 
@@ -1287,25 +1263,22 @@ function RoundTimer({ client }) {
 
 function Country({ economy }) {
     return (
-        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>
-            <Paper sx={{
-                padding: "16px",
-                fontWeight: 700,
-                fontSize: "24px",
-                textAlign: "center",
-                background: "#f5a623",
-                color: "#fff",
-                padding: "4px 16px",
-                fontWeight: "bold",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <Typography fontSize={32} mt={"10px"}>
-                    {economy.flag}{" "}
-                    {economy.country}
-                </Typography>
-            </Paper>
+        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>            <Paper sx={{
+            fontSize: "24px",
+            textAlign: "center",
+            background: "#f5a623",
+            color: "#fff",
+            padding: "4px 16px",
+            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+        }}>
+            <Typography fontSize={32} mt={"10px"}>
+                {economy.flag}{" "}
+                {economy.country}
+            </Typography>
+        </Paper>
 
             <Paper sx={{ flex: "25%", paddingBottom: 3 }}>
                 <Typography variant="h6" sx={{ padding: 1, fontWeight: 700, textAlign: "center" }}>
@@ -1357,23 +1330,6 @@ function Country({ economy }) {
     )
 }
 
-function CountryCard({ economy }) {
-    const event = economy?.event || null;
-
-    if (!event) return null;
-
-    return (
-        <img src={economy.event.asset} style={{
-            width: 0,
-            gridColumn: "span 1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            aspectRatio: "644 / 967"
-        }} />
-    )
-}
-
 function CountryScore({ economy }) {
     return (
         <Paper
@@ -1409,7 +1365,6 @@ function CountryScore({ economy }) {
     )
 }
 function CountryCurves({ economy }) {
-    const [height, setHeight] = useState(0);
     const containerRef = useRef(null);
 
     const {
@@ -1457,26 +1412,18 @@ function CountryCurves({ economy }) {
         return { i: iEquilibrio, y: yEquilibrio };
     }
 
-    // Defina as constantes de margem
-    const MARGEM_MIN = 0.03;
-    const MARGEM_MAX = 0.03;
-    // Calcule minX e maxX antes de gerar xValues
-    const minX = Math.max(0, Number(taxaDeJuros) - MARGEM_MIN);
-    // Para maxX, precisamos de equilibrio.i, então calculamos antes
-    const equilibrioTemp = calcularEquilibrio(minX, Number(taxaDeJuros) + 0.2); // range amplo só para pegar o equilíbrio
-    const maxX = Number(equilibrioTemp.i) + MARGEM_MAX;
+    const minX = 0;
+    const maxX = 0.5;
+
     // Agora gere xValues, isCurve, lmCurve com o range correto
     const xValues = [];
     const isCurve = [];
     const lmCurve = [];
     for (let i = minX; i <= maxX; i += 0.005) {
         const roundedI = parseFloat(i.toFixed(4));
-        xValues.push(roundedI);
-        isCurve.push(calcularIS(roundedI));
+        xValues.push(roundedI); isCurve.push(calcularIS(roundedI));
         lmCurve.push(calcularLM(roundedI));
     }
-    // Agora calcule o equilibrio final no range correto
-    const equilibrio = calcularEquilibrio(minX, maxX);
 
     // Prepare data for Recharts
     const chartData = xValues.map((x, i) => ({
@@ -1484,15 +1431,6 @@ function CountryCurves({ economy }) {
         IS: isCurve[i],
         LM: lmCurve[i],
     }));
-
-    // Capturar altura do container para ajustar o gráfico
-    useEffect(() => {
-        if (containerRef.current) {
-            setHeight(containerRef.current.offsetHeight);
-        }
-    }, []);
-
-
 
     return (
         <Paper
@@ -1504,53 +1442,71 @@ function CountryCurves({ economy }) {
 
             }}
         >
-            <Box style={{ width: "100%", height: "75%" }}>
-                <ResponsiveContainer >
-                    <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
-                        <XAxis
-                            dataKey="x"
-                            tick={{ fontSize: 12, fill: "#444" }}
-                            label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
-                            axisLine={{ stroke: "#ccc" }}
-                            tickLine={false}
-                        />
-                        <YAxis
-                            tick={{ fontSize: 12, fill: "#444" }}
-                            label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
-                            axisLine={{ stroke: "#ccc" }}
-                            tickLine={false}
-                        />
-                        <RechartsLegend
-                            verticalAlign="top"
-                            align="center"
-                            iconType="circle"
-                            wrapperStyle={{ fontSize: 12 }}
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="IS"
-                            stroke="#1f77b4"
-                            strokeWidth={2.5}
-                            dot={false}
-                            name="Curva IS"
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="LM"
-                            stroke="#d62728"
-                            strokeWidth={2.5}
-                            dot={false}
-                            name="Curva LM"
-                        />
+            <Box style={{ width: "100%", height: "75%" }}>                <ResponsiveContainer >
+                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+                    <XAxis
+                        dataKey="x"
+                        domain={[minX, maxX]}
+                        type="number"
+                        tick={{ fontSize: 12, fill: "#444" }}
+                        label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
+                        axisLine={{ stroke: "#ccc" }}
+                        tickLine={false}
+                    />
+                    <YAxis
+                        tick={{ fontSize: 12, fill: "#444" }}
+                        label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
+                        axisLine={{ stroke: "#ccc" }}
+                        tickLine={false}
+                    />
+                    <RechartsLegend
+                        verticalAlign="top"
+                        align="center"
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: 12 }}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="IS"
+                        stroke="#1f77b4"
+                        strokeWidth={2.5}
+                        dot={false} name="Curva IS"
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="LM"
+                        stroke="#d62728"
+                        strokeWidth={2.5}
+                        dot={false}
+                        name="Curva LM" />
+                    {/* Pontos de referência */}
+                    <ReferenceDot
+                        x={Number(taxaDeJuros.toFixed(4))}
+                        y={calcularIS(taxaDeJuros)}
+                        stroke="#1f77b4"
+                        fill="#1f77b4"
+                        r={4}
+                    />
+                    <ReferenceDot
+                        x={Number(taxaDeJuros.toFixed(4))}
+                        y={calcularLM(taxaDeJuros)}
+                        stroke="#d62728"
+                        fill="#d62728"
+                        r={4}
+                    />
+                    {/* Ponto do PIB real (com validação) */}
+                    {pib > 0 && (
                         <ReferenceDot
-                            x={Number(taxaDeJuros.toFixed(2))}
+                            x={Number(taxaDeJuros.toFixed(4))}
                             y={Number((pib / 100).toFixed(2))}
-                            stroke="#1f77b4"
-                            fill="yellow"
+                            stroke="#FFD700"
+                            fill="#FFD700"
                             r={5}
+                            name={"PIB Real"}
                         />
-                    </LineChart>
-                </ResponsiveContainer>
+                    )}
+                </LineChart>
+            </ResponsiveContainer>
             </Box>
         </Paper>
     );
@@ -1572,7 +1528,6 @@ function Dado({ label, value, icon: Icon }) {
 
 function GlobalEventAnnouncement({ client, gameState }) {
     const [parar, setParar] = useState(false);
-    const [hideGlobalEvent, setHideGlobalEvent] = useState(false);
     const globalEvent = gameState?.round?.globalEvent || null;
 
     useEffect(() => {
@@ -1594,7 +1549,7 @@ function GlobalEventAnnouncement({ client, gameState }) {
                 clearTimeout(timeout);
             }
         }
-    }, [globalEvent]);
+    }, [client, globalEvent, parar]);
 
     if (!globalEvent) return null;
 
@@ -1707,7 +1662,7 @@ function EventHumor({ up, parent, onClose }) {
         }).then(() => {
             if (onClose) onClose();
         });
-    }, [controls, parent, elem]);
+    }, [controls, elem, onClose, parent, up]);
 
     return (
         <motion.span

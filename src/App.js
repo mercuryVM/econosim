@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Route, Router, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { Server } from './screens/Server';
 import { Client } from './screens/Client';
 

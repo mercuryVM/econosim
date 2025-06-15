@@ -1,8 +1,8 @@
 import { useClient } from "../hooks/useClient";
 import { Lobby } from "./Lobby";
-import styles from './Client.module.css';
 import { Round } from "./Client/Round";
 import { useSearchParams } from "react-router";
+import { useEffect } from "react";
 
 export function Client() {
     const [searchParams] = useSearchParams();
@@ -10,6 +10,13 @@ export function Client() {
     const economy = searchParams.get("economy");
 
     const { client, playerState, gameState } = useClient(role, economy);
+
+    useEffect(() => {        return () => {
+            if (client) {
+                client.disconnect();
+            }
+        }
+    }, [client])
 
     return (
         <>

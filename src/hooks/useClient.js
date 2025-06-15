@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import RoundStart from '../sounds/econosim round start.mp3';
 
 let client = undefined;
@@ -22,16 +22,14 @@ export function useClient(role, economy) {
                     }
                 })
             );
-            setSocket(client);
-
-            client.on('stateUpdate', (state) => {
+            setSocket(client); client.on('stateUpdate', (state) => {
                 setPlayerState(state);
                 setGameState(state.gameState);
             });
         }
-    }, []);
+    }, [role, economy]);
 
-    return {client: socket, playerState, gameState};
+    return { client: socket, playerState, gameState };
 }
 
 export class EventSource {
@@ -64,11 +62,14 @@ class Client extends EventSource {
         this.soundManager.loadSound('roundStart', RoundStart);
 
         this.handleMessages();
+    } sendMessage(event, ...data) {
+        this.socket.emit(event, ...data);
     }
 
-    sendMessage(event, ...data) {
-        console.log(`Emitting event: ${event}`, data);
-        this.socket.emit(event, ...data);
+    disconnect() {
+        if (this.socket) {
+            this.socket.disconnect();
+        }
     }
 
     playSound(name, volume = 1) {
@@ -81,24 +82,17 @@ class Client extends EventSource {
 
     get role() {
         return this.socket.auth.role;
-    }
-
-    handleMessages() {
+    } handleMessages() {
         this.socket.on('stateUpdate', (data) => {
-            console.log('State update received:', data);
             this.updateState(data);
         });
 
         this.socket.on("votes", (data) => {
-            console.log('Votes received:', data);
             this.emit('votes', data);
         })
-    }
-
-    updateState(data) {
+    } updateState(data) {
         // Update the client state based on the received data
         this.state = { ...this.state, ...data };
-        console.log('Client state updated:', this.state);
 
         this.game.updateState(data.gameState);
 
@@ -115,20 +109,14 @@ class Game {
 
     get inLobby() {
         return this.state.inLobby || false;
-    }
-
-    handleGameEvents() {
+    } handleGameEvents() {
         this.client.socket.on('gameEvent', (event) => {
-            console.log('Game event received:', event);
             // Handle the game event here
             this.updateState(event);
         });
-    }
-
-    updateState(event) {
+    } updateState(event) {
         // Update the game state based on the event
         this.state = { ...this.state, ...event };
-        console.log('Game state updated:', this.state);
     }
 }
 

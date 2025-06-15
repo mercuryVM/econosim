@@ -1,14 +1,9 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { useClient } from "../hooks/useClient";
 import styles from './Lobby.module.css';
 import { stringToEmoji } from "../utils";
 import Twemoji from "react-twemoji";
 
 export function Lobby({ client, playerState, gameState }) {
-    console.log('Lobby component rendered with client:', client);
-    console.log('Player state:', playerState);
-    console.log('Game state:', gameState);
-
     if (!client) {
         return (null)
     }
@@ -31,8 +26,6 @@ export function Lobby({ client, playerState, gameState }) {
 
 function LobbyContent({ client, playerState, gameState }) {
     const myEntity = playerState?.gameState?.economies?.[playerState.myEconomyIndex]?.[playerState.myEntityIndex];
-
-    console.log(myEntity);
 
     return (
         <>

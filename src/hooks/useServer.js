@@ -81,29 +81,19 @@ class Server extends EventSource {
 
     playSound(name, volume = 1) {
         return this.soundManager.playSound(name, volume);
-    }
-
-    handleMessages() {
+    }    handleMessages() {
         this.socket.on('stateUpdate', (data) => {
-            console.log('State update received:', data);
             this.updateState(data);
         });
 
         this.socket.on("timeUpdate", (data) => {
-            console.log('Timer update received:', data);
             this.emit('timeUpdate', data);
         });
-    }
-
-    sendMessage(event, data) {
-        console.log('Sending message:', event, data);
+    }    sendMessage(event, data) {
         this.socket.emit(event, data);
-    }
-
-    updateState(data) {
+    }    updateState(data) {
         // Update the client state based on the received data
         this.state = { ...this.state, ...data };
-        console.log('Client state updated:', this.state);
 
         this.emit('stateUpdate', this.state);
     }

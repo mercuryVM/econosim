@@ -1,5 +1,4 @@
 import { Box, LinearProgress, Paper, Typography } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useEffect, useState } from 'react';
 import banco from '../assets/bancoCentral.png'
 import bancoBg from '../assets/bancoBg.png'
@@ -53,9 +52,7 @@ function RoundBody({ client, gameState, playerState }) {
             backgroundSize: "cover",
             overflowY: "auto",
         }}>
-            <Typography variant="h4" sx={{
-                padding: 2,
-                backgroundColor: "#f5a623",
+            <Typography variant="h4" sx={{                backgroundColor: "#f5a623",
                 color: "#fff",
                 padding: "4px 16px",
                 borderRadius: "4px",
@@ -98,7 +95,6 @@ function RoundBody({ client, gameState, playerState }) {
 }
 
 function RoundGameActions({ client, gameState, playerState, event }) {
-    const [timeLeft, setTimeLeft] = useState(null);
     const [voteDistribution, setVoteDistribution] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
 
@@ -123,9 +119,9 @@ function RoundGameActions({ client, gameState, playerState, event }) {
 
     return (
         <>
-            <Box sx={{ textAlign: "center", padding: 2 }}>
-                <img
+            <Box sx={{ textAlign: "center", padding: 2 }}>                <img
                     src={playerState.entity.id === "banco" ? banco : governo}
+                    alt={playerState.entity.name}
                     style={{ width: "100px", height: "100px", marginBottom: "16px", borderRadius:"5px" }}
                 />
                 <Typography variant="h6">
@@ -134,12 +130,9 @@ function RoundGameActions({ client, gameState, playerState, event }) {
             </Box>
             <Typography variant="h6" sx={{ padding: 2, textAlign: "center" }}>
                 Qual decisão você vai tomar?
-            </Typography>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2 }}>
+            </Typography>            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2 }}>
                 {event.options[playerState.entity.id].map((option, index) => {
                     const voteValue = voteDistribution ? (voteDistribution[index] || 0) : 0;
-                    console.log(voteDistribution)
 
                     return (
                         <RoundOption playerState={playerState} onClick={() => {
@@ -241,9 +234,7 @@ function RoundOption({ playerState, onClick, description, selected, voteValue = 
                 </Typography>
 
 
-            </Paper>
-
-            <LinearProgress variant="determinate" color={playerState.entity.id == "banco" ? "success" : "primary"}
+            </Paper>            <LinearProgress variant="determinate" color={playerState.entity.id === "banco" ? "success" : "primary"}
             value={voteValue} sx={{
                 height: "12px",
                 borderRadius: "30px"

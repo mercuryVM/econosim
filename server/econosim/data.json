@@ -14,7 +14,8 @@
                             "value": 40
                         }
                     ],
-                    "description": "A euforia dos anos dourados de Clodolândia inflou uma perigosa bolha especulativa no mercado imobiliário. Agora, a bolha estourou com um estrondo, arrastando os preços dos imóveis para o abismo. Construtoras outrora prósperas e bancos sólidos cambaleiam sob o peso de perdas massivas. O crédito, antes abundante, evaporou-se, e uma onda de pessimismo varre a nação, ameaçando congelar outros setores vitais. A economia de Clodolândia enfrenta um efeito dominó devastador, com o fantasma da recessão pairando no ar.",                    "impacts": {
+                    "description": "A euforia dos anos dourados de Clodolândia inflou uma perigosa bolha especulativa no mercado imobiliário. Agora, a bolha estourou com um estrondo, arrastando os preços dos imóveis para o abismo. Construtoras outrora prósperas e bancos sólidos cambaleiam sob o peso de perdas massivas. O crédito, antes abundante, evaporou-se, e uma onda de pessimismo varre a nação, ameaçando congelar outros setores vitais. A economia de Clodolândia enfrenta um efeito dominó devastador, com o fantasma da recessão pairando no ar.",
+                    "impacts": {
                         "consumoFamiliar": -20,
                         "investimentoPrivado": -35,
                         "demandaMoeda": -5
@@ -456,7 +457,8 @@
                                 "score_factor": 1.1
                             },
                             "resultText": "A política de estabilidade monetária do Banco Central evitou a formação de bolhas, enquanto os incentivos fiscais direcionados impulsionaram ainda mais o setor tecnológico. O crescimento foi sólido e concentrado, fortalecendo a base inovadora da economia."
-                        },                        {
+                        },
+                        {
                             "combo": [
                                 "b2",
                                 "g2"
@@ -536,7 +538,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.7,                            "impact": {
+                            "chance": 0.7,
+                            "impact": {
                                 "taxaDeJuros": 0.1,
                                 "gastosPublicos": -10,
                                 "consumoFamiliar": 5,
@@ -550,7 +553,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.3,                            "impact": {
+                            "chance": 0.3,
+                            "impact": {
                                 "taxaDeJuros": 0.1,
                                 "gastosPublicos": -10,
                                 "investimentoPrivado": -3,
@@ -564,7 +568,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.6,                            "impact": {
+                            "chance": 0.6,
+                            "impact": {
                                 "ofertaMoeda": 10,
                                 "consumoFamiliar": 15,
                                 "gastosPublicos": 12,
@@ -577,7 +582,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.4,                            "impact": {
+                            "chance": 0.4,
+                            "impact": {
                                 "ofertaMoeda": 10,
                                 "gastosPublicos": 12,
                                 "nivelPrecos": 0.25,
@@ -591,7 +597,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "taxaDeJuros": 0.1,
                                 "gastosPublicos": 12,
                                 "consumoFamiliar": 8,
@@ -605,7 +612,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "gastosPublicos": -10,
                                 "ofertaMoeda": 8,
                                 "demandaMoeda": 3,
@@ -626,7 +634,8 @@
                     "asset": "/localEvents/jundiai/escandaloPolitico.png",
                     "name": "Escândalo Político de Grande Proporção",
                     "conditions": [],
-                    "description": "Revelações chocantes de corrupção envolvendo figuras proeminentes do governo e do setor empresarial de Jundiaí vieram à tona, desencadeando uma crise de confiança sem precedentes. A população está indignada, investidores retiram fundos e a estabilidade política do país está seriamente ameaçada. A credibilidade das instituições foi abalada, e o futuro econômico parece incerto.",                    "impacts": {
+                    "description": "Revelações chocantes de corrupção envolvendo figuras proeminentes do governo e do setor empresarial de Jundiaí vieram à tona, desencadeando uma crise de confiança sem precedentes. A população está indignada, investidores retiram fundos e a estabilidade política do país está seriamente ameaçada. A credibilidade das instituições foi abalada, e o futuro econômico parece incerto.",
+                    "impacts": {
                         "investimentoPrivado": -25,
                         "consumoFamiliar": -15
                     },
@@ -658,7 +667,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.6,                            "impact": {
+                            "chance": 0.6,
+                            "impact": {
                                 "taxaDeJuros": 0.3,
                                 "investimentoPrivado": 10,
                                 "consumoFamiliar": 3,
@@ -671,7 +681,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.4,                            "impact": {
+                            "chance": 0.4,
+                            "impact": {
                                 "taxaDeJuros": 0.3,
                                 "investimentoPrivado": -5,
                                 "consumoFamiliar": -4,
@@ -684,7 +695,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.5,                            "impact": {
+                            "chance": 0.5,
+                            "impact": {
                                 "ofertaMoeda": 15,
                                 "gastosPublicos": 20,
                                 "investimentoPrivado": 5,
@@ -699,7 +711,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.5,                            "impact": {
+                            "chance": 0.5,
+                            "impact": {
                                 "ofertaMoeda": 15,
                                 "gastosPublicos": 20,
                                 "nivelPrecos": 0.35,
@@ -713,7 +726,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "taxaDeJuros": 0.3,
                                 "gastosPublicos": 20,
                                 "investimentoPrivado": -8,
@@ -728,7 +742,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "ofertaMoeda": 15,
                                 "investimentoPrivado": 3,
                                 "nivelPrecos": 0.15,
@@ -743,7 +758,8 @@
                     "asset": "/localEvents/jundiai/acordoRegional.png",
                     "name": "Novo Acordo Comercial Regional",
                     "conditions": [],
-                    "description": "Jundiaí celebrou um novo e promissor acordo comercial com países vizinhos, abrindo mercados para seus produtos e facilitando a importação de insumos. Há grande expectativa de aumento nas exportações, atração de investimentos e maior competitividade para a indústria local. O otimismo toma conta do setor produtivo.",                    "impacts": {
+                    "description": "Jundiaí celebrou um novo e promissor acordo comercial com países vizinhos, abrindo mercados para seus produtos e facilitando a importação de insumos. Há grande expectativa de aumento nas exportações, atração de investimentos e maior competitividade para a indústria local. O otimismo toma conta do setor produtivo.",
+                    "impacts": {
                         "investimentoPrivado": 10,
                         "consumoFamiliar": 5
                     },
@@ -775,7 +791,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.7,                            "impact": {
+                            "chance": 0.7,
+                            "impact": {
                                 "gastosPublicos": 15,
                                 "investimentoPrivado": 18,
                                 "consumoFamiliar": 8,
@@ -788,7 +805,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.3,                            "impact": {
+                            "chance": 0.3,
+                            "impact": {
                                 "gastosPublicos": 15,
                                 "nivelPrecos": 0.1,
                                 "consumoFamiliar": 3,
@@ -801,7 +819,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.6,                            "impact": {
+                            "chance": 0.6,
+                            "impact": {
                                 "taxaDeJuros": -0.2,
                                 "gastosPublicos": 10,
                                 "investimentoPrivado": 20,
@@ -815,7 +834,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.4,                            "impact": {
+                            "chance": 0.4,
+                            "impact": {
                                 "taxaDeJuros": -0.2,
                                 "gastosPublicos": 10,
                                 "investimentoPrivado": 8,
@@ -830,7 +850,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "gastosPublicos": 10,
                                 "investimentoPrivado": 15,
                                 "consumoFamiliar": 6,
@@ -843,7 +864,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "taxaDeJuros": -0.2,
                                 "gastosPublicos": 15,
                                 "investimentoPrivado": 22,
@@ -858,7 +880,8 @@
                     "asset": "/localEvents/jundiai/greveGeral.png",
                     "name": "Greve Geral de Setores Chave",
                     "conditions": [],
-                    "description": "Uma onda de insatisfação popular com as condições de trabalho e os baixos salários culminou em uma greve geral que paralisou setores cruciais da economia de Jundiaí, como transportes, indústria e serviços públicos. A produção está parada, o abastecimento é afetado e a tensão social é alta. A economia sofre um duro golpe.",                    "impacts": {
+                    "description": "Uma onda de insatisfação popular com as condições de trabalho e os baixos salários culminou em uma greve geral que paralisou setores cruciais da economia de Jundiaí, como transportes, indústria e serviços públicos. A produção está parada, o abastecimento é afetado e a tensão social é alta. A economia sofre um duro golpe.",
+                    "impacts": {
                         "consumoFamiliar": -15,
                         "investimentoPrivado": -10,
                         "nivelPrecos": 0.1,
@@ -894,7 +917,8 @@
                             ],
                             "chance": 0.6,
                             "impact": {
-                                "taxaDeJuros": 0.1,                                "gastosPublicos": 10,
+                                "taxaDeJuros": 0.1,
+                                "gastosPublicos": 10,
                                 "consumoFamiliar": 5,
                                 "nivelPrecos": -0.05,
                                 "investimentoPrivado": 1,
@@ -907,7 +931,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.4,                            "impact": {
+                            "chance": 0.4,
+                            "impact": {
                                 "taxaDeJuros": 0.1,
                                 "gastosPublicos": 10,
                                 "consumoFamiliar": -5,
@@ -921,7 +946,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.3,                            "impact": {
+                            "chance": 0.3,
+                            "impact": {
                                 "ofertaMoeda": 5,
                                 "consumoFamiliar": -3,
                                 "investimentoPrivado": -2,
@@ -936,7 +962,8 @@
                                 "g2"
                             ],
                             "chance": 0.7,
-                            "impact": {                                "ofertaMoeda": 5,
+                            "impact": {
+                                "ofertaMoeda": 5,
                                 "consumoFamiliar": -10,
                                 "investimentoPrivado": -3,
                                 "score_factor": 0.75
@@ -948,7 +975,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "taxaDeJuros": 0.1,
                                 "consumoFamiliar": -3,
                                 "investimentoPrivado": -2,
@@ -962,7 +990,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "ofertaMoeda": 5,
                                 "gastosPublicos": 12,
                                 "consumoFamiliar": 10,
@@ -977,7 +1006,8 @@
                     "asset": "/localEvents/jundiai/inovacaoSetor.png",
                     "name": "Inovação Disruptiva no Setor de Serviços",
                     "conditions": [],
-                    "description": "Uma startup local de Jundiaí desenvolveu uma tecnologia revolucionária que está transformando o setor de serviços, aumentando a eficiência e criando novas oportunidades de negócios. O país se destaca como um polo de inovação, atraindo talentos e investimentos. O otimismo com o futuro do setor é contagiante.",                    "impacts": {
+                    "description": "Uma startup local de Jundiaí desenvolveu uma tecnologia revolucionária que está transformando o setor de serviços, aumentando a eficiência e criando novas oportunidades de negócios. O país se destaca como um polo de inovação, atraindo talentos e investimentos. O otimismo com o futuro do setor é contagiante.",
+                    "impacts": {
                         "investimentoPrivado": 18,
                         "consumoFamiliar": 4.5
                     },
@@ -1011,7 +1041,8 @@
                             ],
                             "chance": 0.7,
                             "impact": {
-                                "gastosPublicos": 15,                                "investimentoPrivado": 22,
+                                "gastosPublicos": 15,
+                                "investimentoPrivado": 22,
                                 "consumoFamiliar": 5.5,
                                 "score_factor": 1.25
                             },
@@ -1024,7 +1055,8 @@
                             ],
                             "chance": 0.3,
                             "impact": {
-                                "gastosPublicos": 15,                                "investimentoPrivado": 15,
+                                "gastosPublicos": 15,
+                                "investimentoPrivado": 15,
                                 "consumoFamiliar": 3.5,
                                 "score_factor": 1.1
                             },
@@ -1035,7 +1067,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.6,                            "impact": {
+                            "chance": 0.6,
+                            "impact": {
                                 "taxaDeJuros": -0.25,
                                 "investimentoPrivado": 28,
                                 "consumoFamiliar": 6,
@@ -1051,7 +1084,8 @@
                             "chance": 0.4,
                             "impact": {
                                 "taxaDeJuros": -0.25,
-                                "investimentoPrivado": 15,                                "nivelPrecos": 0.15,
+                                "investimentoPrivado": 15,
+                                "nivelPrecos": 0.15,
                                 "consumoFamiliar": 4,
                                 "score_factor": 1.0
                             },
@@ -1062,7 +1096,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "investimentoPrivado": 25,
                                 "consumoFamiliar": 5,
                                 "score_factor": 1.2
@@ -1076,7 +1111,8 @@
                             ],
                             "chance": 1.0,
                             "impact": {
-                                "taxaDeJuros": -0.2,                                "gastosPublicos": 15,
+                                "taxaDeJuros": -0.2,
+                                "gastosPublicos": 15,
                                 "investimentoPrivado": 20,
                                 "consumoFamiliar": 4.8,
                                 "score_factor": 1.2
@@ -1089,7 +1125,8 @@
                     "asset": "/localEvents/jundiai/quebraSafra.png",
                     "name": "Quebra de Safra Agrícola Significativa",
                     "conditions": [],
-                    "description": "Condições climáticas adversas (seca prolongada/chuvas excessivas) e o aumento inesperado no custo de fertilizantes resultaram em uma quebra severa na safra agrícola de Jundiaí, um dos pilares da economia. Os preços dos alimentos dispararam, as exportações do setor caíram e a renda no campo despencou, gerando um efeito cascata negativo.",                    "impacts": {
+                    "description": "Condições climáticas adversas (seca prolongada/chuvas excessivas) e o aumento inesperado no custo de fertilizantes resultaram em uma quebra severa na safra agrícola de Jundiaí, um dos pilares da economia. Os preços dos alimentos dispararam, as exportações do setor caíram e a renda no campo despencou, gerando um efeito cascata negativo.",
+                    "impacts": {
                         "consumoFamiliar": -10,
                         "investimentoPrivado": -3.5,
                         "nivelPrecos": 0.1
@@ -1124,7 +1161,8 @@
                             ],
                             "chance": 0.5,
                             "impact": {
-                                "taxaDeJuros": 0.2,                                "gastosPublicos": 18,
+                                "taxaDeJuros": 0.2,
+                                "gastosPublicos": 18,
                                 "consumoFamiliar": -1,
                                 "nivelPrecos": -0.05,
                                 "score_factor": 1.0
@@ -1136,7 +1174,8 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.5,                            "impact": {
+                            "chance": 0.5,
+                            "impact": {
                                 "taxaDeJuros": 0.2,
                                 "gastosPublicos": 18,
                                 "consumoFamiliar": -19,
@@ -1151,7 +1190,8 @@
                                 "g2"
                             ],
                             "chance": 0.7,
-                            "impact": {                                "consumoFamiliar": 5,
+                            "impact": {
+                                "consumoFamiliar": 5,
                                 "investimentoPrivado": -0.5,
                                 "nivelPrecos": -0.1,
                                 "score_factor": 1.05
@@ -1163,7 +1203,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.3,                            "impact": {
+                            "chance": 0.3,
+                            "impact": {
                                 "consumoFamiliar": -2,
                                 "score_factor": 0.9
                             },
@@ -1174,7 +1215,8 @@
                                 "b1",
                                 "g2"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "taxaDeJuros": 0.2,
                                 "consumoFamiliar": -8,
                                 "investimentoPrivado": -2.5,
@@ -1188,7 +1230,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "gastosPublicos": 20,
                                 "consumoFamiliar": 2,
                                 "investimentoPrivado": 0,
@@ -1203,7 +1246,8 @@
                     "asset": "/localEvents/jundiai/turismoAlta.png",
                     "name": "Boom Inesperado no Turismo",
                     "conditions": [],
-                    "description": "Uma combinação de fatores, como uma taxa de câmbio favorável e campanhas de promoção internacional bem-sucedidas, resultou em um boom inesperado no setor de turismo de Jundiaí. Hotéis estão lotados, restaurantes movimentados e uma entrada significativa de divisas estrangeiras impulsiona a economia local.",                    "impacts": {
+                    "description": "Uma combinação de fatores, como uma taxa de câmbio favorável e campanhas de promoção internacional bem-sucedidas, resultou em um boom inesperado no setor de turismo de Jundiaí. Hotéis estão lotados, restaurantes movimentados e uma entrada significativa de divisas estrangeiras impulsiona a economia local.",
+                    "impacts": {
                         "consumoFamiliar": 10,
                         "investimentoPrivado": 4
                     },
@@ -1236,7 +1280,8 @@
                                 "g1"
                             ],
                             "chance": 0.7,
-                            "impact": {                                "gastosPublicos": 15,
+                            "impact": {
+                                "gastosPublicos": 15,
                                 "consumoFamiliar": 5,
                                 "score_factor": 1.2
                             },
@@ -1248,7 +1293,8 @@
                                 "g1"
                             ],
                             "chance": 0.3,
-                            "impact": {                                "gastosPublicos": 15,
+                            "impact": {
+                                "gastosPublicos": 15,
                                 "investimentoPrivado": 3.5,
                                 "score_factor": 1.1
                             },
@@ -1261,7 +1307,8 @@
                             ],
                             "chance": 0.4,
                             "impact": {
-                                "gastosPublicos": 10,                                "consumoFamiliar": 2,
+                                "gastosPublicos": 10,
+                                "consumoFamiliar": 2,
                                 "score_factor": 0.9
                             },
                             "resultText": "A valorização da moeda e o aumento de impostos frearam o ímpeto do turismo. Embora a arrecadação tenha aumentado e as importações ficado mais baratas, o setor perdeu competitividade."
@@ -1271,7 +1318,8 @@
                                 "b2",
                                 "g2"
                             ],
-                            "chance": 0.6,                            "impact": {
+                            "chance": 0.6,
+                            "impact": {
                                 "gastosPublicos": 8,
                                 "investimentoPrivado": 3,
                                 "nivelPrecos": -0.05,
@@ -1286,7 +1334,8 @@
                             ],
                             "chance": 1.0,
                             "impact": {
-                                "gastosPublicos": 12,                                "consumoFamiliar": 3.8,
+                                "gastosPublicos": 12,
+                                "consumoFamiliar": 3.8,
                                 "score_factor": 1.1
                             },
                             "resultText": "O Banco Central conseguiu manter o câmbio estável, enquanto o governo aumentou a arrecadação com o setor. O boom foi controlado, gerando receita fiscal senza matar a galinha dos ovos de ouro, mas o crescimento foi menor que o potencial máximo."
@@ -1296,7 +1345,8 @@
                                 "b2",
                                 "g1"
                             ],
-                            "chance": 1.0,                            "impact": {
+                            "chance": 1.0,
+                            "impact": {
                                 "gastosPublicos": 18,
                                 "investimentoPrivado": 4.2,
                                 "score_factor": 1.15
@@ -1313,7 +1363,8 @@
             "asset": "/globalEvents/criseFinanceira.png",
             "name": "Crise Financeira Internacional",
             "goodEvent": false,
-            "description": "Uma crise bancária em grandes economias gerou pânico nos mercados e fuga de capitais de países emergentes.",            "impact": {
+            "description": "Uma crise bancária em grandes economias gerou pânico nos mercados e fuga de capitais de países emergentes.",
+            "impact": {
                 "investimentoPrivado": -20,
                 "taxaDeJuros": 0.1,
                 "demandaMoeda": -3,
@@ -1324,7 +1375,8 @@
             "asset": "/globalEvents/boomCommodities.png",
             "name": "Boom de Commodities",
             "goodEvent": true,
-            "description": "O preço internacional de alimentos e minérios disparou, beneficiando países exportadores.",            "impact": {
+            "description": "O preço internacional de alimentos e minérios disparou, beneficiando países exportadores.",
+            "impact": {
                 "nivelPrecos": 0.1,
                 "score_factor": 1.1
             }
@@ -1333,7 +1385,8 @@
             "asset": "/globalEvents/altaPetroleo.png",
             "name": "Alta Global no Petróleo",
             "goodEvent": false,
-            "description": "O aumento nos preços do petróleo pressionou os custos de transporte e energia no mundo todo.",            "impact": {
+            "description": "O aumento nos preços do petróleo pressionou os custos de transporte e energia no mundo todo.",
+            "impact": {
                 "nivelPrecos": 0.25,
                 "consumoFamiliar": -10,
                 "score_factor": 0.85
@@ -1343,7 +1396,8 @@
             "asset": "/globalEvents/estabilidadeGlobal.png",
             "name": "Estabilidade Econômica Global",
             "goodEvent": true,
-            "description": "Confiança nos mercados e crescimento moderado trouxeram estabilidade e otimismo global.",            "impact": {
+            "description": "Confiança nos mercados e crescimento moderado trouxeram estabilidade e otimismo global.",
+            "impact": {
                 "investimentoPrivado": 10,
                 "consumoFamiliar": 5,
                 "score_factor": 1.15
@@ -1353,7 +1407,8 @@
             "asset": "/globalEvents/livreComercio.png",
             "name": "Acordo Global de Livre Comércio",
             "goodEvent": true,
-            "description": "Novos tratados internacionais reduziram barreiras comerciais, aumentando o fluxo de bens e serviços.",            "impact": {
+            "description": "Novos tratados internacionais reduziram barreiras comerciais, aumentando o fluxo de bens e serviços.",
+            "impact": {
                 "investimentoPrivado": 5,
                 "score_factor": 1.05
             }
@@ -1362,7 +1417,8 @@
             "asset": "/globalEvents/choqueClimatico.png",
             "name": "Choque Climático Global",
             "goodEvent": false,
-            "description": "Eventos climáticos extremos em vários países afetam a produção agrícola e pressionam preços.",            "impact": {
+            "description": "Eventos climáticos extremos em vários países afetam a produção agrícola e pressionam preços.",
+            "impact": {
                 "nivelPrecos": 0.2,
                 "consumoFamiliar": -5,
                 "score_factor": 0.9
