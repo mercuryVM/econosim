@@ -46,7 +46,7 @@ function PreServer({ client, setPreIntro }) {
 
     return (
         <Box sx={{
-            background: "rgba(0, 0, 0, 1)",
+            background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
             position: "fixed",
             top: 0,
             left: 0,
@@ -77,14 +77,16 @@ function PreServer({ client, setPreIntro }) {
                     transition: { duration: 1, ease: "easeInOut" }
                 }}
             >
-                <img src={CooktopLogo} alt="Cooktop Logo" style={{ width: "640px", marginBottom: "20px" }} />
+                <img src={CooktopLogo} alt="Cooktop Logo" style={{ width: "480px", marginBottom: "30px" }} />
 
-                <Typography color={"white"} variant="h4">
+                <Typography color={"white"} variant="h3" sx={{
+                    fontWeight: 600,
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.5)"
+                }}>
                     Grupo Cooktop apresenta
                 </Typography>
             </motion.div>
         </Box>
-
     )
 }
 
@@ -118,11 +120,17 @@ function StatusBar() {
             bottom: 0,
             left: 0,
             right: 0,
-            padding: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            padding: 1.5,
+            background: "linear-gradient(90deg, rgba(34, 139, 34, 0.95) 0%, rgba(46, 125, 50, 0.95) 100%)",
+            backdropFilter: "blur(10px)",
+            borderTop: "1px solid rgba(255, 255, 255, 0.2)",
             overflow: "hidden"
         }}>
-            <Typography variant="body2" component="div" sx={{ color: "white" }}>
+            <Typography variant="body1" component="div" sx={{
+                color: "white",
+                fontWeight: 500,
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"
+            }}>
                 <Box
                     component="div"
                     key={currentIdx}
@@ -175,27 +183,54 @@ function RenderLobby({ client, countdown, handleStartGame }) {
     return (
         <Box
             sx={{
-                flex: 1,
-                minHeight: 0,
+                background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+                minHeight: "100vh",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                py: 6,
-                margin: "auto"
+                position: "relative"
             }}
-        >
+        >            {/* Header Fixo com Logo - Compacto */}
+            <Box
+                sx={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    background: 'linear-gradient(135deg, rgba(34, 139, 34, 0.95) 0%, rgba(46, 125, 50, 0.95) 100%)',
+                    backdropFilter: 'blur(15px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <motion.img
+                    src={Logo}
+                    alt="EconoSim Logo"
+                    style={{ height: '40px', maxWidth: '200px', objectFit: 'contain' }}
+                    animate={{ y: [0, -3, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+            </Box>
+
             <StatusBar />
 
-            <Dialog onClose={() => setSelectedQrCode(null)} open={Boolean(selectedQr)}>
-                <DialogTitle textAlign={"center"}>QR Code para {selectedQr?.role === 0 ? "Banco" : "Governo"} de {economies[selectedQr?.economy]?.country}</DialogTitle>
-                <DialogContent>
+            <Dialog onClose={() => setSelectedQrCode(null)} open={Boolean(selectedQr)}>                <DialogTitle textAlign={"center"} sx={{
+                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                color: "white",
+                fontWeight: 600
+            }}>
+                QR Code para {selectedQr?.role === 0 ? "Banco" : "Governo"} de {economies[selectedQr?.economy]?.country}
+            </DialogTitle>
+                <DialogContent sx={{ p: 3 }}>
                     {
                         selectedQr && (
                             <QRCode style={{
-                                width: 512,
-                                height: 512,
-                            }} width={512} height={512} value={
+                                width: 256,
+                                height: 256,
+                            }} width={256} height={256} value={
                                 window.location.origin + "/?" + new URLSearchParams({
                                     role: selectedQr.role,
                                     economy: selectedQr.economy
@@ -204,101 +239,121 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                         )
                     }
                 </DialogContent>
-            </Dialog >
-
-            <Box sx={{
-                position: 'relative',
-                display: 'inline-block',
-                '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    width: '200px',
-                    height: '50px',
-                    transform: 'translate(-50%, -50%)',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(37, 133, 37, 0.99)',
-                    filter: 'blur(30px)',
-                    zIndex: -1,
-                }
-            }}>
-                <motion.img
-                    src={Logo}
-                    alt="EconoSim Logo"
-                    style={{ width: "300px", marginBottom: "20px" }}
-                    animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                />
-            </Box>
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4, color: "black" }}>
-                Lobby das Economias
-            </Typography>
-            <Grid container spacing={4} justifyContent="center">
-                {economies.map((eco, idx) => (
-                    <Grid item xs={12} md={6} key={idx} sx={{ display: "flex", justifyContent: "center" }}>
-                        <Paper
-                            elevation={6}
-                            sx={{
-                                p: 3,
-                                borderRadius: 4,
-                                minWidth: 320,
-                                maxWidth: 400,
-                                width: "100%",
-                                boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-                                background: "rgba(255,255,255,0.95)",
-                            }}
-                        >
-                            <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 600 }}>
-                                <span style={{ fontSize: 36, marginRight: 10 }}>{eco.flag}</span>
-                                {eco.country}
-                            </Typography>
-                            <Grid container spacing={2}>
-                                {
-                                    [
-                                        {
-                                            name: "Banco",
-                                            players: eco.banco.players,
-                                        },
-                                        {
-                                            name: "Governo",
-                                            players: eco.governo.players,
-                                        }
-                                    ].map((entity, index) => (
-                                        <Grid item xs={6} style={{ flex: 1, }}>
-                                            <Typography variant="subtitle1" align="center" sx={{ fontWeight: 500 }}>
-                                                <Box display={"flex"} alignItems="center" justifyContent="center">
-                                                    <QrCodeIcon sx={{
-                                                        cursor: "pointer",
-                                                        "&:hover": {
-                                                            opacity: 0.5
-                                                        }
-                                                    }} onClick={() => setSelectedQrCode({
-                                                        role: index,
-                                                        economy: idx
-                                                    })} />
-                                                    {
-                                                        entity.name
-                                                    }
+            </Dialog >            {/* Conteúdo Principal - Compacto */}
+            <Box
+                sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    py: 3,
+                    mt: 6, // margem para o header fixo compacto
+                    px: 2
+                }}
+            >
+                <Typography variant="h4" gutterBottom sx={{
+                    fontWeight: 800,
+                    mb: 3,
+                    color: "#2d3748",
+                    textAlign: "center",
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
+                    fontSize: "28px"
+                }}>
+                    🏛️ Lobby das Economias 🏛️
+                </Typography>
+                <Grid container spacing={2} justifyContent="center" sx={{ maxWidth: 900 }}>
+                    {economies.map((eco, idx) => (
+                        <Grid item xs={12} md={6} key={idx} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Paper
+                                elevation={6}
+                                sx={{
+                                    p: 2.5,
+                                    borderRadius: 4,
+                                    minWidth: 320,
+                                    maxWidth: 420,
+                                    width: "100%",
+                                    background: "rgba(255,255,255,0.95)",
+                                    backdropFilter: "blur(20px)",
+                                    border: "1px solid rgba(255,255,255,0.3)",
+                                    boxShadow: "0 12px 30px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.07)",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": {
+                                        transform: "translateY(-3px)",
+                                        boxShadow: "0 15px 35px rgba(0,0,0,0.15), 0 6px 15px rgba(0,0,0,0.1)"
+                                    }
+                                }}
+                            >                <Typography variant="h5" gutterBottom align="center" sx={{
+                                fontWeight: 700,
+                                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                                mb: 2,
+                                fontSize: "20px"
+                            }}>
+                                    <span style={{ fontSize: 28, marginRight: 10 }}>{eco.flag}</span>
+                                    {eco.country}
+                                </Typography>
+                                <Grid container spacing={2}>
+                                    {
+                                        [
+                                            {
+                                                name: "🏦 Banco Central",
+                                                players: eco.banco.players,
+                                                color: "#e3f2fd"
+                                            },
+                                            {
+                                                name: "🏛️ Governo",
+                                                players: eco.governo.players,
+                                                color: "#f3e5f5"
+                                            }
+                                        ].map((entity, index) => (<Grid item xs={6} key={index} style={{ flex: 1, }}>
+                                            <Typography variant="h6" align="center" sx={{
+                                                fontWeight: 600,
+                                                mb: 1.5,
+                                                color: "#2d3748",
+                                                fontSize: "14px"
+                                            }}>
+                                                <Box display={"flex"} alignItems="center" justifyContent="center" gap={0.5}>                                        <QrCodeIcon sx={{
+                                                    cursor: "pointer",
+                                                    color: "#228B22",
+                                                    fontSize: 20,
+                                                    "&:hover": {
+                                                        opacity: 0.7,
+                                                        transform: "scale(1.1)"
+                                                    },
+                                                    transition: "all 0.2s ease"
+                                                }} onClick={() => setSelectedQrCode({
+                                                    role: index,
+                                                    economy: idx
+                                                })} />
+                                                    {entity.name}
                                                 </Box>
                                             </Typography>
-                                            <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: "hidden" }}>
+                                            <TableContainer component={Paper} sx={{
+                                                borderRadius: 2,
+                                                overflow: "hidden",
+                                                boxShadow: "0 3px 8px rgba(0,0,0,0.1)"
+                                            }}>
                                                 <Table size={"small"}>
                                                     <TableHead>
                                                         <TableRow>
                                                             <TableCell
                                                                 align="center"
                                                                 sx={{
-                                                                    fontWeight: 600,
+                                                                    fontWeight: 700,
                                                                     borderBottom: "none",
-                                                                    backgroundColor: "#e3f2fd",
+                                                                    background: entity.color,
+                                                                    color: "#2d3748",
+                                                                    fontSize: 12,
+                                                                    py: 1
                                                                 }}
                                                             >
-                                                                Jogadores
+                                                                👥 Jogadores
                                                             </TableCell>
                                                         </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
+                                                    </TableHead>                                                        <TableBody>
                                                         {entity.players.map((player, index) => {
                                                             const emoji = stringToEmoji(player.nickname)
 
@@ -306,17 +361,22 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                                                                 <TableRow
                                                                     key={player.id}
                                                                     sx={{
-                                                                        backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
+                                                                        backgroundColor: index % 2 === 0 ? "#fafafa" : "#ffffff",
+                                                                        "&:hover": {
+                                                                            backgroundColor: "#f0f9ff"
+                                                                        }
                                                                     }}
                                                                 >
                                                                     <TableCell
                                                                         align="center"
                                                                         sx={{
                                                                             fontWeight: 500,
-                                                                            borderBottom: "none",
+                                                                            borderBottom: "1px solid rgba(0,0,0,0.05)",
                                                                             display: "flex",
                                                                             alignItems: "center",
-                                                                            gap: "5px"
+                                                                            gap: "6px",
+                                                                            py: 0.8,
+                                                                            fontSize: 12
                                                                         }}
                                                                     >
                                                                         <Twemoji options={{ className: styles.emoji }}>{emoji}</Twemoji>
@@ -329,44 +389,64 @@ function RenderLobby({ client, countdown, handleStartGame }) {
                                                 </Table>
                                             </TableContainer>
                                         </Grid>
-                                    ))
-                                }
-                            </Grid>
-
-                            <Typography variant="subtitle1" align="center" sx={{ mt: 2, fontWeight: 500 }}>
-                                Jogadores Conectados: {eco.banco.players.length + eco.governo.players.length}
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                ))}
-            </Grid>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 4, mb: 2 }}>
-                Aguardando início da partida...
-            </Typography>
-            {!client.state.started && (
-                <Button
+                                        ))
+                                    }
+                                </Grid>                <Box sx={{
+                                    mt: 2,
+                                    p: 1.5,
+                                    background: "linear-gradient(135deg, rgba(34, 139, 34, 0.1) 0%, rgba(46, 125, 50, 0.1) 100%)",
+                                    borderRadius: 2,
+                                    border: "1px solid rgba(34, 139, 34, 0.2)"
+                                }}>
+                                    <Typography variant="h6" align="center" sx={{
+                                        fontWeight: 600,
+                                        color: "#2d3748",
+                                        fontSize: "14px"
+                                    }}>
+                                        🎮 Jogadores Conectados: {eco.banco.players.length + eco.governo.players.length}
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
+                <Typography variant="h6" color="text.secondary" sx={{ mt: 3, mb: 2, fontWeight: 500, fontSize: "16px" }}>
+                    ⏳ Aguardando início da partida...
+                </Typography>
+                {!client.state.started && (<Button
                     variant="contained"
-                    color="primary"
-                    size="large"
+                    size="medium"
                     sx={{
-                        mt: 2,
-                        px: 5,
+                        mt: 1, px: 4,
                         py: 1.5,
-                        borderRadius: 3,
-                        fontWeight: 700,
-                        fontSize: 18,
-                        boxShadow: "0 4px 20px 0 rgba(33, 150, 243, 0.15)",
+                        borderRadius: 4,
+                        fontWeight: 800,
+                        fontSize: 16,
+                        background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                        color: "white",
                         textTransform: "none",
+                        boxShadow: "0 6px 24px rgba(34, 139, 34, 0.3)",
+                        "&:hover": {
+                            background: "linear-gradient(135deg, #1F7A1F 0%, #265828 100%)",
+                            transform: "translateY(-2px)",
+                            boxShadow: "0 8px 30px rgba(34, 139, 34, 0.4)"
+                        },
+                        transition: "all 0.3s ease"
                     }}
                     onClick={handleStartGame}
                 >
-                    Iniciar Partida
+                    🚀 Iniciar Partida
                 </Button>
-            )}
-
-            <Typography sx={{ mt: 4, color: "text.secondary", textAlign: "center" }}>
-                Desenvolvido com ❤️ por Cooktop
-            </Typography>
+                )}                <Typography sx={{
+                    mt: 3,
+                    color: "text.secondary",
+                    textAlign: "center",
+                    fontSize: 14,
+                    fontWeight: 500
+                }}>
+                    Desenvolvido com ❤️ por <strong style={{ color: "#228B22" }}>Cooktop</strong>
+                </Typography>
+            </Box>
         </Box>
     )
 }
@@ -467,70 +547,91 @@ export function Server() {
                 flexDirection: "column",
             }}></Box>
         );
-    }
-
-    return (
-        <Box sx={{ p: 0, minHeight: 0, display: "flex", flexDirection: "column", flex: 1, color: "black" }}>
-            {(countdown !== null && countdown !== undefined) && renderCountdown()}
-            {!client && (<div>Connecting to server...</div>)}
-
-            <AnimatePresence exitBeforeEnter>
-                {preIntro && client && !client.state?.started && (
-                    <motion.div
-                        key="pre"
-                        initial={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <PreServer client={client} setPreIntro={setPreIntro} />
-                    </motion.div>
-                )}
-
-                {client && !client.state.started && !preIntro && (
-                    <motion.div
-                        key="lobby"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        transition={{ duration: 0.5 }}
-                        style={{
-                            flex: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <RenderLobby handleStartGame={handleStartGame} client={client} countdown={countdown} />
-                    </motion.div>
-                )}
-
-                {client && client.state.started && (
-                    <motion.div
-                        key="game"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <RenderGame client={client} gameState={gameState} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+    } return (<Box sx={{
+        p: 0,
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        color: "#2d3748",
+        position: "relative"
+    }}>
+        {(countdown !== null && countdown !== undefined) && renderCountdown()}
+        {!client && (<Box sx={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white"
+        }}>
+            <Typography variant="h4" sx={{ fontWeight: 600 }}>
+                🔌 Conectando ao servidor...
+            </Typography>
         </Box>
+        )}
+
+        <AnimatePresence exitBeforeEnter>
+            {preIntro && client && !client.state?.started && (
+                <motion.div
+                    key="pre"
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <PreServer client={client} setPreIntro={setPreIntro} />
+                </motion.div>
+            )}
+
+            {client && !client.state.started && !preIntro && (
+                <motion.div
+                    key="lobby"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <RenderLobby handleStartGame={handleStartGame} client={client} countdown={countdown} />
+                </motion.div>
+            )}
+
+            {client && client.state.started && (
+                <motion.div
+                    key="game"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <RenderGame client={client} gameState={gameState} />
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </Box>
     )
 }
 
-function Tutorial({ setTutorial, tutorial }) {
+function Tutorial({ setTutorial, tutorial, client }) {
     const ref = useRef(null);
 
-    useEffect(() => {
+    const endTutorial = () => {
+        setTutorial(false);
+        // Notify server that tutorial has ended
+        if (client && client.sendMessage) {
+            client.sendMessage("endTutorial");
+        }
+    }; useEffect(() => {
         if (ref.current) {
             //on end
             ref.current.onended = () => {
-                // Remove the video element from the DOM
-                setTutorial(false);
+                endTutorial();
             };
         }
-    }, [ref, setTutorial]);
+    }, [ref, setTutorial, endTutorial]);
 
     if (!tutorial) {
         return null;
@@ -565,7 +666,7 @@ function Tutorial({ setTutorial, tutorial }) {
                 "&:hover": {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }
-            }} onClick={() => setTutorial(false)}>Skip Tutorial</Button>
+            }} onClick={endTutorial}>Skip Tutorial</Button>
         </Box>
     )
 }
@@ -616,9 +717,8 @@ function RenderGame({ client, gameState }) {
     return (
         <>
             {!tutorial && gameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
-            {!tutorial && localGameState && state === 1 && <Dashboard client={client} gameState={localGameState} />}
-            {tutorial && (
-                <Tutorial tutorial={tutorial} setTutorial={setTutorial} />
+            {!tutorial && localGameState && state === 1 && <Dashboard client={client} gameState={localGameState} />}            {tutorial && (
+                <Tutorial tutorial={tutorial} setTutorial={setTutorial} client={client} />
             )}
 
             {
@@ -1142,24 +1242,29 @@ function RoundEndGraph({ economy }) {
 }
 
 function Dashboard({ client, gameState }) {
-    const round = useMemo(() => gameState?.round || {}, [gameState?.round]);
-
-    useEffect(() => {
-        if (client)
-            client.sendMessage("startTimer");
-    }, [client])
-
-    useEffect(() => {
+    const round = useMemo(() => gameState?.round || {}, [gameState?.round]); useEffect(() => {
         if (round?.roundEnded) {
             client.sendMessage("nextRound");
         }
-    }, [client, round])
+    }, [client, round]);
 
     return (
-        <Box gridTemplateColumns={"2fr 1fr 2fr"} display={"grid"} flex={1} gap={2}>
-            <Country economy={gameState.economies[0]} />
-            <GlobalData client={client} gameState={gameState} />
-            <Country economy={gameState.economies[1]} />
+        <Box sx={{
+            minHeight: "100vh",
+            position: "relative",
+            overflow: "hidden"
+        }}>            {/* Header Fixo com Logo para Dashboard - Compacto */}
+
+            <Box sx={{
+                display: "grid",
+                gridTemplateColumns: "1fr 260px 1fr", gap: 1,
+                pt: 0, // sem margem para maximizar espaço
+                minHeight: "calc(100vh - 40px)"
+            }}>
+                <Country economy={gameState.economies[0]} />
+                <GlobalData client={client} gameState={gameState} />
+                <Country economy={gameState.economies[1]} />
+            </Box>
         </Box>
     )
 }
@@ -1169,22 +1274,62 @@ function GlobalData({ client, gameState }) {
     const round = gameState?.round;
     const globalEvent = round?.globalEvent || null;
 
-
-
     return (
-        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>
+        <Box display={"flex"} flexDirection={"column"} gap={1.5} sx={{ height: "100%" }}>            {/* Round Counter - Compacto */}
             <Paper sx={{
-                padding: "16px",
-                fontWeight: 700,
-                fontSize: "24px",
+                padding: 1.5,
+                fontWeight: 800,
+                fontSize: "18px",
                 textAlign: "center",
-            }}> Round {round.numRound}</Paper>
-
-            <Paper sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img src={globalEvent ? globalEvent.asset : Backface} alt="Global Event" style={{ width: "100%", height: "100%", objectFit: "contain", aspectRatio: "644 / 967" }} />
+                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                color: "white",
+                borderRadius: 3,
+                boxShadow: "0 6px 20px rgba(34, 139, 34, 0.3)",
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"
+            }}>
+                🎯 Round {round.numRound}
             </Paper>
 
-            <Paper sx={{ flex: "28%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 2 }}>
+            {/* Global Event Card - Compacto */}
+            <Paper sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 3,
+                overflow: "hidden",
+                background: "rgba(255,255,255,0.95)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
+                flex: 1,
+                minHeight: 200
+            }}>
+                <img
+                    src={globalEvent ? globalEvent.asset : Backface}
+                    alt="Global Event"
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        aspectRatio: "644 / 967",
+                        borderRadius: 6
+                    }}
+                />
+            </Paper>
+
+            {/* Timer Controls - Compacto */}
+            <Paper sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                p: 1.5,
+                borderRadius: 3,
+                background: "rgba(255,255,255,0.95)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.1)"
+            }}>
                 <RoundTimer client={client} />
             </Paper>
         </Box>
@@ -1194,23 +1339,106 @@ function GlobalData({ client, gameState }) {
 const roundTime = 300;
 
 function RoundTimer({ client }) {
-    const [timeLeft, setTimeLeft] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(roundTime);
+    const [timerState, setTimerState] = useState('stopped'); // 'stopped', 'running', 'paused'
+    const [timerSpeed, setTimerSpeed] = useState(1); // 1 = normal, 2 = double speed
+    const timerRef = useRef(null);
+
+    // Reset timer when new round starts
+    useEffect(() => {
+        setTimeLeft(roundTime);
+        setTimerState('stopped');
+        setTimerSpeed(1);
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+    }, [client.state?.round?.numRound]);
 
     useEffect(() => {
-        if (client) {
-            const handleTimeUpdate = (time) => {
-                setTimeLeft(time);
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
             }
+        };
+    }, []); const startTimer = (seconds = roundTime) => {
+        if (timerState === 'running') return;
 
-            client.on("timeUpdate", handleTimeUpdate); return () => {
-                client.off("timeUpdate", handleTimeUpdate);
-            }
+        if (timeLeft === null || timeLeft === 0) {
+            setTimeLeft(seconds);
         }
-    }, [client]);
 
-    const progress = (timeLeft / roundTime) * 100;
+        setTimerState('running');
 
-    function formatTime(seconds) {
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    setTimerState('stopped');
+                    // Emitir evento de fim de rodada
+                    client.sendMessage("roundEnd");
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000 / timerSpeed);
+    };
+
+    const stopTimer = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+        setTimerState('stopped');
+    };
+
+    const pauseTimer = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+        setTimerState('paused');
+    };
+
+    const resetTimer = () => {
+        stopTimer();
+        setTimeLeft(roundTime);
+    };
+
+    const accelerateTimer = () => {
+        const newSpeed = timerSpeed === 1 ? 2 : timerSpeed === 2 ? 4 : 1;
+        setTimerSpeed(newSpeed);
+
+        if (timerState === 'running') {
+            // Restart timer with new speed
+            pauseTimer();
+            setTimeout(() => {
+                setTimerState('running');
+                timerRef.current = setInterval(() => {
+                    setTimeLeft(prev => {
+                        if (prev <= 1) {
+                            clearInterval(timerRef.current);
+                            setTimerState('stopped');
+                            client.sendMessage("roundEnd");
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000 / newSpeed);
+            }, 50);
+        }
+    };
+
+    const nextRound = () => {
+        stopTimer();
+        setTimeLeft(roundTime);
+        client.sendMessage("nextRound");
+    };
+
+    const endRound = () => {
+        stopTimer();
+        client.sendMessage("roundEnd");
+    };
+
+    const progress = timeLeft ? (timeLeft / roundTime) * 100 : 0; function formatTime(seconds) {
+        if (seconds === null || seconds === undefined) return "5:00";
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -1228,14 +1456,22 @@ function RoundTimer({ client }) {
         }
         // Caso geral: não anima
         return '';
-    }
-
-    return (
+    } return (
         <>
-            <Box flex={1} display="flex" alignItems="center" justifyContent="center" position="relative" sx={{ height: 150 }}>
-                <CircularProgress color={"success"} classes={{
-                    circle: styles.circularProgressCircle,
-                }} variant="determinate" value={progress} size={120} />
+            {/* Timer Circular - Compacto */}
+            <Box flex={1} display="flex" alignItems="center" justifyContent="center" position="relative" sx={{ height: 90 }}>
+                <CircularProgress
+                    sx={{
+                        color: timeLeft <= 60 ? "#ff4757" : "#76c63f",
+                        '& .MuiCircularProgress-circle': {
+                            strokeWidth: 5,
+                            filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.2))"
+                        }
+                    }}
+                    variant="determinate"
+                    value={progress}
+                    size={80}
+                />
                 <Box
                     top={0}
                     left={0}
@@ -1247,14 +1483,167 @@ function RoundTimer({ client }) {
                     justifyContent="center"
                 >
                     <motion.span key={getTimeKey(timeLeft)}
-                        initial={{ scale: 1.5 }}
+                        initial={{ scale: 1.3 }}
                         animate={{ scale: 1 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.4 }}
                     >
-                        <Typography variant="h4" component="div" color="textSecondary">
+                        <Typography variant="h6" component="div" sx={{
+                            color: timeLeft <= 60 ? "#ff4757" : "#2d3748",
+                            fontWeight: 800,
+                            textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
+                            fontSize: "16px"
+                        }}>
                             {formatTime(timeLeft)}
                         </Typography>
                     </motion.span>
+                </Box>
+            </Box>
+
+            {/* Controles do Timer - Compactos */}
+            <Box display="flex" flexDirection="column" gap={1} mt={0.5} sx={{ width: "100%" }}>
+                <Typography variant="body2" textAlign="center" sx={{
+                    color: "#2d3748",
+                    fontWeight: 600,
+                    background: timerState === 'running' ?
+                        "linear-gradient(135deg, rgba(118, 198, 63, 0.2) 0%, rgba(255, 209, 69, 0.2) 100%)" :
+                        "rgba(0,0,0,0.05)",
+                    borderRadius: 2,
+                    py: 0.3,
+                    px: 0.8,
+                    fontSize: "12px"
+                }}>
+                    {timerState === 'running' ? '▶ Rodando' : timerState === 'paused' ? '⏸ Pausado' : '⏹ Parado'}
+                    {timerSpeed > 1 && ` (${timerSpeed}x)`}
+                </Typography>
+
+                {/* Linha 1: Controles básicos */}
+                <Box display="flex" gap={0.4} justifyContent="center" flexWrap="wrap">
+                    <Button
+                        size="small"
+                        variant={timerState === 'running' ? "outlined" : "contained"}
+                        sx={{
+                            minWidth: 32,
+                            height: 28,
+                            fontSize: 10,
+                            background: timerState !== 'running' ?
+                                "linear-gradient(135deg, #76c63f 0%, #5da83a 100%)" : "transparent",
+                            color: timerState !== 'running' ? "white" : "#76c63f",
+                            borderColor: "#76c63f",
+                            "&:hover": {
+                                background: timerState !== 'running' ?
+                                    "linear-gradient(135deg, #6ab02f 0%, #52962f 100%)" : "rgba(118, 198, 63, 0.1)"
+                            }
+                        }}
+                        onClick={() => startTimer()} disabled={timerState === 'running'}
+                    >
+                        ▶
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                            minWidth: 32,
+                            height: 28,
+                            fontSize: 10,
+                            borderColor: "#ffd145",
+                            color: "#ffd145",
+                            "&:hover": {
+                                background: "rgba(255, 209, 69, 0.1)"
+                            }
+                        }}
+                        onClick={pauseTimer}
+                        disabled={timerState !== 'running'}
+                    >
+                        ⏸
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                            minWidth: 32,
+                            height: 28,
+                            fontSize: 10,
+                            borderColor: "#ff4757",
+                            color: "#ff4757",
+                            "&:hover": {
+                                background: "rgba(255, 71, 87, 0.1)"
+                            }
+                        }}
+                        onClick={stopTimer}
+                        disabled={timerState === 'stopped'}
+                    >
+                        ⏹
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                            minWidth: 32,
+                            height: 28,
+                            fontSize: 10,
+                            borderColor: "#2d3748",
+                            color: "#2d3748",
+                            "&:hover": {
+                                background: "rgba(45, 55, 72, 0.1)"
+                            }
+                        }}
+                        onClick={resetTimer}
+                    >
+                        ↻
+                    </Button>
+                </Box>
+
+                {/* Linha 2: Controles avançados - Compactos */}
+                <Box display="flex" gap={0.4} justifyContent="center" flexWrap="wrap">
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={accelerateTimer}
+                        title={`Velocidade atual: ${timerSpeed}x`}
+                        sx={{
+                            minWidth: 40,
+                            height: 26,
+                            fontSize: 9,
+                            borderColor: "#9c88ff",
+                            color: "#9c88ff",
+                            "&:hover": {
+                                background: "rgba(156, 136, 255, 0.1)"
+                            }
+                        }}
+                    >
+                        ⚡{timerSpeed}x
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="contained" onClick={endRound}
+                        sx={{
+                            minWidth: 45,
+                            height: 26,
+                            fontSize: 9,
+                            background: "linear-gradient(135deg, #ff4757 0%, #e84143 100%)",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #e84143 0%, #d63031 100%)"
+                            }
+                        }}
+                    >
+                        🏁 Fim
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="contained"
+                        onClick={nextRound}
+                        sx={{
+                            minWidth: 45,
+                            height: 26,
+                            fontSize: 9,
+                            background: "linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #0984e3 0%, #2d3436 100%)"
+                            }
+                        }}
+                    >
+                        ➡ Next
+                    </Button>
                 </Box>
             </Box>
         </>
@@ -1263,69 +1652,76 @@ function RoundTimer({ client }) {
 
 function Country({ economy }) {
     return (
-        <Box gridColumn={"span 1"} display={"flex"} flexDirection={"column"} gap={2}>            <Paper sx={{
-            fontSize: "24px",
-            textAlign: "center",
-            background: "#f5a623",
-            color: "#fff",
-            padding: "4px 16px",
-            fontWeight: "bold",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-        }}>
-            <Typography fontSize={32} mt={"10px"}>
-                {economy.flag}{" "}
-                {economy.country}
-            </Typography>
-        </Paper>
-
-            <Paper sx={{ flex: "25%", paddingBottom: 3 }}>
-                <Typography variant="h6" sx={{ padding: 1, fontWeight: 700, textAlign: "center" }}>
-                    Dados
+        <Box display={"flex"} flexDirection={"column"} gap={1.5} sx={{ height: "100%" }}>              {/* Header do País - Compacto */}
+            <Paper sx={{
+                fontSize: "16px",
+                textAlign: "center",
+                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                color: "white",
+                padding: 1.5,
+                fontWeight: 800,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 3,
+                boxShadow: "0 6px 20px rgba(34, 139, 34, 0.3)",
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"
+            }}>
+                <Typography fontSize={20} sx={{ fontWeight: 800 }}>
+                    {economy.flag}{" "}
+                    {economy.country}
                 </Typography>
-                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 2fr"} sx={{
-                    padding: "0px 16px"
+            </Paper>
+
+            {/* Dados Econômicos - Compactos */}
+            <Paper sx={{
+                padding: 1.5,
+                borderRadius: 3,
+                background: "rgba(255,255,255,0.95)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.1)"
+            }}>
+                <Typography variant="h6" sx={{
+                    padding: 0.8,
+                    fontWeight: 800,
+                    textAlign: "center",
+                    color: "#2d3748",
+                    mb: 0.8,
+                    fontSize: "14px"
+                }}>
+                    📊 Indicadores Econômicos
+                </Typography>
+                <Box display={"grid"} gridTemplateColumns={"auto 1fr auto"} gap={0.8} sx={{
+                    "& > *": {
+                        display: "flex",
+                        alignItems: "center",
+                        py: 0.3
+                    }
                 }}>
                     <Dado label={"PIB"} value={"R$ " + (economy.stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
                     <Dado label={"Taxa de Juros"} value={(economy.stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
-                    <Dado label={"Gastos públicos"} value={"R$ " + (economy.stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
-                    <Dado label={"Investimentos privados"} value={"R$ " + (economy.stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
-                    <Dado label={"Oferta por moeda"} value={"R$ " + (economy.stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Demanda por moeda"} value={"R$ " + (economy.stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Consumo familiar"} value={"R$ " + (economy.stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
+                    <Dado label={"Gastos Públicos"} value={"R$ " + (economy.stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                    <Dado label={"Investimento Privado"} value={"R$ " + (economy.stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                    <Dado label={"Oferta de Moeda"} value={"R$ " + (economy.stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Demanda de Moeda"} value={"R$ " + (economy.stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Consumo Familiar"} value={"R$ " + (economy.stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
                 </Box>
             </Paper>
 
-            <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr", // Divide em duas colunas iguais
-                    flex: "1",
-                    gap: 2,
-                }}
-            >
+            {/* Score e Gráfico - Compactos */}
+            <Box sx={{
+                display: "grid",
+                gridTemplateRows: "auto 1fr",
+                flex: 1,
+                gap: 1.5
+            }}>
+                {/* Score */}
+                <CountryScore economy={economy} />
 
-                {/* Coluna da direita: Score e Chart */}
-                <Box
-                    sx={{
-                        gridColumn: "span 1",
-                        display: "grid",
-                        gridTemplateRows: "1fr 3fr", // Divide em duas linhas iguais
-                        gap: 2
-                    }}
-                >
-                    {/* Score */}
-                    <CountryScore economy={economy} />
-
-                    {/* Chart */}
-
-                    <CountryCurves economy={economy} />
-
-                </Box>
+                {/* Gráfico IS-LM */}
+                <CountryCurves economy={economy} />
             </Box>
-
-
         </Box>
     )
 }
@@ -1334,31 +1730,41 @@ function CountryScore({ economy }) {
     return (
         <Paper
             sx={{
-                padding: 2,
+                padding: 1.5,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "column",
-                gap: 1
+                gap: 0.8,
+                borderRadius: 3,
+                background: "rgba(255,255,255,0.95)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.1)"
             }}
         >
-            Score
-
-            <Box sx={{
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-                width: "80%",
+            <Typography variant="h6" sx={{
+                fontWeight: 800,
+                color: "#2d3748",
+                textAlign: "center",
+                fontSize: "13px"
+            }}>
+                🏆 Pontuação Econômica
+            </Typography>            <Box sx={{
+                background: "linear-gradient(135deg, #228B22 0%, #2E7D32 100%)",
+                width: "90%",
                 borderRadius: 2,
                 textAlign: "center",
+                padding: 1,
+                boxShadow: "0 3px 12px rgba(34, 139, 34, 0.3)"
             }}>
-                <Typography variant="h4" sx={{
-                    fontWeight: 700,
-                    marginTop: "10px",
-                    padding: "0 10px",
-                    paddingRight: "30px"
+                <Typography variant="h5" sx={{
+                    fontWeight: 900,
+                    color: "white",
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                    fontSize: "20px"
                 }}>
-                    {
-                        Math.floor(economy.score)
-                    }
+                    {Math.floor(economy.score)}
                 </Typography>
             </Box>
         </Paper>
@@ -1393,7 +1799,7 @@ function CountryCurves({ economy }) {
         )
     };
 
-        const minX = 0;
+    const minX = 0;
     const maxX = 0.3;
 
     // Agora gere xValues, isCurve, lmCurve com o range correto
@@ -1402,7 +1808,8 @@ function CountryCurves({ economy }) {
     const lmCurve = [];
     for (let i = minX; i <= maxX; i += 0.005) {
         const roundedI = parseFloat(i.toFixed(4));
-        xValues.push(roundedI); isCurve.push(calcularIS(roundedI));
+        xValues.push(roundedI);
+        isCurve.push(calcularIS(roundedI));
         lmCurve.push(calcularLM(roundedI));
     }
 
@@ -1413,66 +1820,88 @@ function CountryCurves({ economy }) {
         LM: lmCurve[i],
     }));
 
-    return (
-        <Paper
-            ref={containerRef}
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+    return (<Paper
+        ref={containerRef}
+        sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.95)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.3)",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.1)",
+            p: 0.8,
+            position: "relative"
+        }}
+    >
+        {/* Título do gráfico - Compacto */}
+        <Typography variant="body2" sx={{
+            position: "absolute",
+            top: 6,
+            left: 10,
+            fontWeight: 700,
+            color: "#2d3748",
+            background: "rgba(255,255,255,0.9)",
+            padding: "1px 6px",
+            borderRadius: 1.5,
+            fontSize: 10
+        }}>
+            📈 Curvas IS-LM
+        </Typography>
 
-            }}
-        >
-            <Box style={{ width: "100%", height: "75%" }}>                <ResponsiveContainer >
-                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+        <Box style={{ width: "100%", height: "100%" }}>
+            <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 20, right: 12, left: 12, bottom: 20 }}>
                     <XAxis
                         dataKey="x"
                         domain={[minX, maxX]}
                         type="number"
-                        tick={{ fontSize: 12, fill: "#444" }}
-                        label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 20, fontSize: 14, fill: "#222" }}
-                        axisLine={{ stroke: "#ccc" }}
-                        tickLine={false}
+                        tick={{ fontSize: 9, fill: "#2d3748" }}
+                        label={{ value: "Taxa de Juros (i)", position: "insideBottom", dy: 12, fontSize: 9, fill: "#2d3748" }}
+                        axisLine={{ stroke: "#cbd5e0", strokeWidth: 1 }}
+                        tickLine={{ stroke: "#cbd5e0" }}
                     />
                     <YAxis
-                        tick={{ fontSize: 12, fill: "#444" }}
-                        label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -10, fontSize: 14, fill: "#222" }}
-                        axisLine={{ stroke: "#ccc" }}
-                        tickLine={false}
+                        tick={{ fontSize: 9, fill: "#2d3748" }}
+                        label={{ value: "Renda (Y)", angle: -90, position: "insideLeft", dx: -3, fontSize: 9, fill: "#2d3748" }}
+                        axisLine={{ stroke: "#cbd5e0", strokeWidth: 1 }}
+                        tickLine={{ stroke: "#cbd5e0" }}
                     />
                     <RechartsLegend
                         verticalAlign="top"
                         align="center"
                         iconType="circle"
-                        wrapperStyle={{ fontSize: 12 }}
-                    />
-                    <Line
+                        wrapperStyle={{ fontSize: 9, paddingBottom: 3 }}
+                    />                        <Line
                         type="monotone"
                         dataKey="IS"
-                        stroke="#1f77b4"
+                        stroke="#228B22"
                         strokeWidth={2.5}
-                        dot={false} name="Curva IS"
+                        dot={false}
+                        name="Curva IS"
                     />
                     <Line
                         type="monotone"
                         dataKey="LM"
-                        stroke="#d62728"
+                        stroke="#2E7D32"
                         strokeWidth={2.5}
                         dot={false}
-                        name="Curva LM" />
-                    {/* Pontos de referência */}
+                        name="Curva LM"
+                    />
+                    {/* Pontos de referência - Compactos */}
                     <ReferenceDot
                         x={Number(taxaDeJuros.toFixed(4))}
                         y={calcularIS(taxaDeJuros)}
-                        stroke="#1f77b4"
-                        fill="#1f77b4"
+                        stroke="#228B22"
+                        fill="#228B22"
                         r={4}
                     />
                     <ReferenceDot
                         x={Number(taxaDeJuros.toFixed(4))}
                         y={calcularLM(taxaDeJuros)}
-                        stroke="#d62728"
-                        fill="#d62728"
+                        stroke="#2E7D32"
+                        fill="#2E7D32"
                         r={4}
                     />
                     {/* Ponto do PIB real (com validação) */}
@@ -1480,27 +1909,38 @@ function CountryCurves({ economy }) {
                         <ReferenceDot
                             x={Number(taxaDeJuros.toFixed(4))}
                             y={Number((pib / 100).toFixed(2))}
-                            stroke="#FFD700"
-                            fill="#FFD700"
+                            stroke="#ff4757"
+                            fill="#ff4757"
                             r={5}
                             name={"PIB Real"}
                         />
                     )}
                 </LineChart>
             </ResponsiveContainer>
-            </Box>
-        </Paper>
+        </Box>
+    </Paper>
     );
 }
 
 function Dado({ label, value, icon: Icon }) {
     return (
         <>
-            <Icon />
-            <Typography fontSize={14}>
+            <Icon sx={{
+                color: "#228B22",
+                fontSize: 16,
+                mr: 0.4
+            }} />
+            <Typography fontSize={11} sx={{
+                color: "#2d3748",
+                fontWeight: 600
+            }}>
                 {label}
             </Typography>
-            <Typography fontSize={14} fontWeight={400}>
+            <Typography fontSize={11} sx={{
+                fontWeight: 700,
+                color: "#1a202c",
+                textAlign: "right"
+            }}>
                 {value}
             </Typography>
         </>
@@ -1535,8 +1975,30 @@ function GlobalEventAnnouncement({ client, gameState }) {
     if (!globalEvent) return null;
 
     return (
-        <>
-            <motion.div key={globalEvent.name} style={{ p: 2, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, minHeight: 0 }} className={styles.globalEventContainer}>
+        <Box sx={{
+            minHeight: "100vh",
+
+            position: "relative",
+            overflow: "hidden"
+        }}>            {/* Header com Logo */}
+
+
+            {/* Conteúdo do Evento Global */}
+            <motion.div
+                key={globalEvent.name}
+                style={{
+                    padding: 16,
+                    paddingTop: 100,
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 24,
+                    minHeight: "100vh",
+                    justifyContent: "center"
+                }}
+                className={styles.globalEventContainer}
+            >
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.globalflipCard}>
                     <motion.div
                         className={styles.globalflipCardInner}
@@ -1555,21 +2017,40 @@ function GlobalEventAnnouncement({ client, gameState }) {
                         </div>
                         <div className={styles.globalEventCardBack}></div>
                     </motion.div>
-
                 </motion.div>
+
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 5.5, duration: 0.5 }}
-                >
-                    <Typography variant="h5" textAlign="center" marginTop={5} fontWeight={700} sx={{ color: "black" }}>
+                    style={{
+                        background: "rgba(255, 255, 255, 0.95)",
+                        backdropFilter: "blur(20px)",
+                        borderRadius: 20,
+                        padding: 24,
+                        border: "1px solid rgba(255, 255, 255, 0.3)",
+                        boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
+                        maxWidth: 800,
+                        textAlign: "center"
+                    }}
+                >                    <Typography variant="h4" sx={{
+                    fontWeight: 800,
+
+                    mb: 2
+                }}>
+                        🌍 Evento Global
+                    </Typography>
+                    <Typography variant="h5" sx={{
+                        color: "#2d3748",
+                        fontWeight: 600,
+                        lineHeight: 1.4
+                    }}>
                         {globalEvent.description}
                     </Typography>
                 </motion.div>
             </motion.div>
             <Canvas globalEvent={globalEvent} />
-        </>
-
+        </Box>
     );
 }
 

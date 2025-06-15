@@ -799,21 +799,37 @@ class ServerController {
         this.server = server;
 
         this.handleMessages();
-    } 
-    
+    }    
     handleMessages() {
-        this.socket.on("startTimer", () => {
-            this.server.round?.startTimer(300) || console.warn("No round to start timer for");
-        })
-
         this.socket.on("nextRound", () => {
             if (this.server.round && !this.server.round.roundEnded) {
                 console.warn("Cannot start next round while current round is still active");
                 return;
             }
             this.server.nextRound();
+        });        this.socket.on("roundEnd", () => {
+            if (this.server.round && !this.server.round.roundEnded) {
+                this.server.round.resolveRound();
+            }
         });
-    } emit(eventName, ...args) {
+
+        this.socket.on("endTutorial", () => {
+            if (this.server.tutorial) {
+                this.server.tutorial = false;
+                this.server.updateSync();
+            }
+        });
+
+        this.socket.on("endTutorial", () => {
+            if (this.server.tutorial) {
+                this.server.tutorial = false;
+                this.server.updateSync();
+                console.log("Tutorial ended by server controller");
+            }
+        });
+    }
+
+    emit(eventName, ...args) {
         // Emit an event to the server controller
         this.socket.emit(eventName, ...args);
     }
@@ -826,7 +842,6 @@ class Round {
         this.economies = economies;
         this.roundEnded = false;
         this.votes = [];
-        this.timer = null; // Inicializar timer como null
         this.cleanupCallbacks = []; // Array para callbacks de limpeza
     }
 
@@ -835,17 +850,9 @@ class Round {
         if (typeof callback === 'function') {
             this.cleanupCallbacks.push(callback);
         }
-    }
-
-    // Função para limpeza de recursos
+    }    // Função para limpeza de recursos
     cleanup() {
         try {
-            // Limpar timer se existe
-            if (this.timer) {
-                clearInterval(this.timer);
-                this.timer = null;
-            }
-
             // Executar callbacks de limpeza
             for (const callback of this.cleanupCallbacks) {
                 try {
@@ -853,11 +860,13 @@ class Round {
                 } catch (error) {
                     console.error('Error in cleanup callback:', error);
                 }
-            } this.cleanupCallbacks = [];
+            } 
+
+            this.cleanupCallbacks = [];
         } catch (error) {
             console.error('Error during round cleanup:', error);
         }
-    } onOptionSelected(client, optionIndex) {
+    }onOptionSelected(client, optionIndex) {
         if (!client || !client.entity) {
             console.error('Invalid client or entity');
             return;
@@ -1032,8 +1041,7 @@ class Round {
         } catch (error) {
             console.error('Error in applyGlobalEvent:', error);
         }
-    }
-    start() {
+    }    start() {
         this.globalEvent = this.server.getGlobalRandomEvent();
 
         // Aplicar impactos do evento global
@@ -1053,49 +1061,6 @@ class Round {
             );
         }
     }
-    
-    startTimer(seconds = 90) {
-        if (this.timer) {
-            console.warn("Timer already running");
-            return;
-        }
-
-        // Validar entrada
-        if (isNaN(seconds) || seconds <= 0) {
-            console.warn("Invalid timer duration, using default 90 seconds");
-            seconds = 90;
-        }
-
-        // Limitar tempo máximo para evitar problemas
-        seconds = Math.min(seconds, 600); // Máximo 10 minutos
-
-        try {
-            if (this.server.serverController) {
-                this.server.serverController.emit('timeUpdate', seconds);
-            }
-
-            this.timer = setInterval(() => {
-                try {
-                    seconds--;
-                    if (this.server.serverController) {
-                        this.server.serverController.emit('timeUpdate', seconds);
-                    }
-                    if (seconds <= 0) {
-                        clearInterval(this.timer);
-                        this.timer = null;
-                        this.resolveRound();
-                    }
-                } catch (error) {
-                    console.error('Error in timer interval:', error);
-                    clearInterval(this.timer);
-                    this.timer = null;
-                }
-            }, 1000);
-        } catch (error) {
-            console.error('Error starting timer:', error);
-            this.timer = null;
-        }
-    } 
     
     resolveRound() {
         try {
