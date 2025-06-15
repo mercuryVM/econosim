@@ -799,9 +799,11 @@ class ServerController {
         this.server = server;
 
         this.handleMessages();
-    } handleMessages() {
+    } 
+    
+    handleMessages() {
         this.socket.on("startTimer", () => {
-            this.server.round?.startTimer(3) || console.warn("No round to start timer for");
+            this.server.round?.startTimer(300) || console.warn("No round to start timer for");
         })
 
         this.socket.on("nextRound", () => {
