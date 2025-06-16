@@ -390,7 +390,9 @@ class Economy {
         // PIB real considera o efeito da taxa de juros no investimento
         const investimentoAjustado = this.investimentoPrivado - (this.sensibilidadeInvestimentoAoJuros * this.taxaDeJuros);
         return this.consumoFamiliar + investimentoAjustado + this.gastosPublicos;
-    }    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    }    
+    
+    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
     // Onde I = investimentoPrivado e b = sensibilidadeInvestimentoAoJuros
     calcularIS(i) {
         try {
@@ -1282,20 +1284,10 @@ class Round {
                 while (economy.pib < 0) {
                     console.log(`Economy ${economy.country} in deep recession (PIB: ${pibAtual}), applying emergency measures`);
 
-                    // Pib menor que zero. Pib é calculado como:
-                    // PIB = Consumo + Investimento + Gastos Públicos + (Exportações - Importações)
-                    // Ou seja, se o PIB é negativo, significa que a soma de todos esses componentes é insuficiente.
-                    economy.consumoFamiliar *= 0.9; // Reduzir consumo
-                    economy.investimentoPrivado *= 0.8; // Reduzir investimento
-                    economy.gastosPublicos *= 0.85; // Reduzir gastos públicos
-
-                    // Forças naturais de recuperação
-                    economy.nivelPrecos *= 0.95; // Pressão deflacionária
-                    economy.demandaMoeda *= 0.95; // Menor demanda por liquidez
-
-
-                    // Reduzir sensibilidade aos juros (mercado menos ativo)
-                    economy.sensibilidadeInvestimentoAoJuros *= 0.95;
+                    economy.nivelPrecos += 5; // Aumentar preços para estimular consumo
+                    economy.consumoFamiliar *= 1.05; // Aumentar consumo
+                    economy.investimentoPrivado *= 1.1; // Estimular investimento privado
+                    economy.gastosPublicos *= 1.2; // Aumentar gastos públicos para estimular a economia
                 }
 
 

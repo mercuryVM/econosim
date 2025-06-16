@@ -54,7 +54,7 @@
                                 "gastosPublicos": 20,
                                 "investimentoPrivado": -5,
                                 "consumoFamiliar": -8,
-                                "score_factor": 0.5
+                                "score_factor": 0.8
                             },
                             "resultText": "Apesar dos estímulos, a crise imobiliária deixou cicatrizes profundas. O investimento privado permaneceu retraído devido à desconfiança no setor, e o consumo sofreu com o efeito riqueza negativo da queda dos preços imobiliários."
                         },
@@ -70,7 +70,7 @@
                                 "consumoFamiliar": -12,
                                 "investimentoPrivado": -8,
                                 "nivelPrecos": -0.15,
-                                "score_factor": 0.4
+                                "score_factor": 0.8
                             },
                             "resultText": "A profunda crise imobiliária mostrou-se resistente aos estímulos. O investimento privado colapsou devido à desconfiança, o consumo despencou e uma deflação preocupante sinalizou uma recessão severa."
                         },
@@ -85,7 +85,7 @@
                                 "investimentoPrivado": 20,
                                 "consumoFamiliar": 8,
                                 "gastosPublicos": 12,
-                                "score_factor": 1.05
+                                "score_factor": 1.025
                             },
                             "resultText": "A injeção de liquidez pelo Banco Central, combinada com subsídios diretos ao vital setor da construção civil, conseguiu estancar a sangria. Construtoras retomaram projetos e o investimento no setor mostrou sinais de vida, puxando consigo um modesto, mas bem-vindo, aumento no consumo familiar."
                         },
@@ -100,7 +100,7 @@
                                 "gastosPublicos": 12,
                                 "nivelPrecos": 0.35,
                                 "investimentoPrivado": -5,
-                                "score_factor": 0.4
+                                "score_factor": 1.025
                             },
                             "resultText": "A tentativa de reanimar a economia foi percebida como desesperada e mal calibrada. O excesso de moeda injetada sem um correspondente aumento na confiança ou na produção real apenas alimentou a inflação. O setor da construção, apesar dos subsídios, permaneceu cético, e a população viu seu poder de compra corroído."
                         },
@@ -132,7 +132,7 @@
                                 "nivelPrecos": 0.4,
                                 "consumoFamiliar": -8,
                                 "investimentoPrivado": 0,
-                                "score_factor": 0.35
+                                "score_factor": 1.0
                             },
                             "resultText": "A combinação agressiva de expansão monetária e grandes obras públicas, sem a devida cautela, superaqueceu perigosamente a economia. A inflação disparou, corroendo o poder de compra das famílias e gerando incerteza. O investimento privado estagnou, temendo a instabilidade, e o tiro saiu pela culatra."
                         }
@@ -261,7 +261,7 @@
                                 "gastosPublicos": 10,
                                 "nivelPrecos": 0.15,
                                 "investimentoPrivado": -5,
-                                "score_factor": 0.5
+                                "score_factor": 1.0
                             },
                             "resultText": "As políticas pareceram desalinhadas e arriscadas. Enquanto os incentivos fiscais tentavam atrair capital, o uso de reservas para segurar o câmbio sem um forte pilar de confiança apenas adiou o problema, gerando inflação e não revertendo a fuga de investimentos de forma sustentável."
                         }
@@ -309,7 +309,7 @@
                                 "gastosPublicos": 8,
                                 "investimentoPrivado": -5,
                                 "consumoFamiliar": -3,
-                                "score_factor": 0.9
+                                "score_factor": 0.85
                             },
                             "resultText": "A elevação drástica dos juros, combinada com incentivos fiscais, conseguiu reduzir a saída de capitais, mas a um alto custo interno. O crédito encareceu, afetando investimentos e consumo."
                         },
@@ -325,7 +325,7 @@
                                 "investimentoPrivado": -15,
                                 "consumoFamiliar": -10,
                                 "sensibilidadeInvestimentoAoJuros_factor": 1.1,
-                                "score_factor": 0.6
+                                "score_factor": 0.85
                             },
                             "resultText": "As medidas não conseguiram conter a fuga de capitais. Os juros altos aprofundaram a recessão, derrubando consumo e investimento, criando um ciclo vicioso de desconfiança."
                         },
@@ -431,7 +431,7 @@
                                 "investimentoPrivado": 22,
                                 "sensibilidadeInvestimentoAoJuros_factor": 1.2,
                                 "sensibilidadeDaMoedaARenda_factor": 1.1,
-                                "score_factor": 1.2
+                                "score_factor": 1.125
                             },
                             "resultText": "A combinação visionária de estímulo monetário e investimento estratégico em capital humano provou ser um sucesso. O crescimento acelerou de forma sustentável, com mão de obra qualificada absorvendo as novas tecnologias e expandindo ainda mais o potencial produtivo do país."
                         },
@@ -446,7 +446,7 @@
                                 "gastosPublicos": 15,
                                 "nivelPrecos": 0.2,
                                 "demandaMoeda": 8,
-                                "score_factor": 1.05
+                                "score_factor": 1.125
                             },
                             "resultText": "O crescimento foi robusto, mas a política monetária excessivamente frouxa, mesmo com investimentos em educação, começou a gerar pressões inflacionárias. A demanda agregada superaqueceu a capacidade produtiva no curto prazo, exigindo cautela futura."
                         },
@@ -459,7 +459,7 @@
                             "impact": {
                                 "investimentoPrivado": 10,
                                 "gastosPublicos": -10,
-                                "score_factor": 1.1
+                                "score_factor": 1.05
                             },
                             "resultText": "A política de estabilidade monetária do Banco Central evitou a formação de bolhas, enquanto os incentivos fiscais direcionados impulsionaram ainda mais o setor tecnológico. O crescimento foi sólido e concentrado, fortalecendo a base inovadora da economia."
                         },
@@ -473,7 +473,7 @@
                                 "nivelPrecos": 0.3,
                                 "investimentoPrivado": 5,
                                 "consumoFamiliar": -5,
-                                "score_factor": 0.8
+                                "score_factor": 1.05
                             },
                             "resultText": "O excesso de estímulo e a desregulamentação rápida criaram uma bolha tecnológica perigosa. Os preços dispararam devido ao superaquecimento, e quando a bolha estourou, muitos investimentos se mostraram especulativos, prejudicando o consumo."
                         },
@@ -550,7 +550,7 @@
                                 "gastosPublicos": -10,
                                 "consumoFamiliar": 5,
                                 "investimentoPrivado": 3,
-                                "score_factor": 1.15
+                                "score_factor": 1.05
                             },
                             "resultText": "A abordagem prudente de leve aperto monetário e consolidação fiscal, em um momento de otimismo, fortaleceu os fundamentos da economia. A confiança se manteve elevada, a dívida pública caiu, e o crescimento continuou de forma mais sustentável, aumentando a resiliência de Clodolândia."
                         },
@@ -565,7 +565,7 @@
                                 "gastosPublicos": -10,
                                 "investimentoPrivado": -8,
                                 "consumoFamiliar": -3,
-                                "score_factor": 0.8
+                                "score_factor": 1.05
                             },
                             "resultText": "O ajuste fiscal e monetário rompeu o ciclo de otimismo excessivo, revelando que parte da confiança estava baseada em expectativas irreais. O mercado corrigiu para baixo, investimentos especulativos perderam valor, e o consumo recuou."
                         },
@@ -579,7 +579,7 @@
                                 "ofertaMoeda": 10,
                                 "consumoFamiliar": 15,
                                 "gastosPublicos": 12,
-                                "score_factor": 1.25
+                                "score_factor": 1.15
                             },
                             "resultText": "A política de manter a torneira da liquidez aberta, combinada com a expansão de programas sociais, capitalizou o otimismo existente. O padrão de vida da população melhorou, o consumo disparou, e a popularidade do governo atingiu níveis recordes, com forte crescimento econômico."
                         },
@@ -594,7 +594,7 @@
                                 "gastosPublicos": 12,
                                 "nivelPrecos": 0.25,
                                 "demandaMoeda": 8,
-                                "score_factor": 1.05
+                                "score_factor": 1.15
                             },
                             "resultText": "O excesso de estímulo, tanto monetário quanto fiscal, começou a gerar preocupações inflacionárias. Embora o bem-estar social tenha aumentado no curto prazo, a sustentabilidade dessa política foi questionada, e o mercado começou a precificar riscos de superaquecimento."
                         },
@@ -679,7 +679,7 @@
                                 "investimentoPrivado": -8,
                                 "consumoFamiliar": -5,
                                 "gastosPublicos": -3,
-                                "score_factor": 0.8
+                                "score_factor": 0.7
                             },
                             "resultText": "Apesar das reformas anticorrupção, a desconfiança persistiu e o aperto monetário agravou a recessão. A economia ainda sofre com os efeitos do escândalo."
                         },
@@ -694,7 +694,7 @@
                                 "investimentoPrivado": -12,
                                 "consumoFamiliar": -8,
                                 "gastosPublicos": -5,
-                                "score_factor": 0.6
+                                "score_factor": 0.7
                             },
                             "resultText": "A reforma anticorrupção foi vista como insuficiente e o aumento de juros aprofundou a recessão. A desconfiança persistiu, causando fuga de capitais e forte retração econômica."
                         },
@@ -710,7 +710,7 @@
                                 "investimentoPrivado": -8,
                                 "nivelPrecos": 0.25,
                                 "consumoFamiliar": -5,
-                                "score_factor": 0.7
+                                "score_factor": 0.75
                             },
                             "resultText": "A tentativa de estímulo econômico foi vista como desperdício de recursos públicos em meio ao escândalo. A inflação disparou, a confiança despencou e a economia entrou em recessão profunda."
                         },
@@ -726,7 +726,7 @@
                                 "investimentoPrivado": -15,
                                 "nivelPrecos": 0.4,
                                 "consumoFamiliar": -12,
-                                "score_factor": 0.5
+                                "score_factor": 0.75
                             },
                             "resultText": "As medidas foram vistas como uma tentativa desesperada de encobrir o escândalo. A liquidez excessiva gerou inflação descontrolada e a crise de confiança se aprofundou, levando a economia ao colapso."
                         },
@@ -805,7 +805,7 @@
                                 "gastosPublicos": 15,
                                 "investimentoPrivado": 18,
                                 "consumoFamiliar": 8,
-                                "score_factor": 1.2
+                                "score_factor": 1.1
                             },
                             "resultText": "A política cambial favorável e os investimentos em infraestrutura criaram um ciclo virtuoso. As exportações dispararam, atraindo investimentos e impulsionando um forte crescimento econômico."
                         },
@@ -819,7 +819,7 @@
                                 "gastosPublicos": 15,
                                 "nivelPrecos": 0.1,
                                 "consumoFamiliar": 3,
-                                "score_factor": 1.0
+                                "score_factor": 1.1
                             },
                             "resultText": "Os investimentos em infraestrutura demoraram a maturar e a desvalorização cambial gerou alguma inflação importada. Os ganhos com o acordo foram mais modestos do que o esperado inicialmente."
                         },
@@ -834,7 +834,7 @@
                                 "gastosPublicos": 10,
                                 "investimentoPrivado": 20,
                                 "consumoFamiliar": 8,
-                                "score_factor": 1.15
+                                "score_factor": 1.0499999999999998
                             },
                             "resultText": "O crédito farto e barato, tanto do BC quanto do governo, turbinou o investimento e a capacidade exportadora. Jundiaí aproveitou ao máximo o novo acordo comercial."
                         },
@@ -850,7 +850,7 @@
                                 "investimentoPrivado": 8,
                                 "nivelPrecos": 0.15,
                                 "consumoFamiliar": 3,
-                                "score_factor": 0.95
+                                "score_factor": 1.0499999999999998
                             },
                             "resultText": "O estímulo ao crédito foi excessivo, gerando endividamento e pressões inflacionárias. Embora as exportações tenham crescido, a qualidade do crescimento foi questionada."
                         },
@@ -931,7 +931,7 @@
                                 "consumoFamiliar": 5,
                                 "nivelPrecos": -0.05,
                                 "investimentoPrivado": 1,
-                                "score_factor": 1.05
+                                "score_factor": 1.025
                             },
                             "resultText": "A negociação bem-sucedida, apoiada por uma política monetária que controlou a inflação da crise, permitiu o fim da greve. A produção foi retomada e a confiança começou a se restabelecer, embora com custos fiscais."
                         },
@@ -946,7 +946,7 @@
                                 "gastosPublicos": 10,
                                 "consumoFamiliar": -5,
                                 "investimentoPrivado": -2,
-                                "score_factor": 0.8
+                                "score_factor": 1.025
                             },
                             "resultText": "As concessões salariais foram insuficientes para acalmar os ânimos completamente, e a política monetária restritiva dificultou a recuperação. A greve deixou sequelas na produção e no consumo."
                         },
@@ -961,7 +961,7 @@
                                 "consumoFamiliar": -3,
                                 "investimentoPrivado": -2,
                                 "gastosPublicos": -2,
-                                "score_factor": 0.5
+                                "score_factor": 0.75
                             },
                             "resultText": "A postura inflexível do governo e a sinalização monetária dúbia agravaram a crise. A greve se prolongou, causando danos severos à economia e à imagem do país."
                         },
@@ -990,7 +990,7 @@
                                 "consumoFamiliar": -3,
                                 "investimentoPrivado": -2,
                                 "gastosPublicos": -1,
-                                "score_factor": 0.6
+                                "score_factor": 1.0
                             },
                             "resultText": "A combinação de repressão à greve com aperto monetário aprofundou a crise. A produção demorou a normalizar, a confiança despencou e a economia mergulhou em recessão."
                         },
@@ -1054,7 +1054,7 @@
                                 "gastosPublicos": 15,
                                 "investimentoPrivado": 22,
                                 "consumoFamiliar": 5.5,
-                                "score_factor": 1.25
+                                "score_factor": 1.175
                             },
                             "resultText": "A política de estabilidade monetária e o investimento em capital humano criaram um ambiente ideal para a inovação florescer de forma sustentável. O setor de serviços modernizou-se, impulsionando toda a economia."
                         },
@@ -1068,7 +1068,7 @@
                                 "gastosPublicos": 15,
                                 "investimentoPrivado": 15,
                                 "consumoFamiliar": 3.5,
-                                "score_factor": 1.1
+                                "score_factor": 1.175
                             },
                             "resultText": "Os investimentos em educação demoraram a surtir efeito e a política monetária neutra não foi suficiente para acelerar a difusão da inovação. O crescimento foi positivo, mas abaixo do potencial máximo."
                         },
@@ -1082,7 +1082,7 @@
                                 "taxaDeJuros": -0.25,
                                 "investimentoPrivado": 28,
                                 "consumoFamiliar": 6,
-                                "score_factor": 1.3
+                                "score_factor": 1.05
                             },
                             "resultText": "O crédito facilitado e um ambiente regulatório amigável transformaram Jundiaí num verdadeiro hub de inovação. Novas empresas surgiram em profusão, e o setor de serviços experimentou um boom."
                         },
@@ -1097,7 +1097,7 @@
                                 "investimentoPrivado": 15,
                                 "nivelPrecos": 0.15,
                                 "consumoFamiliar": 4,
-                                "score_factor": 1.0
+                                "score_factor": 1.05
                             },
                             "resultText": "O excesso de estímulo e a desregulamentação rápida geraram um crescimento acelerado, mas com sinais de uma possível bolha no setor de tecnologia e pressões inflacionárias."
                         },
@@ -1175,7 +1175,7 @@
                                 "gastosPublicos": 18,
                                 "consumoFamiliar": -1,
                                 "nivelPrecos": -0.05,
-                                "score_factor": 1.0
+                                "score_factor": 0.95
                             },
                             "resultText": "O auxílio aos produtores ajudou a mitigar as perdas e o aperto monetário controlou a inflação. A recuperação do setor foi iniciada, mas a economia ainda sentiu o impacto negativo."
                         },
@@ -1190,7 +1190,7 @@
                                 "gastosPublicos": 18,
                                 "consumoFamiliar": -19,
                                 "investimentoPrivado": -10,
-                                "score_factor": 0.7
+                                "score_factor": 0.95
                             },
                             "resultText": "O aumento de juros em meio à crise agrícola aprofundou a recessão. O auxílio governamental foi insuficiente para compensar a queda na renda e no consumo."
                         },
@@ -1204,7 +1204,7 @@
                                 "consumoFamiliar": 5,
                                 "investimentoPrivado": -0.5,
                                 "nivelPrecos": -0.1,
-                                "score_factor": 1.05
+                                "score_factor": 1.025
                             },
                             "resultText": "A importação de alimentos estabilizou os preços e garantiu o abastecimento, aliviando a pressão sobre os consumidores. A política monetária neutra evitou maiores danos a outros setores."
                         },
@@ -1218,7 +1218,7 @@
                                 "consumoFamiliar": -8,
                                 "investimentoPrivado": -2.5,
                                 "nivelPrecos": 0.05,
-                                "score_factor": 0.8
+                                "score_factor": 1.025
                             },
                             "resultText": "A importação resolveu o problema de preços no curto prazo, mas prejudicou gravemente a recuperação dos produtores locais e piorou a balança comercial. A crise agrícola causou desemprego rural e migração para as cidades."
                         },
@@ -1321,7 +1321,7 @@
                             "impact": {
                                 "gastosPublicos": 10,
                                 "consumoFamiliar": 2,
-                                "score_factor": 0.9
+                                "score_factor": 0.9750000000000001
                             },
                             "resultText": "A valorização da moeda e o aumento de impostos frearam o ímpeto do turismo. Embora a arrecadação tenha aumentado e as importações ficado mais baratas, o setor perdeu competitividade."
                         },
@@ -1335,7 +1335,7 @@
                                 "gastosPublicos": 8,
                                 "investimentoPrivado": 3,
                                 "nivelPrecos": -0.05,
-                                "score_factor": 1.05
+                                "score_factor": 0.9750000000000001
                             },
                             "resultText": "A valorização cambial ajudou a controlar a inflação e os novos impostos geraram receita, mas o crescimento do turismo foi moderado. O governo conseguiu equilibrar os benefícios com a necessidade de controle."
                         },
