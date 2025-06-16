@@ -1271,7 +1271,7 @@ class Round {
             const penaltyLM = 0//Math.min(distanciaLMNormalizada * 100, 100);
 
             // Bonus por PIB saudável (entre 25-50)
-            const pibBonus = economy.pib >= 25 && economy.pib <= 50 ? 100 : 0;
+            const pibBonus = 0//economy.pib >= 25 && economy.pib <= 50 ? 100 : 0;
 
             // Score final
             const score = Math.max(0, baseScore - penaltyIS - penaltyLM + pibBonus);
