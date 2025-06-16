@@ -713,7 +713,7 @@ function RenderGame({ client, gameState }) {
 
     return (
         <>
-            {!tutorial && gameState && state === 0 && <GlobalEventAnnouncement client={client} gameState={gameState} />}
+            {!tutorial && gameState && state === 0 && !gameState.round.roundEnded && <GlobalEventAnnouncement client={client} gameState={gameState} />}
             {!tutorial && localGameState && state === 1 && !gameState.round.roundEnded && <Dashboard client={client} gameState={localGameState} />}            {tutorial && (
                 <Tutorial tutorial={tutorial} setTutorial={setTutorial} client={client} />
             )}
@@ -740,8 +740,11 @@ function GameSummary({ gameState, client }) {
 
     useEffect(() => {
         if (client && winner) {
-            client.playSound("gameSummary", 0.5);
-        }
+            const sound = client.playSound("gameSummary", 0.5);
+            return () => {
+                sound.stop?.(); // Stop sound when component unmounts
+            }
+        } 
     }, [])
 
     useEffect(() => {
