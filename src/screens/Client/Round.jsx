@@ -12,6 +12,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import PercentIcon from '@mui/icons-material/Percent';
+import SuccessIcon from '@mui/icons-material/CheckCircle';
 
 function TutorialWaitingScreen() {
     return (
@@ -356,7 +357,7 @@ function RoundBody({ client, gameState, playerState }) {
                 backgroundColor: "rgba(255, 255, 255, 0.8)",
                 backdropFilter: "blur(10px)",
             }}>
-                
+
 
                 <Typography variant="h4" sx={{ padding: 2 }} textAlign={"center"} marginTop={3}>
                     {
@@ -379,21 +380,21 @@ function RoundBody({ client, gameState, playerState }) {
             </Paper>
 
             <Box display={"grid"} gridTemplateColumns={"0.5fr 3fr 2fr"} sx={{
-                    padding: "16px",
-                    background: "white",
-                    borderRadius: "20px",
-                    flex: 1,
-                    margin: "0 auto",
-                   
-                }}>
-                    <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
-                    <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
-                    <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
-                    <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
-                    <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                    <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
-                </Box>
+                padding: "16px",
+                background: "white",
+                borderRadius: "20px",
+                flex: 1,
+                margin: "0 auto",
+
+            }}>
+                <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
+                <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
+            </Box>
         </Box>
     )
 }
@@ -534,9 +535,14 @@ function RoundOption({ playerState, onClick, description, selected, voteValue = 
                     cursor: "pointer"
                 }
             }}>
+                
+
                 <Typography sx={{
                     fontSize: "15px"
                 }}>
+                    {selected && (
+                    <SuccessIcon sx={{ color: "green", marginRight: 1 }} />
+                )}
                     {description}
                 </Typography>
 
