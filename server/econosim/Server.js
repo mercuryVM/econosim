@@ -75,7 +75,9 @@ class Server {
         this.globalPossibleEvents.splice(index, 1);
 
         return event;
-    } startGame() {
+    } 
+    
+    startGame() {
         if (this.started) {
             return;
         }
@@ -87,7 +89,9 @@ class Server {
         this.updateSync();
 
         this.nextRound();
-    }    nextRound() {
+    }    
+    
+    nextRound() {
         try {
             // Check if we've reached the maximum rounds (5)
             if (this.currentRound >= 5) {
@@ -567,7 +571,9 @@ class Entity {
 
     removePlayer(client) {
         delete this.players[client.id];
-    } sendMessage(eventName, ...args) {
+    } 
+    
+    sendMessage(eventName, ...args) {
         // Send a message to all players in this entity
         Object.values(this.players).forEach(player => {
             player.sendEvent(eventName, ...args);
@@ -1209,15 +1215,20 @@ class Round {
                 economy.score_factor = outcome.score_factor;
             }
         }
-    }
-
+    }    
+    
     calculateScores() {
         // Calcular score para cada economia
 
-        const k = 500;
+        const k = 150;
         const scaleFactor = 2;
 
         for (const economy of this.economies) {
+            console.log(`Calculating score for economy: ${economy.country}`);
+            console.log(`Pib: ${economy.pib}, Taxa de Juros: ${economy.taxaDeJuros}`);
+            console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
+            console.log(`Score Factor: ${economy.score_factor}`);
+
             const score = Math.max(0, 1000 - (Math.min(economy.distanciaIS, scaleFactor) * k / scaleFactor) - (Math.min(economy.distanciaLM, scaleFactor) * k / scaleFactor));
             economy.score += Math.floor(score * economy.score_factor * (this.globalEvent?.score_factor || 1));
         }

@@ -2117,10 +2117,11 @@ function CountryCurves({ economy }) {
                         align="center"
                         iconType="circle"
                         wrapperStyle={{ fontSize: 9, paddingBottom: 3 }}
-                    />                        <Line
+                    />           
+                     <Line
                         type="monotone"
                         dataKey="IS"
-                        stroke="#228B22"
+                        stroke="#1f77b4"
                         strokeWidth={2.5}
                         dot={false}
                         name="Curva IS"
@@ -2128,25 +2129,24 @@ function CountryCurves({ economy }) {
                     <Line
                         type="monotone"
                         dataKey="LM"
-                        stroke="#2E7D32"
+                        stroke="#d62728"
                         strokeWidth={2.5}
                         dot={false}
-                        name="Curva LM"
-                    />
+                        name="Curva LM" />
                     {/* Pontos de referência - Compactos */}
-                    <ReferenceDot
+                     <ReferenceDot
                         x={Number(taxaDeJuros.toFixed(4))}
                         y={calcularIS(taxaDeJuros)}
-                        stroke="#228B22"
-                        fill="#228B22"
-                        r={4}
+                        stroke="#1f77b4"
+                        fill="#1f77b4"
+                        r={5}
                     />
                     <ReferenceDot
                         x={Number(taxaDeJuros.toFixed(4))}
                         y={calcularLM(taxaDeJuros)}
-                        stroke="#2E7D32"
-                        fill="#2E7D32"
-                        r={4}
+                        stroke="#d62728"
+                        fill="#d62728"
+                        r={5}
                     />
                     {/* Ponto do PIB real (com validação) */}
                     {pib > 0 && (
