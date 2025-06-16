@@ -625,7 +625,7 @@ function Tutorial({ setTutorial, tutorial, client }) {
         if (ref.current) {
             //on end
             ref.current.onended = () => {
-                endTutorial();
+                //endTutorial();
             };
         }
     }, [ref, setTutorial, endTutorial]);
@@ -727,7 +727,7 @@ function RenderGame({ client, gameState }) {
 
 function GameSummary({ gameState, client }) {
     const [showWinner, setShowWinner] = useState(false);
-    
+
     // Calculate final scores and determine winner
     const finalScores = gameState.economies.map(economy => ({
         country: economy.country,
@@ -735,9 +735,15 @@ function GameSummary({ gameState, client }) {
         score: Math.floor(economy.score || 0),
         stats: economy.stats
     })).sort((a, b) => b.score - a.score);
-    
+
     const winner = finalScores[0];
-    
+
+    useEffect(() => {
+        if (client && winner) {
+            client.playSound("gameSummary", 0.5);
+        }
+    }, [])
+
     useEffect(() => {
         // Show winner after a delay
         const timer = setTimeout(() => {
@@ -746,10 +752,10 @@ function GameSummary({ gameState, client }) {
                 client.playSound("goodEvent", 0.3);
             }
         }, 3000);
-        
+
         return () => clearTimeout(timer);
-    }, [client]);    
-    
+    }, [client]);
+
     return (
         <Box sx={{
             flex: 1,
@@ -832,15 +838,15 @@ function GameSummary({ gameState, client }) {
                     background: "rgba(255,255,255,0.8)",
                     borderRadius: 3
                 }}>
-                    <Typography variant="h6" sx={{ 
-                        fontWeight: 700, 
+                    <Typography variant="h6" sx={{
+                        fontWeight: 700,
                         mb: 2,
                         color: "#2d3748",
                         fontSize: "1.1rem"
                     }}>
                         📊 Ranking Final das Economias
                     </Typography>
-                    
+
                     {finalScores.map((economy, index) => (
                         <motion.div
                             key={economy.country}
@@ -854,13 +860,13 @@ function GameSummary({ gameState, client }) {
                                 justifyContent: "space-between",
                                 p: 1.2,
                                 mb: 1,
-                                background: index === 0 ? 
+                                background: index === 0 ?
                                     "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)" :
-                                    index === 1 ? 
-                                    "linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%)" :
-                                    index === 2 ?
-                                    "linear-gradient(135deg, #CD7F32 0%, #B8860B 100%)" :
-                                    "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                                    index === 1 ?
+                                        "linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%)" :
+                                        index === 2 ?
+                                            "linear-gradient(135deg, #CD7F32 0%, #B8860B 100%)" :
+                                            "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
                                 borderRadius: 2,
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
                             }}>
@@ -941,19 +947,19 @@ function GameSummary({ gameState, client }) {
                     background: "rgba(255,255,255,0.8)",
                     borderRadius: 3
                 }}>
-                    <Typography variant="h6" sx={{ 
-                        fontWeight: 700, 
+                    <Typography variant="h6" sx={{
+                        fontWeight: 700,
                         mb: 2,
                         color: "#2d3748",
                         fontSize: "1.1rem"
                     }}>
                         📊 Histórico de Decisões por Economia
                     </Typography>
-                    
+
                     {finalScores.map((economy, index) => {
                         const decisions = economy.stats.decisions || { good: 0, bad: 0, neutral: 0 };
                         const totalDecisions = decisions.good + decisions.bad + decisions.neutral;
-                        
+
                         return (
                             <motion.div
                                 key={`decisions-${economy.country}`}
@@ -976,12 +982,12 @@ function GameSummary({ gameState, client }) {
                                     }}>
                                         {economy.flag} {economy.country}
                                     </Typography>
-                                    
-                                    <Box sx={{ 
-                                        display: "grid", 
-                                        gridTemplateColumns: "repeat(3, 1fr)", 
+
+                                    <Box sx={{
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(3, 1fr)",
                                         gap: 1,
-                                        textAlign: "center" 
+                                        textAlign: "center"
                                     }}>
                                         <Box sx={{
                                             p: 1,
@@ -996,7 +1002,7 @@ function GameSummary({ gameState, client }) {
                                                 ✅ Decisões Boas
                                             </Typography>
                                         </Box>
-                                        
+
                                         <Box sx={{
                                             p: 1,
                                             borderRadius: 1,
@@ -1010,7 +1016,7 @@ function GameSummary({ gameState, client }) {
                                                 ⚖️ Decisões Neutras
                                             </Typography>
                                         </Box>
-                                        
+
                                         <Box sx={{
                                             p: 1,
                                             borderRadius: 1,
@@ -1025,11 +1031,11 @@ function GameSummary({ gameState, client }) {
                                             </Typography>
                                         </Box>
                                     </Box>
-                                    
+
                                     {totalDecisions > 0 && (
                                         <Box sx={{ mt: 1 }}>
-                                            <Typography variant="caption" sx={{ 
-                                                color: "#666", 
+                                            <Typography variant="caption" sx={{
+                                                color: "#666",
                                                 fontSize: "0.75rem",
                                                 fontStyle: "italic"
                                             }}>
@@ -1060,20 +1066,20 @@ function GameSummary({ gameState, client }) {
                             background: "rgba(255,255,255,0.8)",
                             borderRadius: 3
                         }}>
-                            <Typography variant="h6" sx={{ 
-                                fontWeight: 700, 
+                            <Typography variant="h6" sx={{
+                                fontWeight: 700,
                                 mb: 2,
                                 color: "#2d3748",
                                 fontSize: "1.1rem"
                             }}>
                                 🌍 Estatísticas Globais de Decisões
                             </Typography>
-                            
-                            <Box sx={{ 
-                                display: "grid", 
-                                gridTemplateColumns: "repeat(4, 1fr)", 
+
+                            <Box sx={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(4, 1fr)",
                                 gap: 1.5,
-                                textAlign: "center" 
+                                textAlign: "center"
                             }}>
                                 <Box sx={{
                                     p: 1.5,
@@ -1088,7 +1094,7 @@ function GameSummary({ gameState, client }) {
                                         ✅ Boas
                                     </Typography>
                                 </Box>
-                                
+
                                 <Box sx={{
                                     p: 1.5,
                                     borderRadius: 2,
@@ -1102,7 +1108,7 @@ function GameSummary({ gameState, client }) {
                                         ⚖️ Neutras
                                     </Typography>
                                 </Box>
-                                
+
                                 <Box sx={{
                                     p: 1.5,
                                     borderRadius: 2,
@@ -1116,7 +1122,7 @@ function GameSummary({ gameState, client }) {
                                         ❌ Ruins
                                     </Typography>
                                 </Box>
-                                
+
                                 <Box sx={{
                                     p: 1.5,
                                     borderRadius: 2,
@@ -1124,7 +1130,7 @@ function GameSummary({ gameState, client }) {
                                     color: "white"
                                 }}>
                                     <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.2rem" }}>
-                                        {globalStats.totalDecisions > 0 ? 
+                                        {globalStats.totalDecisions > 0 ?
                                             ((globalStats.totalGood / globalStats.totalDecisions) * 100).toFixed(0) : 0}%
                                     </Typography>
                                     <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
@@ -1146,7 +1152,7 @@ function GameSummary({ gameState, client }) {
                             Rodadas Jogadas
                         </Typography>
                     </Paper>
-               
+
                     <Paper sx={{ p: 1.5, textAlign: "center", borderRadius: 3 }}>
                         <Typography variant="h6" sx={{ fontWeight: 900, color: "#228B22", fontSize: "1.3rem" }}>
                             {finalScores.reduce((total, economy) => total + economy.score, 0)}
@@ -1179,7 +1185,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
         return {
             old: oldGameState.economies[index],
             new: gameState.economies[index],
-            index: index        }
+            index: index
+        }
     }, [gameState, oldGameState]);
 
     useEffect(() => {
@@ -1261,8 +1268,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 </Typography>
             </Box>
         )
-    } 
-    
+    }
+
     function State1({ economy, votes }) {
         const [localState, setLocalState] = useState(0);
         const [stats, setStats] = useState(economy.old.stats || {});
@@ -1521,7 +1528,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
                             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                             textTransform: "uppercase",
                             width: "calc(100% - 32px)",
-                            pt: "10px",                        }}>
+                            pt: "10px",
+                        }}>
                             RESULTADOS - Rodada {gameState.round?.numRound}/5
                         </Typography>
                             <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
@@ -1554,8 +1562,8 @@ function RoundEnd({ client, gameState, oldGameState }) {
                 }
             </Box>
         )
-    }    
-    
+    }
+
     return (
         <>
             {state === 0 && <State0 />}
@@ -1576,7 +1584,7 @@ function RoundEndGraph({ economy }) {
         nivelPrecos,
         demandaMoeda,
         sensibilidadeInvestimentoAoJuros,
-        sensibilidadeDaMoedaAosJuros,        sensibilidadeDaMoedaARenda
+        sensibilidadeDaMoedaAosJuros, sensibilidadeDaMoedaARenda
     } = economy.stats;
 
     // Fórmula IS: Y = C + (I - b*i) + G
@@ -1729,7 +1737,8 @@ function GlobalData({ client, gameState }) {
                 color: "white",
                 borderRadius: 3,
                 boxShadow: "0 6px 20px rgba(34, 139, 34, 0.3)",
-                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"            }}>
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)"
+            }}>
                 🎯 Round {round.numRound}/5
             </Paper>
 
@@ -2226,7 +2235,7 @@ function CountryCurves({ economy }) {
         nivelPrecos,
         demandaMoeda,
         sensibilidadeInvestimentoAoJuros,
-        sensibilidadeDaMoedaAosJuros,        sensibilidadeDaMoedaARenda
+        sensibilidadeDaMoedaAosJuros, sensibilidadeDaMoedaARenda
     } = economy.stats;
 
     // Fórmula IS: Y = C + (I - b*i) + G
@@ -2315,8 +2324,8 @@ function CountryCurves({ economy }) {
                         align="center"
                         iconType="circle"
                         wrapperStyle={{ fontSize: 9, paddingBottom: 3 }}
-                    />           
-                     <Line
+                    />
+                    <Line
                         type="monotone"
                         dataKey="IS"
                         stroke="#1f77b4"

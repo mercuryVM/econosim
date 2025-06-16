@@ -9,6 +9,7 @@ import GoodEventSound from '../sounds/goodEvent.mp3';
 import RoundEndSound from '../sounds/roundEnd.mp3';
 import PreIntroSound from '../sounds/preIntro.wav';
 import LobbySound from '../sounds/econosim_lobby.mp3';
+import GameSummarySound from '../sounds/econosim_end.mp3';
 
 let client = undefined;
 
@@ -75,6 +76,7 @@ class Server extends EventSource {
         this.soundManager.loadSound('roundEnd', RoundEndSound);
         this.soundManager.loadSound('preIntro', PreIntroSound);
         this.soundManager.loadSound('lobby', LobbySound);
+        this.soundManager.loadSound('gameSummary', GameSummarySound);
 
         this.handleMessages();
     }
