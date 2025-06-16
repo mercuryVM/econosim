@@ -1327,7 +1327,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
         useEffect(() => {
             const onClick = (e) => {
                 e.preventDefault();
-                const isRightClick = e.button === -1; // Right click
+                const isRightClick = e.button === 2; // Right click
 
                 if (!isRightClick) {
                     if (localState === 0) {
