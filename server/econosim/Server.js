@@ -75,8 +75,8 @@ class Server {
         this.globalPossibleEvents.splice(index, 1);
 
         return event;
-    } 
-    
+    }
+
     startGame() {
         if (this.started) {
             return;
@@ -89,8 +89,8 @@ class Server {
         this.updateSync();
 
         this.nextRound();
-    }    
-    
+    }
+
     nextRound() {
         try {
             // Check if we've reached the maximum rounds (5)
@@ -375,10 +375,15 @@ class Economy {
         this.demandaMoeda = 7;   // R$ 7 bi
         this.sensibilidadeInvestimentoAoJuros = 250; // Sensibilidade do investimento à taxa de juros
         this.sensibilidadeDaMoedaAosJuros = 250; // Sensibilidade da demanda de moeda aos juros (h) - REDUZIDO para LM mais íngreme
-        this.sensibilidadeDaMoedaARenda = 20; // Sensibilidade da demanda de moeda à renda (k) - AUMENTADO para LM mais íngreme
-
-        this.score_factor = 1; // Fator de multiplicação do score
+        this.sensibilidadeDaMoedaARenda = 20; // Sensibilidade da demanda de moeda à renda (k) - AUMENTADO para LM mais íngreme        this.score_factor = 1; // Fator de multiplicação do score
         this.score = 0;
+
+        // Rastreamento de decisões
+        this.decisions = {
+            good: 0,    // Decisões com score_factor >= 1.0
+            bad: 0,     // Decisões com score_factor < 0.8
+            neutral: 0  // Decisões entre 0.8 e 1.0
+        };
     }
 
     get pib() {
@@ -444,7 +449,7 @@ class Economy {
             console.error('Error in calcularLM:', error);
             return this.pib; // Retornar PIB atual como fallback
         }
-    };    get taxaDeJurosEquilibrio() {
+    }; get taxaDeJurosEquilibrio() {
         try {
             // IS: Y = C + (I - b*i) + G
             // LM: Y = (M/P + h*i) / k
@@ -456,7 +461,7 @@ class Economy {
             // k*C + k*I + k*G - M/P = k*b*i + h*i
             // k*C + k*I + k*G - M/P = i*(k*b + h)
             // i = [k*C + k*I + k*G - M/P] / [k*b + h]
-            
+
             const C = this.consumoFamiliar;
             const G = this.gastosPublicos;
             const I = this.investimentoPrivado;
@@ -519,10 +524,10 @@ class Economy {
             gastosPublicos: this.gastosPublicos,
             ofertaMoeda: this.ofertaMoeda,
             nivelPrecos: this.nivelPrecos,
-            demandaMoeda: this.demandaMoeda,
-            sensibilidadeInvestimentoAoJuros: this.sensibilidadeInvestimentoAoJuros,
+            demandaMoeda: this.demandaMoeda, sensibilidadeInvestimentoAoJuros: this.sensibilidadeInvestimentoAoJuros,
             sensibilidadeDaMoedaAosJuros: this.sensibilidadeDaMoedaAosJuros,
             sensibilidadeDaMoedaARenda: this.sensibilidadeDaMoedaARenda,
+            decisions: this.decisions,
         }
     }
 
@@ -575,8 +580,8 @@ class Entity {
 
     removePlayer(client) {
         delete this.players[client.id];
-    } 
-    
+    }
+
     sendMessage(eventName, ...args) {
         // Send a message to all players in this entity
         Object.values(this.players).forEach(player => {
@@ -818,7 +823,7 @@ class ServerController {
         this.server = server;
 
         this.handleMessages();
-    }    
+    }
     handleMessages() {
         this.socket.on("nextRound", () => {
             if (this.server.round && !this.server.round.roundEnded) {
@@ -826,7 +831,7 @@ class ServerController {
                 return;
             }
             this.server.nextRound();
-        });        this.socket.on("roundEnd", () => {
+        }); this.socket.on("roundEnd", () => {
             if (this.server.round && !this.server.round.roundEnded) {
                 this.server.round.resolveRound();
             }
@@ -879,13 +884,13 @@ class Round {
                 } catch (error) {
                     console.error('Error in cleanup callback:', error);
                 }
-            } 
+            }
 
             this.cleanupCallbacks = [];
         } catch (error) {
             console.error('Error during round cleanup:', error);
         }
-    }onOptionSelected(client, optionIndex) {
+    } onOptionSelected(client, optionIndex) {
         if (!client || !client.entity) {
             console.error('Invalid client or entity');
             return;
@@ -970,8 +975,8 @@ class Round {
         const realIndex = economiaAtual.possibleLocalEvents.indexOf(evento);
         economiaAtual.possibleLocalEvents.splice(realIndex, 1); // Remove o evento do pool para não repetir
         return evento;
-    } 
-    
+    }
+
     applyGlobalEvent() {
         try {
             if (!this.globalEvent || !this.globalEvent.impact) {
@@ -1060,7 +1065,7 @@ class Round {
         } catch (error) {
             console.error('Error in applyGlobalEvent:', error);
         }
-    }    start() {
+    } start() {
         this.globalEvent = this.server.getGlobalRandomEvent();
 
         // Aplicar impactos do evento global
@@ -1080,7 +1085,7 @@ class Round {
             );
         }
     }
-    
+
     resolveRound() {
         try {
             this.applyRound();
@@ -1182,9 +1187,9 @@ class Round {
             economy.consumoFamiliar += (outcome.consumoFamiliar ? outcome.consumoFamiliar : 0);
             economy.investimentoPrivado += (outcome.investimentoPrivado ? outcome.investimentoPrivado : 0);
             economy.gastosPublicos += (outcome.gastosPublicos ? outcome.gastosPublicos : 0);
-            economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda  : 0);
-            economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos  : 0);
-            economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda  : 0);
+            economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda : 0);
+            economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos : 0);
+            economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda : 0);
 
             // Aplicar restrições para manter realismo econômico
             economy.demandaMoeda = Math.max(0.1, economy.demandaMoeda); // Mínimo de 0.1 bi
@@ -1212,15 +1217,22 @@ class Round {
             }
             if (outcome.sensibilidadeDaMoedaARenda_factor) {
                 economy.sensibilidadeDaMoedaARenda *= outcome.sensibilidadeDaMoedaARenda_factor;
-            }
-
-            // Aplicar modificador de score do outcome
+            }            // Aplicar modificador de score do outcome
             if (outcome.score_factor) { // Changed from score_modifier
                 economy.score_factor = outcome.score_factor;
+
+                // Rastrear tipo de decisão baseado no score_factor
+                if (outcome.score_factor >= 1.0) {
+                    economy.decisions.good++;
+                } else if (outcome.score_factor < 0.8) {
+                    economy.decisions.bad++;
+                } else {
+                    economy.decisions.neutral++;
+                }
             }
         }
-    }    
-      calculateScores() {
+    }
+    calculateScores() {
         // Calcular score para cada economia
 
         for (const economy of this.economies) {
@@ -1229,51 +1241,72 @@ class Round {
             console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
             console.log(`Score Factor: ${economy.score_factor}`);
 
-            const score = Math.max(0, 1000 - (Math.min(economy.distanciaIS - 1, 2) * 500) - (Math.min(economy.distanciaLM - 1, 2) * 500));
-            economy.score += Math.floor(score * economy.score_factor * (this.globalEvent?.score_factor || 1));
+            const score = Math.max(0, (1000 * (this.globalEvent?.score_factor || 1) * economy.score_factor) - (Math.min(economy.distanciaIS - 1, 2) * 500) - (Math.min(economy.distanciaLM - 1, 2) * 500));
+            economy.score += Math.floor(score);
         }
-        
+
         // Aplicar correções automáticas de ciclo econômico
         this.applyEconomicCycles();
     }
-    
+
     applyEconomicCycles() {
         for (const economy of this.economies) {
             try {
                 const pibAtual = economy.pib;
-                
+
                 // Detectar superaquecimento (PIB muito alto)
                 if (pibAtual > 60) {
                     console.log(`Economy ${economy.country} overheating (PIB: ${pibAtual}), applying cooling measures`);
-                    
+
                     // Pressões naturais de sobreaquecimento
                     economy.nivelPrecos += 1; // Inflação de demanda
                     economy.consumoFamiliar *= 0.96; // Redução do poder de compra
                     economy.investimentoPrivado *= 0.7; // Cautela dos investidores
-                    
+
                     // Aumentar sensibilidade aos juros (mercado mais volátil)
                     economy.sensibilidadeInvestimentoAoJuros *= 1.05;
                 }
-                
+
                 // Detectar recessão prolongada (PIB muito baixo)
                 else if (pibAtual < 25) {
                     console.log(`Economy ${economy.country} in recession (PIB: ${pibAtual}), applying natural recovery`);
-                    
+
                     // Forças naturais de recuperação
                     economy.nivelPrecos *= 0.99; // Pressão deflacionária
                     economy.demandaMoeda *= 0.98; // Menor demanda por liquidez
-                    
+
                     // Reduzir sensibilidade aos juros (mercado menos ativo)
                     economy.sensibilidadeInvestimentoAoJuros *= 0.98;
                 }
-                
+
+                while (economy.pib < 0) {
+                    console.log(`Economy ${economy.country} in deep recession (PIB: ${pibAtual}), applying emergency measures`);
+
+                    // Pib menor que zero. Pib é calculado como:
+                    // PIB = Consumo + Investimento + Gastos Públicos + (Exportações - Importações)
+                    // Ou seja, se o PIB é negativo, significa que a soma de todos esses componentes é insuficiente.
+                    economy.consumoFamiliar *= 0.9; // Reduzir consumo
+                    economy.investimentoPrivado *= 0.8; // Reduzir investimento
+                    economy.gastosPublicos *= 0.85; // Reduzir gastos públicos
+
+                    // Forças naturais de recuperação
+                    economy.nivelPrecos *= 0.95; // Pressão deflacionária
+                    economy.demandaMoeda *= 0.95; // Menor demanda por liquidez
+
+
+                    // Reduzir sensibilidade aos juros (mercado menos ativo)
+                    economy.sensibilidadeInvestimentoAoJuros *= 0.95;
+                }
+
+
+
                 // Aplicar mínimos e máximos para manter realismo
                 economy.nivelPrecos = Math.max(10, Math.min(200, economy.nivelPrecos));
                 economy.consumoFamiliar = Math.max(1, Math.min(100, economy.consumoFamiliar));
                 economy.investimentoPrivado = Math.max(0, Math.min(80, economy.investimentoPrivado));
                 economy.gastosPublicos = Math.max(1, Math.min(60, economy.gastosPublicos));
                 economy.sensibilidadeInvestimentoAoJuros = Math.max(50, Math.min(500, economy.sensibilidadeInvestimentoAoJuros));
-                
+
             } catch (error) {
                 console.error(`Error applying economic cycles to ${economy.country}:`, error);
             }

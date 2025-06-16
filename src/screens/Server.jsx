@@ -934,7 +934,207 @@ function GameSummary({ gameState, client }) {
                             </Typography>
                         </Paper>
                     </motion.div>
-                )}
+                )}                {/* Decision Statistics */}
+                <Paper sx={{
+                    p: 2,
+                    mb: 2.5,
+                    background: "rgba(255,255,255,0.8)",
+                    borderRadius: 3
+                }}>
+                    <Typography variant="h6" sx={{ 
+                        fontWeight: 700, 
+                        mb: 2,
+                        color: "#2d3748",
+                        fontSize: "1.1rem"
+                    }}>
+                        📊 Histórico de Decisões por Economia
+                    </Typography>
+                    
+                    {finalScores.map((economy, index) => {
+                        const decisions = economy.stats.decisions || { good: 0, bad: 0, neutral: 0 };
+                        const totalDecisions = decisions.good + decisions.bad + decisions.neutral;
+                        
+                        return (
+                            <motion.div
+                                key={`decisions-${economy.country}`}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1, duration: 0.4 }}
+                            >
+                                <Box sx={{
+                                    p: 1.5,
+                                    mb: 1.5,
+                                    border: "1px solid rgba(0,0,0,0.1)",
+                                    borderRadius: 2,
+                                    background: "rgba(255,255,255,0.6)"
+                                }}>
+                                    <Typography variant="body1" sx={{
+                                        fontWeight: 700,
+                                        color: "#2d3748",
+                                        mb: 1,
+                                        fontSize: "1rem"
+                                    }}>
+                                        {economy.flag} {economy.country}
+                                    </Typography>
+                                    
+                                    <Box sx={{ 
+                                        display: "grid", 
+                                        gridTemplateColumns: "repeat(3, 1fr)", 
+                                        gap: 1,
+                                        textAlign: "center" 
+                                    }}>
+                                        <Box sx={{
+                                            p: 1,
+                                            borderRadius: 1,
+                                            background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
+                                            color: "white"
+                                        }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.1rem" }}>
+                                                {decisions.good}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
+                                                ✅ Decisões Boas
+                                            </Typography>
+                                        </Box>
+                                        
+                                        <Box sx={{
+                                            p: 1,
+                                            borderRadius: 1,
+                                            background: "linear-gradient(135deg, #FF9800 0%, #f57c00 100%)",
+                                            color: "white"
+                                        }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.1rem" }}>
+                                                {decisions.neutral}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
+                                                ⚖️ Decisões Neutras
+                                            </Typography>
+                                        </Box>
+                                        
+                                        <Box sx={{
+                                            p: 1,
+                                            borderRadius: 1,
+                                            background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                                            color: "white"
+                                        }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.1rem" }}>
+                                                {decisions.bad}
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
+                                                ❌ Decisões Ruins
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    
+                                    {totalDecisions > 0 && (
+                                        <Box sx={{ mt: 1 }}>
+                                            <Typography variant="caption" sx={{ 
+                                                color: "#666", 
+                                                fontSize: "0.75rem",
+                                                fontStyle: "italic"
+                                            }}>
+                                                Taxa de acerto: {((decisions.good / totalDecisions) * 100).toFixed(1)}%
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </Box>
+                            </motion.div>
+                        );
+                    })}
+                </Paper>                {/* Global Decision Stats */}
+                {(() => {
+                    const globalStats = finalScores.reduce((acc, economy) => {
+                        const decisions = economy.stats.decisions || { good: 0, bad: 0, neutral: 0 };
+                        return {
+                            totalGood: acc.totalGood + decisions.good,
+                            totalBad: acc.totalBad + decisions.bad,
+                            totalNeutral: acc.totalNeutral + decisions.neutral,
+                            totalDecisions: acc.totalDecisions + decisions.good + decisions.bad + decisions.neutral
+                        };
+                    }, { totalGood: 0, totalBad: 0, totalNeutral: 0, totalDecisions: 0 });
+
+                    return (
+                        <Paper sx={{
+                            p: 2,
+                            mb: 2.5,
+                            background: "rgba(255,255,255,0.8)",
+                            borderRadius: 3
+                        }}>
+                            <Typography variant="h6" sx={{ 
+                                fontWeight: 700, 
+                                mb: 2,
+                                color: "#2d3748",
+                                fontSize: "1.1rem"
+                            }}>
+                                🌍 Estatísticas Globais de Decisões
+                            </Typography>
+                            
+                            <Box sx={{ 
+                                display: "grid", 
+                                gridTemplateColumns: "repeat(4, 1fr)", 
+                                gap: 1.5,
+                                textAlign: "center" 
+                            }}>
+                                <Box sx={{
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    background: "linear-gradient(135deg, #4CAF50 0%, #45a049 100%)",
+                                    color: "white"
+                                }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.2rem" }}>
+                                        {globalStats.totalGood}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                                        ✅ Boas
+                                    </Typography>
+                                </Box>
+                                
+                                <Box sx={{
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    background: "linear-gradient(135deg, #FF9800 0%, #f57c00 100%)",
+                                    color: "white"
+                                }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.2rem" }}>
+                                        {globalStats.totalNeutral}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                                        ⚖️ Neutras
+                                    </Typography>
+                                </Box>
+                                
+                                <Box sx={{
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    background: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+                                    color: "white"
+                                }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.2rem" }}>
+                                        {globalStats.totalBad}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                                        ❌ Ruins
+                                    </Typography>
+                                </Box>
+                                
+                                <Box sx={{
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    background: "linear-gradient(135deg, #2196F3 0%, #1976D2 100%)",
+                                    color: "white"
+                                }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 900, fontSize: "1.2rem" }}>
+                                        {globalStats.totalDecisions > 0 ? 
+                                            ((globalStats.totalGood / globalStats.totalDecisions) * 100).toFixed(0) : 0}%
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                                        📈 Taxa Global
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Paper>
+                    );
+                })()}
 
                 {/* Game Stats - Compacto */}
                 <Box sx={{ mt: 2.5, display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 1.5 }}>
