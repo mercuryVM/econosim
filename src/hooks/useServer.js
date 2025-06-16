@@ -85,11 +85,7 @@ class Server extends EventSource {
         this.socket.on('stateUpdate', (data) => {
             this.updateState(data);
         });
-
-        this.socket.on("timeUpdate", (data) => {
-            this.emit('timeUpdate', data);
-        });
-    }    sendMessage(event, data) {
+    }sendMessage(event, data) {
         this.socket.emit(event, data);
     }    updateState(data) {
         // Update the client state based on the received data
