@@ -1337,10 +1337,10 @@ class Round {
         const combinedScore = (scoreFactor * 0.6) + (economicImpactScore * 0.25) + (sustainabilityScore * 0.15);
 
         // Categorização refinada
-        if (combinedScore >= 1.05) {
+        if (combinedScore > 1) {
             economy.decisions.good++;
             console.log(`  ✅ DECISÃO BOA: Score combinado ${combinedScore.toFixed(3)} (${evento.name})`);
-        } else if (combinedScore >= 0.85) {
+        } else if (combinedScore > 0.7) {
             economy.decisions.neutral++;
             console.log(`  ⚖️ DECISÃO NEUTRA: Score combinado ${combinedScore.toFixed(3)} (${evento.name})`);
         } else {

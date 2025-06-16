@@ -54,7 +54,7 @@
                                 "gastosPublicos": 20,
                                 "investimentoPrivado": -5,
                                 "consumoFamiliar": -8,
-                                "score_factor": 0.8
+                                "score_factor": 0.7
                             },
                             "resultText": "Apesar dos estímulos, a crise imobiliária deixou cicatrizes profundas. O investimento privado permaneceu retraído devido à desconfiança no setor, e o consumo sofreu com o efeito riqueza negativo da queda dos preços imobiliários."
                         },
@@ -70,7 +70,7 @@
                                 "consumoFamiliar": -12,
                                 "investimentoPrivado": -8,
                                 "nivelPrecos": -0.15,
-                                "score_factor": 0.8
+                                "score_factor": 0.7
                             },
                             "resultText": "A profunda crise imobiliária mostrou-se resistente aos estímulos. O investimento privado colapsou devido à desconfiança, o consumo despencou e uma deflação preocupante sinalizou uma recessão severa."
                         },
