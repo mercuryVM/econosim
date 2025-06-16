@@ -1203,7 +1203,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
         } else {
             // Check if we've reached the maximum rounds (5)
             if (gameState.round.numRound >= 5) {
-                setState(2); // Go to game summary state
+                setState(3); // Go to game summary state
             } else {
                 client.sendMessage("nextRound");
             }
@@ -1571,7 +1571,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
         <>
             {state === 0 && <State0 />}
             {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} />}
-            {state === 2 && <GameSummary gameState={gameState} client={client} />}
+            {state === 3 && <GameSummary gameState={gameState} client={client} />}
         </>
     )
 }
