@@ -375,7 +375,8 @@ class Economy {
         this.demandaMoeda = 7;   // R$ 7 bi
         this.sensibilidadeInvestimentoAoJuros = 250; // Sensibilidade do investimento à taxa de juros
         this.sensibilidadeDaMoedaAosJuros = 250; // Sensibilidade da demanda de moeda aos juros (h) - REDUZIDO para LM mais íngreme
-        this.sensibilidadeDaMoedaARenda = 20; // Sensibilidade da demanda de moeda à renda (k) - AUMENTADO para LM mais íngreme        this.score_factor = 1; // Fator de multiplicação do score
+        this.sensibilidadeDaMoedaARenda = 20; // Sensibilidade da demanda de moeda à renda (k) - AUMENTADO para LM mais íngreme        
+        this.score_factor = 1; // Fator de multiplicação do score
         this.score = 0;
 
         // Rastreamento de decisões
