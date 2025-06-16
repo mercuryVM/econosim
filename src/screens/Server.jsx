@@ -2359,7 +2359,7 @@ function CountryCurves({ economy }) {
     );
 }
 
-function Dado({ label, value, icon: Icon }) {
+export function Dado({ label, value, icon: Icon }) {
     return (
         <>
             <Icon sx={{

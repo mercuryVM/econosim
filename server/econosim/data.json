@@ -85,7 +85,7 @@
                                 "investimentoPrivado": 20,
                                 "consumoFamiliar": 8,
                                 "gastosPublicos": 12,
-                                "score_factor": 1.025
+                                "score_factor": 1.1
                             },
                             "resultText": "A injeção de liquidez pelo Banco Central, combinada com subsídios diretos ao vital setor da construção civil, conseguiu estancar a sangria. Construtoras retomaram projetos e o investimento no setor mostrou sinais de vida, puxando consigo um modesto, mas bem-vindo, aumento no consumo familiar."
                         },
@@ -100,7 +100,7 @@
                                 "gastosPublicos": 12,
                                 "nivelPrecos": 0.35,
                                 "investimentoPrivado": -5,
-                                "score_factor": 1.025
+                                "score_factor": 0.9
                             },
                             "resultText": "A tentativa de reanimar a economia foi percebida como desesperada e mal calibrada. O excesso de moeda injetada sem um correspondente aumento na confiança ou na produção real apenas alimentou a inflação. O setor da construção, apesar dos subsídios, permaneceu cético, e a população viu seu poder de compra corroído."
                         },
@@ -116,7 +116,7 @@
                                 "gastosPublicos": 12,
                                 "consumoFamiliar": 2,
                                 "nivelPrecos": 0.05,
-                                "score_factor": 0.95
+                                "score_factor": 0.9
                             },
                             "resultText": "As políticas, embora bem-intencionadas, pareceram descoordenadas. A redução de juros incentivou algum investimento, e os subsídios deram um alívio temporário à construção, mas o impacto geral foi modesto. A economia mostrou uma leve melhora, mas sem o vigor necessário para uma recuperação plena, com uma pequena pressão inflacionária começando a surgir."
                         },
@@ -132,7 +132,7 @@
                                 "nivelPrecos": 0.4,
                                 "consumoFamiliar": -8,
                                 "investimentoPrivado": 0,
-                                "score_factor": 1.0
+                                "score_factor": 0.9
                             },
                             "resultText": "A combinação agressiva de expansão monetária e grandes obras públicas, sem a devida cautela, superaqueceu perigosamente a economia. A inflação disparou, corroendo o poder de compra das famílias e gerando incerteza. O investimento privado estagnou, temendo a instabilidade, e o tiro saiu pela culatra."
                         }

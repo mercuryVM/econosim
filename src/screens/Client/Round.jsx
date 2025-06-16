@@ -1,11 +1,17 @@
 import { Box, LinearProgress, Paper, Typography, CircularProgress } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import banco from '../assets/bancoCentral.png'
 import bancoBg from '../assets/bancoBg.png'
 import governo from '../assets/governo.png'
 import governoBg from '../assets/governoBg.png'
 import Logo from '../assets/econosim_logo_1.svg';
+import { Dado } from '../Server';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import PercentIcon from '@mui/icons-material/Percent';
 
 function TutorialWaitingScreen() {
     return (
@@ -54,7 +60,7 @@ function TutorialWaitingScreen() {
                     filter: 'blur(30px)'
                 }}
             />
-            
+
             {/* Additional green accent elements */}
             <Box
                 sx={{
@@ -107,9 +113,9 @@ function TutorialWaitingScreen() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
                     flex: 1,
                     justifyContent: 'center',
@@ -118,13 +124,13 @@ function TutorialWaitingScreen() {
             >
                 {/* Spinner animado */}
                 <Box sx={{ position: 'relative' }}>
-                    <CircularProgress 
-                        size={100} 
+                    <CircularProgress
+                        size={100}
                         thickness={2.5}
-                        sx={{ 
+                        sx={{
                             color: '#76c63f',
                             filter: 'drop-shadow(0 4px 12px rgba(118, 198, 63, 0.3))'
-                        }} 
+                        }}
                     />
                     <Box
                         sx={{
@@ -141,9 +147,9 @@ function TutorialWaitingScreen() {
 
                 {/* Textos principais */}
                 <Box sx={{ maxWidth: '280px', px: 1 }}>
-                    <Typography 
-                        variant="h4" 
-                        sx={{ 
+                    <Typography
+                        variant="h4"
+                        sx={{
                             fontWeight: 'bold',
                             mb: 1.5,
                             fontSize: '1.75rem',
@@ -154,10 +160,10 @@ function TutorialWaitingScreen() {
                     >
                         Aguarde o tutorial
                     </Typography>
-                    
-                    <Typography 
-                        variant="h6" 
-                        sx={{ 
+
+                    <Typography
+                        variant="h6"
+                        sx={{
                             opacity: 0.8,
                             fontSize: '1.1rem',
                             fontWeight: 500,
@@ -170,18 +176,18 @@ function TutorialWaitingScreen() {
                     </Typography>
 
                     <motion.div
-                        animate={{ 
-                            opacity: [0.6, 1, 0.6] 
+                        animate={{
+                            opacity: [0.6, 1, 0.6]
                         }}
-                        transition={{ 
-                            duration: 2.5, 
+                        transition={{
+                            duration: 2.5,
                             repeat: Infinity,
                             ease: "easeInOut"
                         }}
                     >
-                        <Typography 
-                            variant="body1" 
-                            sx={{ 
+                        <Typography
+                            variant="body1"
+                            sx={{
                                 fontSize: '0.95rem',
                                 opacity: 0.7,
                                 lineHeight: 1.4,
@@ -202,8 +208,8 @@ function TutorialWaitingScreen() {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 style={{ marginBottom: '20px' }}
             >
-                <Box 
-                    sx={{ 
+                <Box
+                    sx={{
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1,
@@ -225,9 +231,9 @@ function TutorialWaitingScreen() {
                         animate={{ scale: [1, 1.3, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                     />
-                    <Typography 
-                        variant="caption" 
-                        sx={{ 
+                    <Typography
+                        variant="caption"
+                        sx={{
                             fontSize: '0.8rem',
                             opacity: 0.9,
                             fontWeight: 500,
@@ -280,7 +286,7 @@ export function Round({ client, gameState, playerState }) {
                     transition={{ duration: 0.6, ease: "easeOut" }}
                 />
             </Box>
-            
+
             {/* Conteúdo da Rodada com margem para o header */}
             <Box sx={{ marginTop: { xs: '70px', sm: '80px' } }}>
                 <RoundNumber playerState={playerState} />
@@ -306,6 +312,14 @@ function RoundBody({ client, gameState, playerState }) {
         }
     }, [roundData]);
 
+
+    const stats = useMemo(() => {
+        if (!gameState) {
+            return {};
+        }
+        return gameState.economies[playerState.myEconomyIndex]?.stats;
+    }, [gameState, playerState]);
+
     if (!roundData || !event) {
         return (
             <Paper>
@@ -314,7 +328,7 @@ function RoundBody({ client, gameState, playerState }) {
                 </Typography>
             </Paper>
         );
-    }    return (
+    } return (
         <Box display={"flex"} flexDirection={"column"} gap={2} sx={{
             minHeight: "calc(100vh - 80px)",
             padding: 2,
@@ -323,24 +337,27 @@ function RoundBody({ client, gameState, playerState }) {
             backgroundAttachment: "fixed",
             overflowY: "auto",
         }}>            <Typography variant="h4" sx={{
-                backgroundColor: "#76c63f",
-                color: "#fff",
-                padding: "4px 16px",
-                borderRadius: "4px",
-                fontWeight: "bold",
-                display: "inline-block",
-                textAlign: "center",
-                boxShadow: "0px 2px 4px rgba(118, 198, 63, 0.3)",
-                textTransform: "uppercase",
-                width: "calc(100% - 32px)",
-                pt: "10px",
-                marginTop: 2            }}>
+            backgroundColor: "#76c63f",
+            color: "#fff",
+            padding: "4px 16px",
+            borderRadius: "4px",
+            fontWeight: "bold",
+            display: "inline-block",
+            textAlign: "center",
+            boxShadow: "0px 2px 4px rgba(118, 198, 63, 0.3)",
+            textTransform: "uppercase",
+            width: "calc(100% - 32px)",
+            pt: "10px",
+            marginTop: 2
+        }}>
                 Rodada {roundData.numRound}/5
             </Typography>
             <Paper sx={{
                 backgroundColor: "rgba(255, 255, 255, 0.8)",
                 backdropFilter: "blur(10px)",
             }}>
+                
+
                 <Typography variant="h4" sx={{ padding: 2 }} textAlign={"center"} marginTop={3}>
                     {
                         event.name
@@ -360,6 +377,23 @@ function RoundBody({ client, gameState, playerState }) {
                     )
                 }
             </Paper>
+
+            <Box display={"grid"} gridTemplateColumns={"0.5fr 3fr 2fr"} sx={{
+                    padding: "16px",
+                    background: "white",
+                    borderRadius: "20px",
+                    flex: 1,
+                    margin: "0 auto",
+                   
+                }}>
+                    <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                    <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
+                    <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                    <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                    <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                    <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
+                </Box>
         </Box>
     )
 }
@@ -387,20 +421,24 @@ function RoundGameActions({ client, gameState, playerState, event }) {
         }
     }, [client]);
 
+
     return (
         <>
+
+
             <Box sx={{ textAlign: "center", padding: 2 }}>                <img
-                    src={playerState.entity.id === "banco" ? banco : governo}
-                    alt={playerState.entity.name}
-                    style={{ width: "100px", height: "100px", marginBottom: "16px", borderRadius:"5px" }}
-                />
+                src={playerState.entity.id === "banco" ? banco : governo}
+                alt={playerState.entity.name}
+                style={{ width: "100px", height: "100px", marginBottom: "16px", borderRadius: "5px" }}
+            />
                 <Typography variant="h6">
                     Você é o {playerState.entity.name} do país {playerState.economy.country}.
                 </Typography>
             </Box>
             <Typography variant="h6" sx={{ padding: 2, textAlign: "center" }}>
                 Qual decisão você vai tomar?
-            </Typography>            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2 }}>
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2 }}>
                 {event.options[playerState.entity.id].map((option, index) => {
                     const voteValue = voteDistribution ? (voteDistribution[index] || 0) : 0;
 
@@ -422,7 +460,7 @@ function RoundGameActions({ client, gameState, playerState, event }) {
 function RoundGameEnd({ gameState }) {
     return (
         <>
-            <Typography variant="subtitle1" sx={{ padding: 2,  textAlign: "center"}}>
+            <Typography variant="subtitle1" sx={{ padding: 2, textAlign: "center" }}>
                 Olhe o resultado da rodada no projetor e veja como as decisões afetaram o país.
             </Typography>
         </>
@@ -504,10 +542,10 @@ function RoundOption({ playerState, onClick, description, selected, voteValue = 
 
 
             </Paper>            <LinearProgress variant="determinate" color={playerState.entity.id === "banco" ? "success" : "primary"}
-            value={voteValue} sx={{
-                height: "12px",
-                borderRadius: "30px"
-            }} />
+                value={voteValue} sx={{
+                    height: "12px",
+                    borderRadius: "30px"
+                }} />
 
             <Typography variant="subtitle1" sx={{ marginTop: 1 }}>
                 {voteValue.toFixed(2)}% de votos
