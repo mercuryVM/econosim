@@ -390,8 +390,8 @@ class Economy {
         // PIB real considera o efeito da taxa de juros no investimento
         const investimentoAjustado = this.investimentoPrivado - (this.sensibilidadeInvestimentoAoJuros * this.taxaDeJuros);
         return this.consumoFamiliar + investimentoAjustado + this.gastosPublicos;
-    }    
-    
+    }
+
     // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
     // Onde I = investimentoPrivado e b = sensibilidadeInvestimentoAoJuros
     calcularIS(i) {
@@ -975,7 +975,7 @@ class Round {
         const index = Math.floor(Math.random() * pool.length);
         const evento = pool[index];
         const realIndex = economiaAtual.possibleLocalEvents.indexOf(evento);
-        economiaAtual.possibleLocalEvents.splice(realIndex, 1); // Remove o evento do pool para não repetir
+        economiaAtual.possibleLocalEvents.splice(realIndex, 1); // Removes the event from the pool to avoid repetition
         return evento;
     }
 
@@ -1007,7 +1007,7 @@ class Round {
                 try {
                     // Aplicar impactos do evento global com escala reduzida
                     if (typeof impact.taxaDeJuros === 'number' && isFinite(impact.taxaDeJuros)) {
-                        economy.taxaDeJuros += impact.taxaDeJuros * 0.01;
+                        economy.taxaDeJuros += impact.taxaDeJuros * 0.1;
                     }
                     if (typeof impact.consumoFamiliar === 'number' && isFinite(impact.consumoFamiliar)) {
                         economy.consumoFamiliar += impact.consumoFamiliar;
@@ -1185,7 +1185,7 @@ class Round {
             }; const outcome = eventResult.impact;
 
             // Aplicação dos impactos com escala reduzida
-            economy.taxaDeJuros += (outcome.taxaDeJuros ? outcome.taxaDeJuros * 0.01 : 0);
+            economy.taxaDeJuros += (outcome.taxaDeJuros ? outcome.taxaDeJuros * 0.1 : 0);
             economy.consumoFamiliar += (outcome.consumoFamiliar ? outcome.consumoFamiliar : 0);
             economy.investimentoPrivado += (outcome.investimentoPrivado ? outcome.investimentoPrivado : 0);
             economy.gastosPublicos += (outcome.gastosPublicos ? outcome.gastosPublicos : 0);
@@ -1223,19 +1223,14 @@ class Round {
             if (outcome.score_factor) { // Changed from score_modifier
                 economy.score_factor = outcome.score_factor;
 
-                // Rastrear tipo de decisão baseado no score_factor
-                if (outcome.score_factor >= 1.0) {
-                    economy.decisions.good++;
-                } else if (outcome.score_factor < 0.8) {
-                    economy.decisions.bad++;
-                } else {
-                    economy.decisions.neutral++;
-                }
+                // Rastrear tipo de decisão baseado no score_factor com critérios refinados
+                this.categorizeDecision(economy, eventResult, evento);
             }
         }
-    }
-    calculateScores() {
+    } calculateScores() {
         // Calcular score para cada economia
+        const maxDistanceLM = Math.max(...this.economies.map(e => e.distanciaLM));
+        const maxDistanciaIS = Math.max(...this.economies.map(e => e.distanciaIS));
 
         for (const economy of this.economies) {
             console.log(`Calculating score for economy: ${economy.country}`);
@@ -1243,7 +1238,29 @@ class Round {
             console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
             console.log(`Score Factor: ${economy.score_factor}`);
 
-            const score = Math.max(0, (1000 * (this.globalEvent?.score_factor || 1) * economy.score_factor) - (Math.min(economy.distanciaIS - 1, 2) * 500) - (Math.min(economy.distanciaLM - 1, 2) * 500));
+            // Componente base: reward por decisões boas
+            const baseScore = 500 * (this.globalEvent?.score_factor || 1) * economy.score_factor;
+
+            // Penalidade por desequilíbrio IS-LM (normalizada entre 0-1)
+            const distanciaISNormalizada = maxDistanciaIS > 0 ? economy.distanciaIS / maxDistanciaIS : 0;
+            const distanciaLMNormalizada = maxDistanceLM > 0 ? economy.distanciaLM / maxDistanceLM : 0;
+
+            // Penalidades proporcionais (máximo de 200 pontos cada)
+            const penaltyIS = Math.min(distanciaISNormalizada * 200, 200);
+            const penaltyLM = Math.min(distanciaLMNormalizada * 200, 200);
+
+            // Bonus por PIB saudável (entre 25-50)
+            const pibBonus = economy.pib >= 25 && economy.pib <= 50 ? 100 : 0;
+
+            // Score final
+            const score = Math.max(0, baseScore - penaltyIS - penaltyLM + pibBonus);
+
+            console.log(`  Base Score: ${baseScore.toFixed(1)}`);
+            console.log(`  IS Penalty: ${penaltyIS.toFixed(1)} (normalized: ${distanciaISNormalizada.toFixed(3)})`);
+            console.log(`  LM Penalty: ${penaltyLM.toFixed(1)} (normalized: ${distanciaLMNormalizada.toFixed(3)})`);
+            console.log(`  PIB Bonus: ${pibBonus}`);
+            console.log(`  Final Score: ${score.toFixed(1)}`);
+
             economy.score += Math.floor(score);
         }
 
@@ -1304,6 +1321,113 @@ class Round {
             }
         }
     }
+
+    // Método para categorizar decisões com critérios econômicos refinados
+    categorizeDecision(economy, outcome, evento) {
+        const impact = outcome.impact;
+                const scoreFactor = impact.score_factor;
+
+        // Análise do impacto econômico global
+        const economicImpactScore = this.calculateEconomicImpactScore(impact);
+
+        // Análise de sustentabilidade (evita extremos)
+        const sustainabilityScore = this.calculateSustainabilityScore(economy, impact);
+
+        // Score combinado (peso: 60% score_factor, 25% impacto econômico, 15% sustentabilidade)
+        const combinedScore = (scoreFactor * 0.6) + (economicImpactScore * 0.25) + (sustainabilityScore * 0.15);
+
+        // Categorização refinada
+        if (combinedScore >= 1.05) {
+            economy.decisions.good++;
+            console.log(`  ✅ DECISÃO BOA: Score combinado ${combinedScore.toFixed(3)} (${evento.name})`);
+        } else if (combinedScore >= 0.85) {
+            economy.decisions.neutral++;
+            console.log(`  ⚖️ DECISÃO NEUTRA: Score combinado ${combinedScore.toFixed(3)} (${evento.name})`);
+        } else {
+            economy.decisions.bad++;
+            console.log(`  ❌ DECISÃO RUIM: Score combinado ${combinedScore.toFixed(3)} (${evento.name})`);
+        }
+
+        // Log detalhado para debugging
+        console.log(`    Score Factor: ${scoreFactor.toFixed(3)}`);
+        console.log(`    Economic Impact: ${economicImpactScore.toFixed(3)}`);
+        console.log(`    Sustainability: ${sustainabilityScore.toFixed(3)}`);
+    }
+
+    // Calcula score do impacto econômico direto
+    calculateEconomicImpactScore(impact) {
+        let score = 1.0; // Score neutro base
+
+        // Avaliar impactos positivos na economia real
+        if (impact.consumoFamiliar && impact.consumoFamiliar > 0) score += 0.1;
+        if (impact.investimentoPrivado && impact.investimentoPrivado > 0) score += 0.15;
+        if (impact.gastosPublicos && impact.gastosPublicos > 0) score += 0.1;
+
+        // Avaliar impactos negativos severos
+        if (impact.consumoFamiliar && impact.consumoFamiliar < -2) score -= 0.2;
+        if (impact.investimentoPrivado && impact.investimentoPrivado < -2) score -= 0.25;
+        if (impact.nivelPrecos && impact.nivelPrecos > 5) score -= 0.15; // Inflação alta
+
+        // Penalizar mudanças extremas na taxa de juros
+        if (impact.taxaDeJuros) {
+            const changePercent = Math.abs(impact.taxaDeJuros);
+            if (changePercent > 0.05) score -= 0.1; // Mudança > 5%
+            if (changePercent > 0.1) score -= 0.2;  // Mudança > 10%
+        }
+
+        // Bonificar políticas equilibradas
+        const totalPositiveImpacts = [
+            impact.consumoFamiliar > 0,
+            impact.investimentoPrivado > 0,
+            impact.gastosPublicos > 0
+        ].filter(Boolean).length;
+
+        if (totalPositiveImpacts >= 2) score += 0.1; // Política abrangente
+
+        return Math.max(0, Math.min(2, score)); // Limitar entre 0 e 2
+    }
+
+    // Calcula score de sustentabilidade (evita extremos)
+    calculateSustainabilityScore(economy, impact) {
+        let score = 1.0; // Score neutro base
+        const currentPIB = economy.pib;
+
+        // Projetar PIB após impacto (simplificado)
+        const projectedPIB = currentPIB + (impact.consumoFamiliar || 0) +
+            (impact.investimentoPrivado || 0) + (impact.gastosPublicos || 0);
+
+        // Bonificar decisões que mantêm PIB em zona saudável (25-50)
+        if (projectedPIB >= 25 && projectedPIB <= 50) {
+            score += 0.3;
+        } else if (projectedPIB < 20 || projectedPIB > 60) {
+            score -= 0.3; // Penalizar extremos
+        }
+
+        // Avaliar estabilidade de preços
+        const projectedInflation = economy.nivelPrecos + (impact.nivelPrecos || 0);
+        if (projectedInflation >= 50 && projectedInflation <= 80) {
+            score += 0.2; // Inflação controlada
+        } else if (projectedInflation > 100 || projectedInflation < 30) {
+            score -= 0.3; // Inflação descontrolada ou deflação
+        }
+
+        // Penalizar políticas que podem causar instabilidade
+        if (impact.ofertaMoeda && Math.abs(impact.ofertaMoeda) > 2) {
+            score -= 0.2; // Mudanças drásticas na oferta de moeda
+        }
+
+        // Bonificar políticas anticíclicas
+        if (currentPIB < 30 && impact.gastosPublicos > 0) {
+            score += 0.15; // Estímulo fiscal em recessão
+        }
+        if (currentPIB > 45 && impact.gastosPublicos < 0) {
+            score += 0.15; // Contenção fiscal em aquecimento
+        }
+
+        return Math.max(0, Math.min(2, score)); // Limitar entre 0 e 2
+    }
+
+    // ...existing code...
 }
 
 module.exports = { Server, Economy };

@@ -261,7 +261,7 @@
                                 "gastosPublicos": 10,
                                 "nivelPrecos": 0.15,
                                 "investimentoPrivado": -5,
-                                "score_factor": 1.0
+                                "score_factor": 0.85
                             },
                             "resultText": "As políticas pareceram desalinhadas e arriscadas. Enquanto os incentivos fiscais tentavam atrair capital, o uso de reservas para segurar o câmbio sem um forte pilar de confiança apenas adiou o problema, gerando inflação e não revertendo a fuga de investimentos de forma sustentável."
                         }
@@ -990,7 +990,7 @@
                                 "consumoFamiliar": -3,
                                 "investimentoPrivado": -2,
                                 "gastosPublicos": -1,
-                                "score_factor": 1.0
+                                "score_factor": 0.75
                             },
                             "resultText": "A combinação de repressão à greve com aperto monetário aprofundou a crise. A produção demorou a normalizar, a confiança despencou e a economia mergulhou em recessão."
                         },
