@@ -1060,7 +1060,6 @@ class Round {
                     // Validar se as sensibilidades não ficaram com valores inválidos
                     economy.sensibilidadeInvestimentoAoJuros = Math.max(1, Math.min(10000, economy.sensibilidadeInvestimentoAoJuros)); economy.sensibilidadeDaMoedaAosJuros = Math.max(1, Math.min(10000, economy.sensibilidadeDaMoedaAosJuros));
                     economy.sensibilidadeDaMoedaARenda = Math.max(1, Math.min(10000, economy.sensibilidadeDaMoedaARenda));
-
                 } catch (economyError) {
                     console.error(`Error applying global event to economy ${economy.country}:`, economyError);
                 }
@@ -1068,7 +1067,11 @@ class Round {
         } catch (error) {
             console.error('Error in applyGlobalEvent:', error);
         }
-    } start() {
+        // Aplicar correções automáticas de ciclo econômico
+        this.applyEconomicCycles();
+    } 
+    
+    start() {
         this.globalEvent = this.server.getGlobalRandomEvent();
 
         // Aplicar impactos do evento global
@@ -1230,8 +1233,8 @@ class Round {
 
             economy.outcome = eventResult;
         }
-    } 
-    
+    }
+
     calculateScores() {
         // Calcular score para cada economia
         const maxDistanceLM = Math.max(...this.economies.map(e => e.distanciaLM));
