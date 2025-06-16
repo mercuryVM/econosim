@@ -14,7 +14,7 @@
                             "value": 40
                         }
                     ],
-                    "description": "A euforia dos anos dourados de Clodolândia inflou uma perigosa bolha especulativa no mercado imobiliário. Agora, a bolha estourou com um estrondo, arrastando os preços dos imóveis para o abismo. Construtoras outrora prósperas e bancos sólidos cambaleiam sob o peso de perdas massivas. O crédito, antes abundante, evaporou-se, e uma onda de pessimismo varre a nação, ameaçando congelar outros setores vitais. A economia de Clodolândia enfrenta um efeito dominó devastador, com o fantasma da recessão pairando no ar.",
+                    "description": "Uma bolha especulativa no mercado imobiliário de Clodolândia finalmente estourou, levando os preços dos imóveis ao colapso. Construtoras enfrentam dificuldades financeiras severas, bancos acumulam perdas com empréstimos inadimplentes, e o setor da construção civil está praticamente paralisado. O efeito se espalha pela economia através da redução do crédito e da confiança empresarial.",
                     "impacts": {
                         "consumoFamiliar": -20,
                         "investimentoPrivado": -35,
@@ -142,7 +142,7 @@
                     "asset": "/localEvents/clodolandia/fornecimentoLocal.png",
                     "name": "Ruptura no Fornecimento Local",
                     "conditions": [],
-                    "description": "Uma crise inesperada atingiu a espinha dorsal da economia de Clodolândia: a súbita falência de um fornecedor regional chave, responsável por insumos essenciais para diversas indústrias na metrópole de Jundiaí. O efeito cascata foi imediato: os preços dos insumos dispararam, elevando os custos de produção e pressionando o custo de vida para os cidadãos. A produção local está ameaçada, e a inflação de custos assombra a estabilidade econômica.",
+                    "description": "A falência inesperada de um grande fornecedor regional de insumos industriais causou uma ruptura nas cadeias de suprimento de Clodolândia. Empresas de diversos setores enfrentam escassez de materiais essenciais, levando ao aumento dos custos de produção e dos preços finais. A situação ameaça a estabilidade do mercado interno e a competitividade da indústria local.",
                     "impacts": {
                         "nivelPrecos": 0.15,
                         "consumoFamiliar": -10,
@@ -269,7 +269,7 @@
                     "asset": "/localEvents/clodolandia/fugaCapital.png",
                     "name": "Fuga de Capitais",
                     "conditions": [],
-                    "description": "Uma onda de aversão ao risco varre os mercados globais, desencadeada por incertezas geopolíticas e temores de uma desaceleração econômica mundial. Investidores, em pânico, buscam portos seguros, retirando apressadamente seus recursos de países em desenvolvimento como Clodolândia. A moeda local despenca, as reservas cambiais são pressionadas e o espectro de uma crise cambial e de crédito assombra a nação.",
+                    "description": "Investidores estrangeiros perderam confiança na economia de Clodolândia devido a incertezas políticas internas e questionamentos sobre a sustentabilidade das políticas econômicas locais. O resultado é uma acelerada retirada de capitais do país, pressionando a moeda nacional e reduzindo a disponibilidade de financiamento para empresas e projetos de investimento.",
                     "impacts": {
                         "investimentoPrivado": -25
                     },
@@ -385,7 +385,7 @@
                     "asset": "/localEvents/clodolandia/boomTecnologico.png",
                     "name": "Boom Tecnológico",
                     "conditions": [],
-                    "description": "Uma onda de inovação varre Clodolândia! Descobertas revolucionárias e a rápida adoção de novas tecnologias estão turbinando a produtividade em múltiplos setores. O otimismo é palpável, a confiança dos investidores está nas alturas, e o país se vê na vanguarda de uma nova era de prosperidade digital. Oportunidades de investimento e crescimento parecem ilimitadas.",
+                    "description": "O setor de tecnologia de Clodolândia está experimentando um crescimento explosivo impulsionado por inovações locais e maior adoção digital pela população e empresas. Startups florescem, grandes corporações expandem suas operações tecnológicas e a produtividade em diversos setores aumenta significativamente. O otimismo sobre o futuro digital do país é contagiante.",
                     "impacts": {
                         "investimentoPrivado": 25,
                         "consumoFamiliar": 15
@@ -505,7 +505,7 @@
                     "asset": "/localEvents/clodolandia/confiancaConsumidor.png",
                     "name": "Confiança do Consumidor em Alta",
                     "conditions": [],
-                    "description": "Uma onda de otimismo varre o globo, impulsionada por notícias de estabilidade econômica e perspectivas de crescimento em importantes parceiros comerciais. Em Clodolândia, essa confiança se traduz em consumidores mais dispostos a gastar e empresários mais inclinados a investir. As lojas estão movimentadas, as fábricas aumentam a produção, e a economia pulsa com vigor renovado.",
+                    "description": "Os consumidores de Clodolândia estão demonstrando um otimismo renovado em relação às suas perspectivas econômicas pessoais e ao futuro do país. Pesquisas indicam maior disposição para realizar compras de bens duráveis e as empresas relatam aumento na demanda por seus produtos e serviços. O ambiente de negócios se beneficia deste ciclo positivo de confiança.",
                     "impacts": {
                         "consumoFamiliar": 20,
                         "investimentoPrivado": 15
@@ -634,7 +634,7 @@
                     "asset": "/localEvents/jundiai/escandaloPolitico.png",
                     "name": "Escândalo Político de Grande Proporção",
                     "conditions": [],
-                    "description": "Revelações chocantes de corrupção envolvendo figuras proeminentes do governo e do setor empresarial de Jundiaí vieram à tona, desencadeando uma crise de confiança sem precedentes. A população está indignada, investidores retiram fundos e a estabilidade política do país está seriamente ameaçada. A credibilidade das instituições foi abalada, e o futuro econômico parece incerto.",
+                    "description": "Um escândalo de corrupção envolvendo figuras políticas e empresariais de destaque em Jundiaí foi descoberto pela imprensa e autoridades. As revelações incluem desvio de recursos públicos, contratos superfaturados e esquemas de propina que se estenderam por anos. A confiança nas instituições está severamente abalada e a instabilidade política ameaça o ambiente de negócios.",
                     "impacts": {
                         "investimentoPrivado": -25,
                         "consumoFamiliar": -15
@@ -758,7 +758,7 @@
                     "asset": "/localEvents/jundiai/acordoRegional.png",
                     "name": "Novo Acordo Comercial Regional",
                     "conditions": [],
-                    "description": "Jundiaí celebrou um novo e promissor acordo comercial com países vizinhos, abrindo mercados para seus produtos e facilitando a importação de insumos. Há grande expectativa de aumento nas exportações, atração de investimentos e maior competitividade para a indústria local. O otimismo toma conta do setor produtivo.",
+                    "description": "Jundiaí firmou um ambicioso acordo comercial bilateral com países vizinhos, reduzindo tarifas e facilitando o intercâmbio de bens e serviços. O acordo promete abrir novos mercados para exportadores locais e facilitar o acesso a insumos importados a preços mais competitivos. O setor empresarial demonstra grande expectativa com as novas oportunidades de negócios.",
                     "impacts": {
                         "investimentoPrivado": 10,
                         "consumoFamiliar": 5
@@ -880,7 +880,7 @@
                     "asset": "/localEvents/jundiai/greveGeral.png",
                     "name": "Greve Geral de Setores Chave",
                     "conditions": [],
-                    "description": "Uma onda de insatisfação popular com as condições de trabalho e os baixos salários culminou em uma greve geral que paralisou setores cruciais da economia de Jundiaí, como transportes, indústria e serviços públicos. A produção está parada, o abastecimento é afetado e a tensão social é alta. A economia sofre um duro golpe.",
+                    "description": "Trabalhadores de setores essenciais como transporte, energia e serviços públicos iniciaram uma greve geral para protestar contra políticas salariais e condições de trabalho em Jundiaí. A paralisação afeta significativamente a atividade econômica, com interrupções na produção industrial, no fornecimento de energia e nos serviços de transporte público. A tensão social está em alta.",
                     "impacts": {
                         "consumoFamiliar": -15,
                         "investimentoPrivado": -10,
@@ -1006,7 +1006,7 @@
                     "asset": "/localEvents/jundiai/inovacaoSetor.png",
                     "name": "Inovação Disruptiva no Setor de Serviços",
                     "conditions": [],
-                    "description": "Uma startup local de Jundiaí desenvolveu uma tecnologia revolucionária que está transformando o setor de serviços, aumentando a eficiência e criando novas oportunidades de negócios. O país se destaca como um polo de inovação, atraindo talentos e investimentos. O otimismo com o futuro do setor é contagiante.",
+                    "description": "Uma empresa local desenvolveu uma plataforma tecnológica inovadora que está revolucionando a prestação de serviços em Jundiaí, aumentando significativamente a eficiência operacional e criando novos modelos de negócios. O sucesso da iniciativa está atraindo investimentos para o setor de tecnologia e inspirando outras empresas a adotarem soluções digitais inovadoras.",
                     "impacts": {
                         "investimentoPrivado": 18,
                         "consumoFamiliar": 4.5
@@ -1125,7 +1125,7 @@
                     "asset": "/localEvents/jundiai/quebraSafra.png",
                     "name": "Quebra de Safra Agrícola Significativa",
                     "conditions": [],
-                    "description": "Condições climáticas adversas (seca prolongada/chuvas excessivas) e o aumento inesperado no custo de fertilizantes resultaram em uma quebra severa na safra agrícola de Jundiaí, um dos pilares da economia. Os preços dos alimentos dispararam, as exportações do setor caíram e a renda no campo despencou, gerando um efeito cascata negativo.",
+                    "description": "Uma combinação de condições climáticas desfavoráveis e problemas na cadeia de suprimentos agrícolas resultou em uma significativa redução na produção de alimentos em Jundiaí. A oferta de produtos básicos diminuiu drasticamente, elevando os preços no mercado interno e impactando negativamente a renda dos produtores rurais e o orçamento das famílias.",
                     "impacts": {
                         "consumoFamiliar": -10,
                         "investimentoPrivado": -3.5,
@@ -1246,7 +1246,7 @@
                     "asset": "/localEvents/jundiai/turismoAlta.png",
                     "name": "Boom Inesperado no Turismo",
                     "conditions": [],
-                    "description": "Uma combinação de fatores, como uma taxa de câmbio favorável e campanhas de promoção internacional bem-sucedidas, resultou em um boom inesperado no setor de turismo de Jundiaí. Hotéis estão lotados, restaurantes movimentados e uma entrada significativa de divisas estrangeiras impulsiona a economia local.",
+                    "description": "O setor de turismo de Jundiaí está experimentando um crescimento extraordinário devido a campanhas de marketing bem-sucedidas, melhorias na infraestrutura local e maior interesse em destinos nacionais. Hotéis registram alta ocupação, restaurantes e comércios locais reportam aumento significativo nas vendas, e o setor de serviços como um todo se beneficia do influxo de visitantes.",
                     "impacts": {
                         "consumoFamiliar": 10,
                         "investimentoPrivado": 4
