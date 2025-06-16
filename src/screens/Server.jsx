@@ -1666,20 +1666,7 @@ function RoundEndGraph({ economy }) {
                         dot={false}
                         name="Curva LM" />
                     {/* Pontos de referência */}
-                    <ReferenceDot
-                        x={Number(taxaDeJuros.toFixed(4))}
-                        y={calcularIS(taxaDeJuros)}
-                        stroke="#1f77b4"
-                        fill="#1f77b4"
-                        r={5}
-                    />
-                    <ReferenceDot
-                        x={Number(taxaDeJuros.toFixed(4))}
-                        y={calcularLM(taxaDeJuros)}
-                        stroke="#d62728"
-                        fill="#d62728"
-                        r={5}
-                    />
+                  
                     {/* Ponto do PIB real (com validação) */}
                     {pib > 0 && (
                         <ReferenceDot
@@ -2351,8 +2338,8 @@ function CountryCurves({ economy }) {
                         <ReferenceDot
                             x={Number(taxaDeJuros.toFixed(4))}
                             y={Number((pib).toFixed(2))}
-                            stroke="#ff4757"
-                            fill="#ff4757"
+                            stroke="#ffd700"
+                            fill="#ffd700"
                             r={5}
                             name={"PIB Real"}
                         />
