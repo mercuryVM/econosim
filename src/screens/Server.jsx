@@ -2389,7 +2389,12 @@ export function Dado({ label, value, icon: Icon }) {
 
 function GlobalEventAnnouncement({ client, gameState }) {
     const [parar, setParar] = useState(false);
-    const globalEvent = gameState?.round?.globalEvent || null;
+    const [globalEvent, setGlobalEvent] = useState(gameState?.round?.globalEvent || null);
+
+    useEffect(() => {
+        if(JSON.stringify(gameState?.round?.globalEvent) === JSON.stringify(globalEvent)) return;
+        setGlobalEvent(gameState?.round?.globalEvent || null);
+    }, [gameState]);
 
     useEffect(() => {
         if (globalEvent && !parar) {
