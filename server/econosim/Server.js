@@ -1227,13 +1227,19 @@ class Round {
                 // Rastrear tipo de decisão baseado no score_factor com critérios refinados
                 this.categorizeDecision(economy, eventResult, evento);
             }
+
+            economy.outcome = eventResult;
         }
-    } calculateScores() {
+    } 
+    
+    calculateScores() {
         // Calcular score para cada economia
         const maxDistanceLM = Math.max(...this.economies.map(e => e.distanciaLM));
         const maxDistanciaIS = Math.max(...this.economies.map(e => e.distanciaIS));
 
         for (const economy of this.economies) {
+            const impact = economy.outcome ? economy.outcome.impact : {};
+
             console.log(`Calculating score for economy: ${economy.country}`);
             console.log(`Pib: ${economy.pib}, Taxa de Juros: ${economy.taxaDeJuros}`);
             console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
@@ -1267,6 +1273,7 @@ class Round {
             // Score final
             const score = Math.max(0, baseScore - penaltyIS - penaltyLM + pibBonus);
 
+            console.log(`  Score Factor: ${combinedScoreFactor.toFixed(3)}`);
             console.log(`  Base Score: ${baseScore.toFixed(1)}`);
             console.log(`  IS Penalty: ${penaltyIS.toFixed(1)} (normalized: ${distanciaISNormalizada.toFixed(3)})`);
             console.log(`  LM Penalty: ${penaltyLM.toFixed(1)} (normalized: ${distanciaLMNormalizada.toFixed(3)})`);

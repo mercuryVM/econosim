@@ -1204,7 +1204,7 @@
                                 "consumoFamiliar": 5,
                                 "investimentoPrivado": -0.5,
                                 "nivelPrecos": -0.1,
-                                "score_factor": 1.025
+                                "score_factor": 1.1
                             },
                             "resultText": "A importação de alimentos estabilizou os preços e garantiu o abastecimento, aliviando a pressão sobre os consumidores. A política monetária neutra evitou maiores danos a outros setores."
                         },
