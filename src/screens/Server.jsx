@@ -224,13 +224,13 @@ function RenderLobby({ client, countdown, handleStartGame }) {
             }}>
                 QR Code para {selectedQr?.role === 0 ? "Banco" : "Governo"} de {economies[selectedQr?.economy]?.country}
             </DialogTitle>
-                <DialogContent sx={{ p: 3 }}>
+                <DialogContent sx={{ p: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {
                         selectedQr && (
                             <QRCode style={{
-                                width: 256,
-                                height: 256,
-                            }} width={256} height={256} value={
+                                width: 512,
+                                height: 512,
+                            }} width={512} height={512} value={
                                 window.location.origin + "/?" + new URLSearchParams({
                                     role: selectedQr.role,
                                     economy: selectedQr.economy
