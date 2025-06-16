@@ -1239,8 +1239,19 @@ class Round {
             console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
             console.log(`Score Factor: ${economy.score_factor}`);
 
+            const scoreFactor = (this.globalEvent?.score_factor || 1) * economy.score_factor;
+
+            // Análise do impacto econômico global
+            const economicImpactScore = this.calculateEconomicImpactScore(impact);
+
+            // Análise de sustentabilidade (evita extremos)
+            const sustainabilityScore = this.calculateSustainabilityScore(economy, impact);
+
+            // Score combinado (peso: 60% score_factor, 25% impacto econômico, 15% sustentabilidade)
+            const combinedScoreFactor = (scoreFactor * 0.6) + (economicImpactScore * 0.25) + (sustainabilityScore * 0.15);
+
             // Componente base: reward por decisões boas
-            const baseScore = 500 * (this.globalEvent?.score_factor || 1) * economy.score_factor;
+            const baseScore = 500 * combinedScoreFactor;
 
             // Penalidade por desequilíbrio IS-LM (normalizada entre 0-1)
             const distanciaISNormalizada = maxDistanciaIS > 0 ? economy.distanciaIS / maxDistanciaIS : 0;
@@ -1326,7 +1337,7 @@ class Round {
     // Método para categorizar decisões com critérios econômicos refinados
     categorizeDecision(economy, outcome, evento) {
         const impact = outcome.impact;
-                const scoreFactor = impact.score_factor;
+        const scoreFactor = impact.score_factor;
 
         // Análise do impacto econômico global
         const economicImpactScore = this.calculateEconomicImpactScore(impact);
