@@ -1267,8 +1267,8 @@ class Round {
             const distanciaLMNormalizada = maxDistanceLM > 0 ? economy.distanciaLM / maxDistanceLM : 0;
 
             // Penalidades proporcionais (máximo de 200 pontos cada)
-            const penaltyIS = Math.min(distanciaISNormalizada * 200, 200);
-            const penaltyLM = Math.min(distanciaLMNormalizada * 200, 200);
+            const penaltyIS = 0//Math.min(distanciaISNormalizada, 100);
+            const penaltyLM = 0//Math.min(distanciaLMNormalizada * 100, 100);
 
             // Bonus por PIB saudável (entre 25-50)
             const pibBonus = economy.pib >= 25 && economy.pib <= 50 ? 100 : 0;
