@@ -1376,20 +1376,19 @@ function RoundEndGraph({ economy }) {
         nivelPrecos,
         demandaMoeda,
         sensibilidadeInvestimentoAoJuros,
-        sensibilidadeDaMoedaAosJuros,
-        sensibilidadeDaMoedaARenda
+        sensibilidadeDaMoedaAosJuros,        sensibilidadeDaMoedaARenda
     } = economy.stats;
 
-    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    // Fórmula IS: Y = C + (I - b*i) + G
     const calcularIS = (i) => {
-        return consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+        const investimentoAjustado = investimentoPrivado - (sensibilidadeInvestimentoAoJuros * i);
+        return consumoFamiliar + investimentoAjustado + gastosPublicos;
     };
 
-    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    // Fórmula LM: Y = (M/P + h*i) / k
     const calcularLM = (i) => {
-        return (
-            ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
-        )
+        const ofertaRealMoeda = ofertaMoeda / nivelPrecos;
+        return (ofertaRealMoeda + (sensibilidadeDaMoedaAosJuros * i)) / sensibilidadeDaMoedaARenda;
     };    // Definir range fixo para o gráfico
     const minX = 0;
     const maxX = 0.3;
@@ -1472,7 +1471,7 @@ function RoundEndGraph({ economy }) {
                     {pib > 0 && (
                         <ReferenceDot
                             x={Number(taxaDeJuros.toFixed(4))}
-                            y={Number((pib / 100).toFixed(2))}
+                            y={Number((pib).toFixed(2))}
                             stroke="#FFD700"
                             fill="#FFD700"
                             r={6}
@@ -2027,20 +2026,19 @@ function CountryCurves({ economy }) {
         nivelPrecos,
         demandaMoeda,
         sensibilidadeInvestimentoAoJuros,
-        sensibilidadeDaMoedaAosJuros,
-        sensibilidadeDaMoedaARenda
+        sensibilidadeDaMoedaAosJuros,        sensibilidadeDaMoedaARenda
     } = economy.stats;
 
-    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    // Fórmula IS: Y = C + (I - b*i) + G
     const calcularIS = (i) => {
-        return consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+        const investimentoAjustado = investimentoPrivado - (sensibilidadeInvestimentoAoJuros * i);
+        return consumoFamiliar + investimentoAjustado + gastosPublicos;
     };
 
-    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    // Fórmula LM: Y = (M/P + h*i) / k
     const calcularLM = (i) => {
-        return (
-            ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) - ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
-        )
+        const ofertaRealMoeda = ofertaMoeda / nivelPrecos;
+        return (ofertaRealMoeda + (sensibilidadeDaMoedaAosJuros * i)) / sensibilidadeDaMoedaARenda;
     };
 
     const minX = 0;
@@ -2134,25 +2132,11 @@ function CountryCurves({ economy }) {
                         dot={false}
                         name="Curva LM" />
                     {/* Pontos de referência - Compactos */}
-                     <ReferenceDot
-                        x={Number(taxaDeJuros.toFixed(4))}
-                        y={calcularIS(taxaDeJuros)}
-                        stroke="#1f77b4"
-                        fill="#1f77b4"
-                        r={5}
-                    />
-                    <ReferenceDot
-                        x={Number(taxaDeJuros.toFixed(4))}
-                        y={calcularLM(taxaDeJuros)}
-                        stroke="#d62728"
-                        fill="#d62728"
-                        r={5}
-                    />
                     {/* Ponto do PIB real (com validação) */}
                     {pib > 0 && (
                         <ReferenceDot
                             x={Number(taxaDeJuros.toFixed(4))}
-                            y={Number((pib / 100).toFixed(2))}
+                            y={Number((pib).toFixed(2))}
                             stroke="#ff4757"
                             fill="#ff4757"
                             r={5}

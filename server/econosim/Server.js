@@ -367,23 +367,26 @@ class Economy {
         this.governo = new Governo(this);
 
         this.taxaDeJuros = 0.1; // 10%
-        this.consumoFamiliar = 20; // R$ 20 bi
-        this.investimentoPrivado = 15; // R$ 15 bi
-        this.gastosPublicos = 30; // R$ 30 bi
+        this.consumoFamiliar = 10; // R$ 5 bi
+        this.investimentoPrivado = 15; // R$ 7 bi
+        this.gastosPublicos = 17; // R$ 8 bi
         this.ofertaMoeda = 3;     // R$ 3 bi
-        this.nivelPrecos = 60; // Índice de preços (base 100)
+        this.nivelPrecos = 60; // Índice de preços (base 100)        
         this.demandaMoeda = 7;   // R$ 7 bi
-        this.sensibilidadeInvestimentoAoJuros = 250; // Sensibilidade da demanda de moeda à taxa de juros
-        this.sensibilidadeDaMoedaAosJuros = 200; // Sensibilidade da oferta de moeda à taxa de juros
-        this.sensibilidadeDaMoedaARenda = 12; // Sensibilidade da oferta de moeda à renda
+        this.sensibilidadeInvestimentoAoJuros = 250; // Sensibilidade do investimento à taxa de juros
+        this.sensibilidadeDaMoedaAosJuros = 250; // Sensibilidade da demanda de moeda aos juros (h) - REDUZIDO para LM mais íngreme
+        this.sensibilidadeDaMoedaARenda = 20; // Sensibilidade da demanda de moeda à renda (k) - AUMENTADO para LM mais íngreme
 
         this.score_factor = 1; // Fator de multiplicação do score
         this.score = 0;
     }
 
     get pib() {
-        return (this.consumoFamiliar + this.investimentoPrivado + this.gastosPublicos);
+        // PIB real considera o efeito da taxa de juros no investimento
+        const investimentoAjustado = this.investimentoPrivado - (this.sensibilidadeInvestimentoAoJuros * this.taxaDeJuros);
+        return this.consumoFamiliar + investimentoAjustado + this.gastosPublicos;
     }    // Fórmula IS: Y = C + (I - b*i) + G + (X - M)
+    // Onde I = investimentoPrivado e b = sensibilidadeInvestimentoAoJuros
     calcularIS(i) {
         try {
             const consumoFamiliar = this.consumoFamiliar;
@@ -397,7 +400,9 @@ class Economy {
                 return consumoFamiliar + investimentoPrivado + gastosPublicos; // PIB simples
             }
 
-            const result = consumoFamiliar * (((gastosPublicos + investimentoPrivado) / sensibilidadeInvestimentoAoJuros) - i);
+            // Fórmula correta: Y = C + (I - b*i) + G
+            const investimentoAjustado = investimentoPrivado - (sensibilidadeInvestimentoAoJuros * i);
+            const result = consumoFamiliar + investimentoAjustado + gastosPublicos;
 
             if (!isFinite(result) || isNaN(result)) {
                 console.warn('Invalid result in calcularIS');
@@ -409,7 +414,8 @@ class Economy {
             console.error('Error in calcularIS:', error);
             return this.consumoFamiliar + this.investimentoPrivado + this.gastosPublicos; // PIB simples
         }
-    };    // Fórmula LM: (M/P) = kY - h*i => Y = (M/P + h*i) / k
+    };    // Fórmula LM: (M/P) = k*Y - h*i => Y = (M/P + h*i) / k
+    // Onde k = sensibilidadeDaMoedaARenda e h = sensibilidadeDaMoedaAosJuros
     calcularLM(i) {
         try {
             const ofertaMoeda = this.ofertaMoeda;
@@ -424,10 +430,9 @@ class Economy {
                 return this.pib; // Retornar PIB atual como fallback
             }
 
-            const result = (
-                ((sensibilidadeDaMoedaAosJuros / sensibilidadeDaMoedaARenda) * i) -
-                ((1 / sensibilidadeDaMoedaARenda) * (demandaMoeda - (ofertaMoeda / nivelPrecos)))
-            );
+            // Fórmula correta: Y = (M/P + h*i) / k
+            const ofertaRealMoeda = ofertaMoeda / nivelPrecos;
+            const result = (ofertaRealMoeda + (sensibilidadeDaMoedaAosJuros * i)) / sensibilidadeDaMoedaARenda;
 
             if (!isFinite(result) || isNaN(result)) {
                 console.warn('Invalid result in calcularLM');
@@ -439,42 +444,41 @@ class Economy {
             console.error('Error in calcularLM:', error);
             return this.pib; // Retornar PIB atual como fallback
         }
-    }; get taxaDeJurosEquilibrio() {
+    };    get taxaDeJurosEquilibrio() {
         try {
-            // IS: Y = C * (((G + I) / b) - i)
-            // LM: Y = ((k/h) * i) - ((1/h) * (L - (M/P)))
+            // IS: Y = C + (I - b*i) + G
+            // LM: Y = (M/P + h*i) / k
             //
-            // Igualando:
-            // C * (((G + I) / b) - i) = ((k/h) * i) - ((1/h) * (L - (M/P)))
-            //
-            // Isolando i:
-            // C * ((G + I)/b) - C*i = (k/h)*i - (1/h)*(L - (M/P))
-            // C * ((G + I)/b) + (1/h)*(L - (M/P)) = (k/h)*i + C*i
-            // C * ((G + I)/b) + (1/h)*(L - (M/P)) = i * (k/h + C)
-            // i = [C * ((G + I)/b) + (1/h)*(L - (M/P))] / [ (k/h) + C ]
+            // Igualando IS = LM:
+            // C + (I - b*i) + G = (M/P + h*i) / k
+            // k * [C + I + G - b*i] = M/P + h*i
+            // k*C + k*I + k*G - k*b*i = M/P + h*i
+            // k*C + k*I + k*G - M/P = k*b*i + h*i
+            // k*C + k*I + k*G - M/P = i*(k*b + h)
+            // i = [k*C + k*I + k*G - M/P] / [k*b + h]
+            
             const C = this.consumoFamiliar;
             const G = this.gastosPublicos;
             const I = this.investimentoPrivado;
             const b = this.sensibilidadeInvestimentoAoJuros;
-            const k = this.sensibilidadeDaMoedaAosJuros;
-            const h = this.sensibilidadeDaMoedaARenda;
-            const L = this.demandaMoeda;
+            const k = this.sensibilidadeDaMoedaARenda;
+            const h = this.sensibilidadeDaMoedaAosJuros;
             const M = this.ofertaMoeda;
             const P = this.nivelPrecos;
 
             // Verificar divisão por zero
-            if (b === 0 || h === 0 || P === 0) {
+            if (P === 0 || k === 0) {
                 console.warn('Division by zero detected in taxaDeJurosEquilibrio calculation');
                 return 0.1; // Taxa padrão segura
             }
 
-            const denom = (k / h) + C;
+            const denom = (k * b) + h;
             if (denom === 0) {
                 console.warn('Denominator is zero in taxaDeJurosEquilibrio calculation');
                 return 0.1; // Taxa padrão segura
             }
 
-            const numer = C * ((G + I) / b) + (1 / h) * (L - (M / P));
+            const numer = (k * C) + (k * I) + (k * G) - (M / P);
             const iEquilibrio = numer / denom;
 
             // Validar resultado
@@ -499,11 +503,11 @@ class Economy {
     }
 
     get distanciaIS() {
-        return Math.abs(this.pib / 100 - this.calcularIS(this.taxaDeJuros));
+        return Math.abs(this.pib - this.calcularIS(this.taxaDeJuros));
     }
 
     get distanciaLM() {
-        return Math.abs(this.pib / 100 - this.calcularLM(this.taxaDeJuros));
+        return Math.abs(this.pib - this.calcularLM(this.taxaDeJuros));
     }
 
     get state() {
@@ -1178,9 +1182,9 @@ class Round {
             economy.consumoFamiliar += (outcome.consumoFamiliar ? outcome.consumoFamiliar : 0);
             economy.investimentoPrivado += (outcome.investimentoPrivado ? outcome.investimentoPrivado : 0);
             economy.gastosPublicos += (outcome.gastosPublicos ? outcome.gastosPublicos : 0);
-            economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda : 0);
-            economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos : 0);
-            economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda : 0);
+            economy.ofertaMoeda += (outcome.ofertaMoeda ? outcome.ofertaMoeda  : 0);
+            economy.nivelPrecos += (outcome.nivelPrecos ? outcome.nivelPrecos  : 0);
+            economy.demandaMoeda += (outcome.demandaMoeda ? outcome.demandaMoeda  : 0);
 
             // Aplicar restrições para manter realismo econômico
             economy.demandaMoeda = Math.max(0.1, economy.demandaMoeda); // Mínimo de 0.1 bi
@@ -1216,12 +1220,8 @@ class Round {
             }
         }
     }    
-    
-    calculateScores() {
+      calculateScores() {
         // Calcular score para cada economia
-
-        const k = 150;
-        const scaleFactor = 2;
 
         for (const economy of this.economies) {
             console.log(`Calculating score for economy: ${economy.country}`);
@@ -1229,10 +1229,56 @@ class Round {
             console.log(`Distancia IS: ${economy.distanciaIS}, Distancia LM: ${economy.distanciaLM}`);
             console.log(`Score Factor: ${economy.score_factor}`);
 
-            const score = Math.max(0, 1000 - (Math.min(economy.distanciaIS, scaleFactor) * k / scaleFactor) - (Math.min(economy.distanciaLM, scaleFactor) * k / scaleFactor));
+            const score = Math.max(0, 1000 - (Math.min(economy.distanciaIS - 1, 2) * 500) - (Math.min(economy.distanciaLM - 1, 2) * 500));
             economy.score += Math.floor(score * economy.score_factor * (this.globalEvent?.score_factor || 1));
+        }
+        
+        // Aplicar correções automáticas de ciclo econômico
+        this.applyEconomicCycles();
+    }
+    
+    applyEconomicCycles() {
+        for (const economy of this.economies) {
+            try {
+                const pibAtual = economy.pib;
+                
+                // Detectar superaquecimento (PIB muito alto)
+                if (pibAtual > 60) {
+                    console.log(`Economy ${economy.country} overheating (PIB: ${pibAtual}), applying cooling measures`);
+                    
+                    // Pressões naturais de sobreaquecimento
+                    economy.nivelPrecos += 1; // Inflação de demanda
+                    economy.consumoFamiliar *= 0.96; // Redução do poder de compra
+                    economy.investimentoPrivado *= 0.7; // Cautela dos investidores
+                    
+                    // Aumentar sensibilidade aos juros (mercado mais volátil)
+                    economy.sensibilidadeInvestimentoAoJuros *= 1.05;
+                }
+                
+                // Detectar recessão prolongada (PIB muito baixo)
+                else if (pibAtual < 25) {
+                    console.log(`Economy ${economy.country} in recession (PIB: ${pibAtual}), applying natural recovery`);
+                    
+                    // Forças naturais de recuperação
+                    economy.nivelPrecos *= 0.99; // Pressão deflacionária
+                    economy.demandaMoeda *= 0.98; // Menor demanda por liquidez
+                    
+                    // Reduzir sensibilidade aos juros (mercado menos ativo)
+                    economy.sensibilidadeInvestimentoAoJuros *= 0.98;
+                }
+                
+                // Aplicar mínimos e máximos para manter realismo
+                economy.nivelPrecos = Math.max(10, Math.min(200, economy.nivelPrecos));
+                economy.consumoFamiliar = Math.max(1, Math.min(100, economy.consumoFamiliar));
+                economy.investimentoPrivado = Math.max(0, Math.min(80, economy.investimentoPrivado));
+                economy.gastosPublicos = Math.max(1, Math.min(60, economy.gastosPublicos));
+                economy.sensibilidadeInvestimentoAoJuros = Math.max(50, Math.min(500, economy.sensibilidadeInvestimentoAoJuros));
+                
+            } catch (error) {
+                console.error(`Error applying economic cycles to ${economy.country}:`, error);
+            }
         }
     }
 }
 
-module.exports = { Server };
+module.exports = { Server, Economy };

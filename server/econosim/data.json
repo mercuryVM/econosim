@@ -48,31 +48,31 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.7,
+                            "chance": 0.4,
                             "impact": {
                                 "taxaDeJuros": -0.25,
                                 "gastosPublicos": 20,
-                                "investimentoPrivado": 30,
-                                "consumoFamiliar": 10,
-                                "score_factor": 1.1
+                                "investimentoPrivado": -5,
+                                "consumoFamiliar": -8,
+                                "score_factor": 0.5
                             },
-                            "resultText": "A sinergia entre a política monetária expansionista e o investimento público robusto em infraestrutura agiu como um bálsamo na economia ferida. A confiança gradualmente retornou, o crédito voltou a fluir para empresas e famílias, impulsionando o investimento privado e reaquecendo o consumo. Clodolândia começa a ver uma luz no fim do túnel da crise."
+                            "resultText": "Apesar dos estímulos, a crise imobiliária deixou cicatrizes profundas. O investimento privado permaneceu retraído devido à desconfiança no setor, e o consumo sofreu com o efeito riqueza negativo da queda dos preços imobiliários."
                         },
                         {
                             "combo": [
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.3,
+                            "chance": 0.6,
                             "impact": {
                                 "taxaDeJuros": -0.25,
                                 "gastosPublicos": 20,
-                                "consumoFamiliar": -5,
-                                "investimentoPrivado": 10,
-                                "nivelPrecos": -0.1,
-                                "score_factor": 0.85
+                                "consumoFamiliar": -12,
+                                "investimentoPrivado": -8,
+                                "nivelPrecos": -0.15,
+                                "score_factor": 0.4
                             },
-                            "resultText": "Apesar dos esforços combinados do Banco Central e do Governo, a profunda cicatriz da crise imobiliária mostrou-se resistente. O investimento privado reagiu com extrema cautela e o consumo familiar permaneceu retraído. Uma leve deflação sinaliza que a demanda agregada continua perigosamente anêmica, e a recuperação total ainda parece distante."
+                            "resultText": "A profunda crise imobiliária mostrou-se resistente aos estímulos. O investimento privado colapsou devido à desconfiança, o consumo despencou e uma deflação preocupante sinalizou uma recessão severa."
                         },
                         {
                             "combo": [
@@ -100,7 +100,7 @@
                                 "gastosPublicos": 12,
                                 "nivelPrecos": 0.35,
                                 "investimentoPrivado": -5,
-                                "score_factor": 0.8
+                                "score_factor": 0.4
                             },
                             "resultText": "A tentativa de reanimar a economia foi percebida como desesperada e mal calibrada. O excesso de moeda injetada sem um correspondente aumento na confiança ou na produção real apenas alimentou a inflação. O setor da construção, apesar dos subsídios, permaneceu cético, e a população viu seu poder de compra corroído."
                         },
@@ -132,7 +132,7 @@
                                 "nivelPrecos": 0.4,
                                 "consumoFamiliar": -8,
                                 "investimentoPrivado": 0,
-                                "score_factor": 0.75
+                                "score_factor": 0.35
                             },
                             "resultText": "A combinação agressiva de expansão monetária e grandes obras públicas, sem a devida cautela, superaqueceu perigosamente a economia. A inflação disparou, corroendo o poder de compra das famílias e gerando incerteza. O investimento privado estagnou, temendo a instabilidade, e o tiro saiu pela culatra."
                         }
@@ -180,11 +180,12 @@
                             "impact": {
                                 "taxaDeJuros": 0.2,
                                 "gastosPublicos": 15,
-                                "nivelPrecos": -0.1,
-                                "consumoFamiliar": 3,
-                                "score_factor": 1.05
+                                "nivelPrecos": -0.05,
+                                "consumoFamiliar": -2,
+                                "investimentoPrivado": -5,
+                                "score_factor": 0.9
                             },
-                            "resultText": "A ação coordenada do Banco Central, elevando os juros para ancorar as expectativas inflacionárias, e do Governo, subsidiando produtos essenciais, conseguiu mitigar a crise. Os preços foram parcialmente estabilizados, e o acesso da população a itens básicos foi garantido, evitando um pânico maior."
+                            "resultText": "A ação coordenada do Banco Central e Governo conseguiu estabilizar parcialmente os preços, mas os juros altos e a incerteza na cadeia de suprimentos prejudicaram o consumo e o investimento. A economia se manteve estável, mas com crescimento reduzido."
                         },
                         {
                             "combo": [
@@ -210,12 +211,13 @@
                             "chance": 0.6,
                             "impact": {
                                 "ofertaMoeda": -10,
-                                "investimentoPrivado": 12,
+                                "investimentoPrivado": 5,
                                 "nivelPrecos": -0.08,
                                 "gastosPublicos": 8,
-                                "score_factor": 1.1
+                                "consumoFamiliar": -3,
+                                "score_factor": 0.95
                             },
-                            "resultText": "A política de contração monetária controlada, aliada ao fomento de novos produtores locais, surtiu efeito positivo a médio prazo. A inflação foi contida e a produção interna começou a se fortalecer, substituindo gradualmente o fornecedor perdido e restaurando a cadeia de suprimentos."
+                            "resultText": "A política de contração monetária controlada, aliada ao fomento de novos produtores locais, começou a surtir efeito, mas ainda há pressões contracionárias devido à ruptura na cadeia de suprimentos. A recuperação será gradual."
                         },
                         {
                             "combo": [
@@ -301,42 +303,31 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.6,
+                            "chance": 0.4,
                             "impact": {
                                 "taxaDeJuros": 0.5,
                                 "gastosPublicos": 8,
-                                "investimentoPrivado": 10,
-                                "score_factor": 1.1
+                                "investimentoPrivado": -5,
+                                "consumoFamiliar": -3,
+                                "score_factor": 0.9
                             },
-                            "resultText": "A elevação drástica dos juros, combinada com incentivos fiscais estratégicos, conseguiu estancar a sangria de capitais e até reverter parte do fluxo. A moeda se estabilizou, e a confiança dos investidores começou a ser restaurada, embora a um custo fiscal e de atividade interna."
+                            "resultText": "A elevação drástica dos juros, combinada com incentivos fiscais, conseguiu reduzir a saída de capitais, mas a um alto custo interno. O crédito encareceu, afetando investimentos e consumo."
                         },
                         {
                             "combo": [
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.4,
+                            "chance": 0.6,
                             "impact": {
                                 "taxaDeJuros": 0.5,
                                 "gastosPublicos": 8,
-                                "investimentoPrivado": -10,
-                                "consumoFamiliar": -8,
-                                "sensibilidadeInvestimentoAoJuros_factor": 0.9,
-                                "score_factor": 0.7
+                                "investimentoPrivado": -15,
+                                "consumoFamiliar": -10,
+                                "sensibilidadeInvestimentoAoJuros_factor": 1.1,
+                                "score_factor": 0.6
                             },
-                            "resultText": "Apesar das medidas amargas, o capital continuou cético. Os juros altos apenas aprofundaram a recessão interna, encarecendo o crédito e derrubando o consumo e o investimento, sem conseguir atrair o volume de capital esperado."
-                        },
-                        {
-                            "combo": [
-                                "b2",
-                                "g2"
-                            ],
-                            "chance": 0.7,
-                            "impact": {
-                                "investimentoPrivado": 12,
-                                "score_factor": 1.15
-                            },
-                            "resultText": "A intervenção assertiva do Banco Central no câmbio, utilizando parte das reservas, e a sinalização positiva de novos acordos internacionais de comércio e confiança acalmaram os mercados. A moeda se fortaleceu, e o ambiente de negócios melhorou, atraindo investimentos e impulsionando exportações."
+                            "resultText": "As medidas não conseguiram conter a fuga de capitais. Os juros altos aprofundaram a recessão, derrubando consumo e investimento, criando um ciclo vicioso de desconfiança."
                         },
                         {
                             "combo": [
@@ -345,9 +336,23 @@
                             ],
                             "chance": 0.3,
                             "impact": {
-                                "gastosPublicos": 5,
-                                "nivelPrecos": 0.1,
-                                "score_factor": 0.85
+                                "investimentoPrivado": -8,
+                                "consumoFamiliar": -5,
+                                "score_factor": 0.8
+                            },
+                            "resultText": "A intervenção cambial ofereceu estabilidade temporária, mas os acordos internacionais demoraram para se materializar. A economia ainda sofre com a desconfiança dos investidores."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.7,
+                            "impact": {
+                                "investimentoPrivado": -12,
+                                "consumoFamiliar": -8,
+                                "gastosPublicos": -3,
+                                "score_factor": 0.7
                             },
                             "resultText": "A queima de reservas cambiais mostrou-se um esforço fútil contra a maré de desconfiança global. Os acordos internacionais, embora bem-vindos, não foram suficientes para reverter o pessimismo no curto prazo, e o país ficou mais vulnerável."
                         },
@@ -372,12 +377,12 @@
                             ],
                             "chance": 1.0,
                             "impact": {
-                                "gastosPublicos": 10,
-                                "nivelPrecos": 0.15,
-                                "investimentoPrivado": -5,
-                                "score_factor": 0.8
+                                "gastosPublicos": -5,
+                                "investimentoPrivado": -10,
+                                "consumoFamiliar": -7,
+                                "score_factor": 0.7
                             },
-                            "resultText": "As políticas pareceram desalinhadas e arriscadas. Enquanto os incentivos fiscais tentavam atrair capital, o uso de reservas para segurar o câmbio sem um forte pilar de confiança apenas adiou o problema, gerando inflação e não revertendo a fuga de investimentos de forma sustentável."
+                            "resultText": "As reservas cambiais foram rapidamente esgotadas sem conseguir conter a fuga. Os incentivos fiscais, sem um ambiente de confiança, apenas agravaram a situação fiscal, levando a economia a uma crise ainda mais profunda."
                         }
                     ]
                 },
@@ -465,11 +470,12 @@
                             ],
                             "chance": 0.4,
                             "impact": {
-                                "nivelPrecos": 0.2,
-                                "investimentoPrivado": 15,
-                                "score_factor": 0.9
+                                "nivelPrecos": 0.3,
+                                "investimentoPrivado": 5,
+                                "consumoFamiliar": -5,
+                                "score_factor": 0.8
                             },
-                            "resultText": "O excesso de estímulo e a desregulamentação rápida geraram um crescimento acelerado, mas com sinais de uma possível bolha no setor de tecnologia e pressões inflacionárias."
+                            "resultText": "O excesso de estímulo e a desregulamentação rápida criaram uma bolha tecnológica perigosa. Os preços dispararam devido ao superaquecimento, e quando a bolha estourou, muitos investimentos se mostraram especulativos, prejudicando o consumo."
                         },
                         {
                             "combo": [
@@ -557,11 +563,11 @@
                             "impact": {
                                 "taxaDeJuros": 0.1,
                                 "gastosPublicos": -10,
-                                "investimentoPrivado": -3,
-                                "consumoFamiliar": 5,
-                                "score_factor": 0.95
+                                "investimentoPrivado": -8,
+                                "consumoFamiliar": -3,
+                                "score_factor": 0.8
                             },
-                            "resultText": "O ajuste fiscal e monetário, embora bem-intencionado, foi percebido como excessivamente cauteloso pelo mercado, que esperava mais ousadia. O resultado foi uma desaceleração prematura do ímpeto de crescimento, frustrando parte das expectativas."
+                            "resultText": "O ajuste fiscal e monetário rompeu o ciclo de otimismo excessivo, revelando que parte da confiança estava baseada em expectativas irreais. O mercado corrigiu para baixo, investimentos especulativos perderam valor, e o consumo recuou."
                         },
                         {
                             "combo": [
@@ -667,59 +673,62 @@
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.6,
+                            "chance": 0.3,
                             "impact": {
                                 "taxaDeJuros": 0.3,
-                                "investimentoPrivado": 10,
-                                "consumoFamiliar": 3,
-                                "score_factor": 1.1
+                                "investimentoPrivado": -8,
+                                "consumoFamiliar": -5,
+                                "gastosPublicos": -3,
+                                "score_factor": 0.8
                             },
-                            "resultText": "A combinação de um aperto monetário responsável com uma reforma anticorrupção séria restaurou gradualmente a confiança. Investidores e cidadãos viram sinais de um compromisso real com a mudança, e a economia começou a se recuperar lentamente."
+                            "resultText": "Apesar das reformas anticorrupção, a desconfiança persistiu e o aperto monetário agravou a recessão. A economia ainda sofre com os efeitos do escândalo."
                         },
                         {
                             "combo": [
                                 "b1",
                                 "g1"
                             ],
-                            "chance": 0.4,
+                            "chance": 0.7,
                             "impact": {
                                 "taxaDeJuros": 0.3,
-                                "investimentoPrivado": -5,
-                                "consumoFamiliar": -4,
-                                "score_factor": 0.8
-                            },
-                            "resultText": "A reforma anticorrupção foi vista como insuficiente e o aumento de juros apenas piorou a recessão. A desconfiança persistiu, e a economia continuou a sofrer com a fuga de capitais e a retração do consumo."
-                        },
-                        {
-                            "combo": [
-                                "b2",
-                                "g2"
-                            ],
-                            "chance": 0.5,
-                            "impact": {
-                                "ofertaMoeda": 15,
-                                "gastosPublicos": 20,
-                                "investimentoPrivado": 5,
-                                "nivelPrecos": 0.2,
-                                "consumoFamiliar": 2,
-                                "score_factor": 0.9
-                            },
-                            "resultText": "A injeção de liquidez e o estímulo fiscal trouxeram um alívio temporário, mas a falta de medidas estruturais contra a corrupção minou os efeitos. A inflação começou a preocupar, e a confiança não foi totalmente restaurada."
-                        },
-                        {
-                            "combo": [
-                                "b2",
-                                "g2"
-                            ],
-                            "chance": 0.5,
-                            "impact": {
-                                "ofertaMoeda": 15,
-                                "gastosPublicos": 20,
-                                "nivelPrecos": 0.35,
+                                "investimentoPrivado": -12,
                                 "consumoFamiliar": -8,
+                                "gastosPublicos": -5,
                                 "score_factor": 0.6
                             },
-                            "resultText": "As medidas foram vistas como uma tentativa de encobrir o problema principal. A liquidez excessiva e os gastos sem reformas geraram inflação e aumentaram o risco país, aprofundando a crise de confiança."
+                            "resultText": "A reforma anticorrupção foi vista como insuficiente e o aumento de juros aprofundou a recessão. A desconfiança persistiu, causando fuga de capitais e forte retração econômica."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.2,
+                            "impact": {
+                                "ofertaMoeda": 15,
+                                "gastosPublicos": -10,
+                                "investimentoPrivado": -8,
+                                "nivelPrecos": 0.25,
+                                "consumoFamiliar": -5,
+                                "score_factor": 0.7
+                            },
+                            "resultText": "A tentativa de estímulo econômico foi vista como desperdício de recursos públicos em meio ao escândalo. A inflação disparou, a confiança despencou e a economia entrou em recessão profunda."
+                        },
+                        {
+                            "combo": [
+                                "b2",
+                                "g2"
+                            ],
+                            "chance": 0.8,
+                            "impact": {
+                                "ofertaMoeda": 15,
+                                "gastosPublicos": -15,
+                                "investimentoPrivado": -15,
+                                "nivelPrecos": 0.4,
+                                "consumoFamiliar": -12,
+                                "score_factor": 0.5
+                            },
+                            "resultText": "As medidas foram vistas como uma tentativa desesperada de encobrir o escândalo. A liquidez excessiva gerou inflação descontrolada e a crise de confiança se aprofundou, levando a economia ao colapso."
                         },
                         {
                             "combo": [
@@ -993,12 +1002,13 @@
                             "chance": 1.0,
                             "impact": {
                                 "ofertaMoeda": 5,
-                                "gastosPublicos": 12,
-                                "consumoFamiliar": 10,
-                                "nivelPrecos": 0.1,
-                                "score_factor": 1.1
+                                "gastosPublicos": -8,
+                                "consumoFamiliar": -5,
+                                "investimentoPrivado": -8,
+                                "nivelPrecos": 0.15,
+                                "score_factor": 0.7
                             },
-                            "resultText": "A negociação bem-sucedida, facilitada por uma postura monetária mais branda, permitiu uma rápida normalização. A produção e o consumo se recuperaram, mas a expansão monetária e os gastos geraram alguma pressão inflacionária."
+                            "resultText": "As negociações se prolongaram demais, a flexibilização monetária gerou inflação e os custos da greve superaram os benefícios dos acordos. A economia ficou mais frágil e com menos recursos públicos."
                         }
                     ]
                 },
@@ -1205,10 +1215,12 @@
                             ],
                             "chance": 0.3,
                             "impact": {
-                                "consumoFamiliar": -2,
-                                "score_factor": 0.9
+                                "consumoFamiliar": -8,
+                                "investimentoPrivado": -2.5,
+                                "nivelPrecos": 0.05,
+                                "score_factor": 0.8
                             },
-                            "resultText": "A importação resolveu o problema de preços no curto prazo, mas prejudicou a recuperação dos produtores locais e piorou a balança comercial. A falta de apoio direto ao campo deixou sequelas."
+                            "resultText": "A importação resolveu o problema de preços no curto prazo, mas prejudicou gravemente a recuperação dos produtores locais e piorou a balança comercial. A crise agrícola causou desemprego rural e migração para as cidades."
                         },
                         {
                             "combo": [
@@ -1233,12 +1245,12 @@
                             "chance": 1.0,
                             "impact": {
                                 "gastosPublicos": 20,
-                                "consumoFamiliar": 2,
-                                "investimentoPrivado": 0,
-                                "nivelPrecos": 0.05,
-                                "score_factor": 1.05
+                                "consumoFamiliar": -5,
+                                "investimentoPrivado": -3,
+                                "nivelPrecos": 0.08,
+                                "score_factor": 0.9
                             },
-                            "resultText": "O forte apoio aos produtores rurais permitiu uma recuperação mais rápida do setor e sustentou o consumo, apesar da leve pressão inflacionária que a política monetária mais branda não combateu totalmente."
+                            "resultText": "O forte apoio aos produtores rurais ajudou a mitigar a crise, mas a política monetária frouxa gerou inflação de alimentos. O consumo urbano foi impactado pelos preços altos e pela incerteza econômica."
                         }
                     ]
                 },
