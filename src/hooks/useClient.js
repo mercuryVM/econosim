@@ -140,7 +140,10 @@ export class SoundManager {
         const buffer = this.buffers[name];
         if (!buffer) {
             console.warn(`Sound ${name} not found`);
-            return;
+            return {
+                stop: () => {},
+                length: 0
+            };
         }
         const source = this.audioContext.createBufferSource();
         source.buffer = buffer;
