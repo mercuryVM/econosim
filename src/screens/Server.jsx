@@ -163,14 +163,16 @@ function RenderLobby({ client, countdown, handleStartGame }) {
             const startLoop = () => {
                 sound = client.playSound("lobby", 0.1);
                 intervalId = setInterval(() => {
-                    sound.stop?.();
+                    if(sound)
+                        sound.stop?.();
                     sound = client.playSound("lobby", 0.1);
                 }, 64 * 1000);
             };
             startLoop();
             return () => {
                 clearInterval(intervalId);
-                sound.stop?.();
+                if(sound)
+                    sound.stop?.();
             };
         }
     }, [client, countdownLocal]); // sem dependências: roda só uma vez
