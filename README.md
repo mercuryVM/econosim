@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+<p align="center">
+  <img src="./src/screens/assets/logo.png" alt="EconoSim logo" width="200"/>
+</p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<h1 align="center">📊 EconoSim — Simulador Interativo IS-LM</h1>
 
-## Available Scripts
+**EconoSim** é um jogo educacional interativo baseado no modelo macroeconômico **IS-LM**, desenvolvido para simular as decisões de política fiscal e monetária feitas por governos e bancos centrais em diferentes cenários econômicos.
 
-In the project directory, you can run:
+O jogo foi criado para ser aplicado em salas de aula, como uma dinâmica prática que ajuda os alunos a entenderem as interações entre política econômica, PIB, taxa de juros e os choques externos.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🧠 Objetivo
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Cada time representa uma entidade econômica: **Governo** ou **Banco Central**, de dois países diferentes. A cada rodada, os grupos discutem e tomam decisões que afetam variáveis econômicas como:
 
-### `npm test`
+- Gastos Públicos (G)
+- Oferta Monetária (M)
+- Taxa de Juros (i)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Essas decisões influenciam a posição das curvas **IS** e **LM**, aproximando (ou afastando) o país de um equilíbrio macroeconômico ideal.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🖥️ Tecnologias Utilizadas
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **React** (frontend)
+- **Socket.IO** (comunicação em tempo real)
+- **Node.js** (backend)
+- **Create React App** (build)
+- **Styled with MUI** (layout e animações)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🚀 Rodando localmente
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone o repositório:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone https://github.com/mercuryVM/econosim.git
+cd econosim
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Instale as dependências:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+yarn
+```
 
-## Learn More
+3. Inicie o servidor:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+yarn start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. Acesse no navegador:
 
-### Code Splitting
+```
+http://localhost:3000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 📷 Visão do Jogo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<p align="center">
+  <img src="./assets/gameplay.png" alt="Tela do jogo EconoSim" width="600"/>
+</p>
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🧩 Estrutura do Jogo
 
-### Advanced Configuration
+- Salas com até 4 grupos (País A/B - Governo/BC)
+- Rodadas de 5 a 7 minutos
+- Eventos globais que alteram o cenário macroeconômico
+- Decisões em grupo com votação via celular
+- Cálculo automático da posição IS-LM e score por rodada
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 📈 Como vencer?
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+O sistema de pontuação calcula a distância entre a economia atual do país e o ponto de equilíbrio IS-LM. O país com maior consistência em se manter próximo ao equilíbrio ao longo das rodadas vence.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🧪 Para professores
+
+O jogo é ideal para turmas de graduação em Economia, Administração ou Computação, oferecendo:
+
+- Aplicação prática de modelos teóricos
+- Tomada de decisões colaborativa
+- Visualização em tempo real de impactos econômicos
+- Base para discussão em aula
+
+---
+
+## 📚 Créditos
+
+Desenvolvido por estudantes da Universidade de São Paulo (USP) como parte da disciplina ACH2063 - Introdução à Administração e Economia para Computação.
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Sinta-se livre para adaptar, modificar e aplicar em suas aulas!
