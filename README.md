@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./src/screens/assets/logo.png" alt="EconoSim logo" width="200"/>
+  <img src="./src/screens/assets/econosim_logo_1.svg" alt="EconoSim logo" width="200"/>
 </p>
 
 <h1 align="center">📊 EconoSim — Simulador Interativo IS-LM</h1>
