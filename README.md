@@ -55,12 +55,12 @@ yarn start
 
 4. Acesse no navegador:
 
-##Cliente
+### Cliente
 ```
 http://localhost:3000
 ```
 
-##Servidor
+### Servidor
 ```
 http://localhost:3000/server
 ```
