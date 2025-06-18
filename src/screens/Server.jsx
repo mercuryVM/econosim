@@ -124,7 +124,8 @@ function StatusBar() {
             background: "linear-gradient(90deg, rgba(34, 139, 34, 0.95) 0%, rgba(46, 125, 50, 0.95) 100%)",
             backdropFilter: "blur(10px)",
             borderTop: "1px solid rgba(255, 255, 255, 0.2)",
-            overflow: "hidden"
+            overflow: "hidden",
+            zIndex: 9999
         }}>
             <Typography variant="body1" component="div" sx={{
                 color: "white",
@@ -1273,211 +1274,188 @@ function RoundEnd({ client, gameState, oldGameState }) {
 }
 
 
-    function State0({client, }) {
-        useEffect(() => {
-            if (client) {
-                client.playSound("roundEnd", 0.1);
-            }
-        }, [])
-
-        return (
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.9)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999,
-                }}
-            >
-                <Typography
-                    variant="h1"
-                    sx={{
-                        color: "white",
-                        fontWeight: 700,
-                        fontSize: "6rem",
-                        animation: "fadeScale 1s ease-in-out",
-                        "@keyframes fadeScale": {
-                            "0%": { transform: "scale(0.5)", opacity: 0 },
-                            "50%": { transform: "scale(1.2)", opacity: 1 },
-                            "100%": { transform: "scale(1)", opacity: 1 },
-                        },
-                    }}
-                >
-                    FIM DE RODADA
-                </Typography>
-            </Box>
-        )
-    }
-
-    function State1({ economy, votes, gameState, setState, goBackEconomy }) {
-        const [localState, setLocalState] = useState(0);
-        const [stats, setStats] = useState(economy.old.stats || {});
-
-        const event = economy.old.event || null;
-        const selectedBancoOption = votes[economy.index].option.banco;
-        const selectedGovernoOption = votes[economy.index].option.governo;
-        const outcomeEvent = votes[economy.index].eventResult || null;
-
-        useEffect(() => {
-            if (localState === 2) {
-                const duration = 2000; // Duration of the transition in milliseconds
-                const steps = 60; // Number of steps for the transition
-                const interval = duration / steps;
-
-                const oldStats = {
-                    ...economy.old.stats,
-                    score: economy.old.score || 0,
-                } || {};
-                const newStats = {
-                    ...economy.new.stats,
-                    score: economy.new.score || 0,
-                } || {};
-
-                const keys = Object.keys(oldStats);
-                const deltas = keys.map(key => (newStats[key] - oldStats[key]) / steps);
-
-                let currentStep = 0;
-                const intervalId = setInterval(() => {
-                    currentStep++;
-
-                    if (currentStep >= steps) {
-                        clearInterval(intervalId);
-                        setStats(newStats); // Ensure final state is set
-                        return;
-                    }
-
-                    const updatedStats = {};
-                    keys.forEach((key, index) => {
-                        updatedStats[key] = oldStats[key] + deltas[index] * currentStep;
-                    });
-
-                    setStats(updatedStats);
-                }, interval);
-
-                return () => clearInterval(intervalId); // Cleanup on unmount or state change
-            }
-        }, [localState, economy]);
-
-        useEffect(() => {
-            const onClick = (e) => {
-                e.preventDefault();
-                const isRightClick = e.button === 2; // Right click
-
-                if (!isRightClick) {
-                    if (localState === 0) {
-                        setLocalState(1);
-                    }
-                    if (localState === 1) {
-                        setLocalState(2);
-                    }
-                    if (localState === 2) {
-                        setState(2);
-                    }
-                } else {
-                    if (localState === 0) {
-                        goBackEconomy();
-                        setLocalState(2);
-                    }
-                    if (localState === 1) {
-                        setLocalState(0);
-                    }
-                    if (localState === 2) {
-                        setLocalState(1);
-                    }
-                }
-            }
-
-            const handleContextMenu = (e) => {
-                e.preventDefault(); // Prevent the context menu from appearing
-                onClick(e); // Call the same function to handle right click
-            }
-
-            window.addEventListener("click", onClick);
-            window.addEventListener("contextmenu", handleContextMenu);
-
-            return () => {
-                window.removeEventListener("click", onClick);
-                window.removeEventListener("contextmenu", handleContextMenu);
-            }
-        }, [localState])
-
-        function Decision({ entityName, decision }) {
-            return (
-                <Paper sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(10px)",
-                    borderRadius: 2,
-                    padding: "1rem 0",
-                    flexDirection: "column"
-                }}>
-                    <Typography fontSize={24} sx={{ fontWeight: 500, fontwcolor: "black", margin: "auto" }}>
-                        {entityName} tomou a decisão:
-                    </Typography>
-
-                    <Divider sx={{ width: "100%" }} />
-
-                    <Box>
-                        <Typography fontSize={16} sx={{ color: "black", margin: "auto" }}>
-                            {decision ? decision.description : "Nenhuma opção selecionada"}
-                        </Typography>
-                    </Box>
-                </Paper>
-            )
+function State0({ client, }) {
+    useEffect(() => {
+        if (client) {
+            client.playSound("roundEnd", 0.1);
         }
+    }, [])
 
-        return (
-            <Box sx={{
+    return (
+        <Box
+            sx={{
                 position: "absolute",
                 top: 0,
                 left: 0,
-                flex: 1,
-                zIndex: 9999,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(0, 0, 0, 0.9)",
                 display: "flex",
-                flexDirection: "column",
-                padding: 2,
-                gap: 2,
-                borderRadius: "20px",
-                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
-            }} className="bg">
-                {
-                    //NOME DA ECONOMIA
-                    localState === 0 && (
-                        <>
-                            <Typography
-                                variant="h6"
-                                sx={{
-                                    backgroundColor: "#f5a623", // cor de fundo laranja
-                                    color: "#fff",              // texto branco
-                                    padding: "4px 16px",        // espaço interno
-                                    borderRadius: "4px",        // cantos levemente arredondados
-                                    fontWeight: "bold",         // negrito
-                                    display: "inline-block",    // para ajustar ao conteúdo
-                                    textAlign: "center",        // centraliza o texto
-                                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // leve sombra
-                                    textTransform: "uppercase", // tudo em maiúsculas, se desejar
-                                }}
-                            >
-                                {economy.old.country}
-                            </Typography>
-                        </>
-                    )
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 9999,
+            }}
+        >
+            <Typography
+                variant="h1"
+                sx={{
+                    color: "white",
+                    fontWeight: 700,
+                    fontSize: "6rem",
+                    animation: "fadeScale 1s ease-in-out",
+                    "@keyframes fadeScale": {
+                        "0%": { transform: "scale(0.5)", opacity: 0 },
+                        "50%": { transform: "scale(1.2)", opacity: 1 },
+                        "100%": { transform: "scale(1)", opacity: 1 },
+                    },
+                }}
+            >
+                FIM DE RODADA
+            </Typography>
+        </Box>
+    )
+}
+
+function State1({ economy, votes, gameState, setState, goBackEconomy }) {
+    const [localState, setLocalState] = useState(0);
+    const [stats, setStats] = useState(economy.old.stats || {});
+
+    const event = economy.old.event || null;
+    const selectedBancoOption = votes[economy.index].option.banco;
+    const selectedGovernoOption = votes[economy.index].option.governo;
+    const outcomeEvent = votes[economy.index].eventResult || null;
+
+    useEffect(() => {
+        if (localState === 2) {
+            const duration = 2000; // Duration of the transition in milliseconds
+            const steps = 60; // Number of steps for the transition
+            const interval = duration / steps;
+
+            const oldStats = {
+                ...economy.old.stats,
+                score: economy.old.score || 0,
+            } || {};
+            const newStats = {
+                ...economy.new.stats,
+                score: economy.new.score || 0,
+            } || {};
+
+            const keys = Object.keys(oldStats);
+            const deltas = keys.map(key => (newStats[key] - oldStats[key]) / steps);
+
+            let currentStep = 0;
+            const intervalId = setInterval(() => {
+                currentStep++;
+
+                if (currentStep >= steps) {
+                    clearInterval(intervalId);
+                    setStats(newStats); // Ensure final state is set
+                    return;
                 }
 
-                {
-                    //MOSTRAR SITUAÇÃO LOCAL
-                    localState === 1 && (
-                        <>
+                const updatedStats = {};
+                keys.forEach((key, index) => {
+                    updatedStats[key] = oldStats[key] + deltas[index] * currentStep;
+                });
 
-                            <Typography variant="h3" sx={{
+                setStats(updatedStats);
+            }, interval);
+
+            return () => clearInterval(intervalId); // Cleanup on unmount or state change
+        }
+    }, [localState, economy]);
+
+    useEffect(() => {
+        const onClick = (e) => {
+            e.preventDefault();
+            const isRightClick = e.button === 2; // Right click
+
+            if (!isRightClick) {
+                if (localState === 0) {
+                    setLocalState(1);
+                }
+                if (localState === 1) {
+                    setLocalState(2);
+                }
+                if (localState === 2) {
+                    setState(2);
+                }
+            } else {
+                if (localState === 0) {
+                    goBackEconomy();
+                    setLocalState(2);
+                }
+                if (localState === 1) {
+                    setLocalState(0);
+                }
+                if (localState === 2) {
+                    setLocalState(1);
+                }
+            }
+        }
+
+        const handleContextMenu = (e) => {
+            e.preventDefault(); // Prevent the context menu from appearing
+            onClick(e); // Call the same function to handle right click
+        }
+
+        window.addEventListener("click", onClick);
+        window.addEventListener("contextmenu", handleContextMenu);
+
+        return () => {
+            window.removeEventListener("click", onClick);
+            window.removeEventListener("contextmenu", handleContextMenu);
+        }
+    }, [localState])
+
+    function Decision({ entityName, decision }) {
+        return (
+            <Paper sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                backdropFilter: "blur(10px)",
+                borderRadius: 2,
+                padding: "1rem 0",
+                flexDirection: "column"
+            }}>
+                <Typography fontSize={24} sx={{ fontWeight: 500, fontwcolor: "black", margin: "auto" }}>
+                    {entityName} tomou a decisão:
+                </Typography>
+
+                <Divider sx={{ width: "100%" }} />
+
+                <Box>
+                    <Typography fontSize={16} sx={{ color: "black", margin: "auto" }}>
+                        {decision ? decision.description : "Nenhuma opção selecionada"}
+                    </Typography>
+                </Box>
+            </Paper>
+        )
+    }
+
+    return (
+        <Box sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            flex: 1,
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            padding: 2,
+            gap: 2,
+            borderRadius: "20px",
+            boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
+        }} className="bg">
+            {
+                //NOME DA ECONOMIA
+                localState === 0 && (
+                    <>
+                        <Typography
+                            variant="h6"
+                            sx={{
                                 backgroundColor: "#f5a623", // cor de fundo laranja
                                 color: "#fff",              // texto branco
                                 padding: "4px 16px",        // espaço interno
@@ -1487,127 +1465,150 @@ function RoundEnd({ client, gameState, oldGameState }) {
                                 textAlign: "center",        // centraliza o texto
                                 boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // leve sombra
                                 textTransform: "uppercase", // tudo em maiúsculas, se desejar
-                            }}>
-                                {economy.old.country}
-                            </Typography>
-
-                            <Box display="grid" gridTemplateColumns={{ xs: "1fr", md: "2fr 1fr" }} gap={3} alignItems="center" justifyItems="center">
-                                <Box display="flex" flexDirection="column" gap={3}>
-                                    <Paper sx={{
-                                        display: "flex",
-
-                                        background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
-                                        boxShadow: "0 4px 16px 0 rgba(31, 38, 135, 0.10)",
-                                        borderRadius: "15px",
-                                        padding: 4,
-                                        flexDirection: "column",
-                                        animation: "fadeIn 1s ease-in-out",
-                                    }}>
-                                        <Typography fontSize={32} sx={{
-                                            color: "#263238",
-                                            fontWeight: 400,
-                                            lineHeight: 0.7,
-                                            textShadow: "1px 1px 3px rgba(0, 0, 0, 0.3)",
-                                        }}>
-                                            Situação Problema:
-                                        </Typography>
-                                        <Typography fontSize={32} sx={{ fontWeight: 900, color: "#263238", mb: 1 }}>{event.name}</Typography>
-                                        <Typography fontSize={20} sx={{
-                                            color: "#37474f",
-                                            margin: "auto",
-
-                                            textAlign: "center",
-                                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
-                                        }}>
-                                            {event.description}
-                                        </Typography>
-                                    </Paper>
-                                    <Decision entityName={"Banco"} decision={selectedBancoOption} />
-                                    <Decision entityName={"Governo"} decision={selectedGovernoOption} />
-                                </Box>
-                                <img src={event.asset} alt={event.description} style={{
-                                    maxHeight: 400,
-                                    borderRadius: "30px",
-
-                                    objectFit: "contain",
-                                    width: "100%",
-                                    maxWidth: 350,
-                                    animation: "zoomIn 0.8s ease-in-out",
-                                }} />
-                            </Box>
-
-                            <Paper sx={{
-                                p: 2,
-                                mt: "auto",
-                                display: "flex",
-                                background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
-                                boxShadow: "0 2px 8px 0 rgba(31, 38, 135, 0.08)",
-                                borderRadius: "15px",
-
-                                animation: "fadeIn 1s ease-in-out",
-                            }}>
-                                <Typography variant="h5" textAlign={"center"} margin={"auto"} sx={{
-                                    color: "#263238",
-                                    fontWeight: 600,
-                                    textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
-                                }}>
-                                    {outcomeEvent.resultText}
-                                </Typography>
-                            </Paper>
-                        </>
-
-                    )
-                }
-
-                {
-                    //MOSTRAR DADOS E GRÁFICO
-                    localState === 2 && (
-                        <>                            <Typography variant="h4" sx={{
-                            backgroundColor: "#f5a623",
-                            color: "#fff",
-                            padding: "4px 16px",
-                            borderRadius: "4px",
-                            fontWeight: "bold",
-                            display: "inline-block",
-                            textAlign: "center",
-                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                            textTransform: "uppercase",
-                            width: "calc(100% - 32px)",
-                            pt: "10px",
-                        }}>
-                            RESULTADOS - Rodada {gameState.round?.numRound}/5
+                            }}
+                        >
+                            {economy.old.country}
                         </Typography>
-                            <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
-                                <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
-                                    padding: "16px",
-                                    background: "white",
-                                    borderRadius: "20px",
-                                    width: "50%"
+                    </>
+                )
+            }
+
+            {
+                //MOSTRAR SITUAÇÃO LOCAL
+                localState === 1 && (
+                    <>
+
+                        <Typography variant="h3" sx={{
+                            backgroundColor: "#f5a623", // cor de fundo laranja
+                            color: "#fff",              // texto branco
+                            padding: "4px 16px",        // espaço interno
+                            borderRadius: "4px",        // cantos levemente arredondados
+                            fontWeight: "bold",         // negrito
+                            display: "inline-block",    // para ajustar ao conteúdo
+                            textAlign: "center",        // centraliza o texto
+                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // leve sombra
+                            textTransform: "uppercase", // tudo em maiúsculas, se desejar
+                        }}>
+                            {economy.old.country}
+                        </Typography>
+
+                        <Box display="grid" gridTemplateColumns={{ xs: "1fr", md: "2fr 1fr" }} gap={3} alignItems="center" justifyItems="center">
+                            <Box display="flex" flexDirection="column" gap={3}>
+                                <Paper sx={{
+                                    display: "flex",
+
+                                    background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
+                                    boxShadow: "0 4px 16px 0 rgba(31, 38, 135, 0.10)",
+                                    borderRadius: "15px",
+                                    padding: 4,
+                                    flexDirection: "column",
+                                    animation: "fadeIn 1s ease-in-out",
                                 }}>
-                                    <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
-                                    <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
-                                    <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
-                                    <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
-                                    <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                                    <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
-                                    <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
-                                </Box>
+                                    <Typography fontSize={32} sx={{
+                                        color: "#263238",
+                                        fontWeight: 400,
+                                        lineHeight: 0.7,
+                                        textShadow: "1px 1px 3px rgba(0, 0, 0, 0.3)",
+                                    }}>
+                                        Situação Problema:
+                                    </Typography>
+                                    <Typography fontSize={32} sx={{ fontWeight: 900, color: "#263238", mb: 1 }}>{event.name}</Typography>
+                                    <Typography fontSize={20} sx={{
+                                        color: "#37474f",
+                                        margin: "auto",
 
-                                <CountryScore economy={{
-                                    score: stats.score || 0,
-                                }} />
-
-                                <Paper sx={{ padding: 2, flex: 1, width: "50%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
-                                    <RoundEndGraph economy={{ stats }} />
+                                        textAlign: "center",
+                                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
+                                    }}>
+                                        {event.description}
+                                    </Typography>
                                 </Paper>
+                                <Decision entityName={"Banco"} decision={selectedBancoOption} />
+                                <Decision entityName={"Governo"} decision={selectedGovernoOption} />
+                            </Box>
+                            <img src={event.asset} alt={event.description} style={{
+                                maxHeight: 400,
+                                borderRadius: "30px",
+
+                                objectFit: "contain",
+                                width: "100%",
+                                maxWidth: 350,
+                                animation: "zoomIn 0.8s ease-in-out",
+                            }} />
+                        </Box>
+
+                        <Paper sx={{
+                            p: 2,
+                            mt: "auto",
+                            display: "flex",
+                            background: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
+                            boxShadow: "0 2px 8px 0 rgba(31, 38, 135, 0.08)",
+                            borderRadius: "15px",
+
+                            animation: "fadeIn 1s ease-in-out",
+                        }}>
+                            <Typography variant="h5" textAlign={"center"} margin={"auto"} sx={{
+                                color: "#263238",
+                                fontWeight: 600,
+                                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
+                            }}>
+                                {outcomeEvent.resultText}
+                            </Typography>
+                        </Paper>
+                    </>
+
+                )
+            }
+
+            {
+                //MOSTRAR DADOS E GRÁFICO
+                localState === 2 && (
+                    <>                            <Typography variant="h4" sx={{
+                        backgroundColor: "#f5a623",
+                        color: "#fff",
+                        padding: "4px 16px",
+                        borderRadius: "4px",
+                        fontWeight: "bold",
+                        display: "inline-block",
+                        textAlign: "center",
+                        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                        textTransform: "uppercase",
+                        width: "calc(100% - 32px)",
+                        pt: "10px",
+                    }}>
+                        RESULTADOS - Rodada {gameState.round?.numRound}/5
+                    </Typography>
+                        <Box display={"flex"} flex={1} alignItems={"center"} flexDirection={"column"} gap={2}>
+                            <Box display={"grid"} gridTemplateColumns={"0.5fr 4fr 1fr"} sx={{
+                                padding: "16px",
+                                background: "white",
+                                borderRadius: "20px",
+                                width: "50%"
+                            }}>
+                                <Dado label={"PIB"} value={"R$ " + (stats.pib).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                                <Dado label={"Taxa de Juros"} value={(stats.taxaDeJuros * 100).toFixed(2) + "%"} icon={PercentIcon} />
+                                <Dado label={"Gastos públicos"} value={"R$ " + (stats.gastosPublicos).toFixed(2) + " bi"} icon={AccountBalanceIcon} />
+                                <Dado label={"Investimentos privados"} value={"R$ " + (stats.investimentoPrivado).toFixed(2) + " bi"} icon={PriceCheckIcon} />
+                                <Dado label={"Oferta por moeda"} value={"R$ " + (stats.ofertaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                                <Dado label={"Demanda por moeda"} value={"R$ " + (stats.demandaMoeda).toFixed(2) + " bi"} icon={MonetizationOnIcon} />
+                                <Dado label={"Consumo familiar"} value={"R$ " + (stats.consumoFamiliar).toFixed(2) + " bi"} icon={FamilyRestroomIcon} />
                             </Box>
 
-                        </>
-                    )
-                }
-            </Box>
-        )
-    }
+                            <CountryScore economy={{
+                                score: stats.score || 0,
+                            }} />
+
+                            <Paper sx={{ padding: 2, flex: 1, width: "50%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                                <RoundEndGraph economy={{ stats }} />
+                            </Paper>
+                        </Box>
+
+                    </>
+                )
+            }
+        </Box>
+    )
+}
 
 function RoundEndGraph({ economy }) {
     const {
