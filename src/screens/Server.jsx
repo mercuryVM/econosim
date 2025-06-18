@@ -163,7 +163,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
             const startLoop = () => {
                 sound = client.playSound("lobby", 0.1);
                 intervalId = setInterval(() => {
-                    if(sound)
+                    if (sound)
                         sound.stop?.();
                     sound = client.playSound("lobby", 0.1);
                 }, 64 * 1000);
@@ -171,7 +171,7 @@ function RenderLobby({ client, countdown, handleStartGame }) {
             startLoop();
             return () => {
                 clearInterval(intervalId);
-                if(sound)
+                if (sound)
                     sound.stop?.();
             };
         }
@@ -746,7 +746,7 @@ function GameSummary({ gameState, client }) {
             return () => {
                 sound.stop?.(); // Stop sound when component unmounts
             }
-        } 
+        }
     }, [])
 
     useEffect(() => {
@@ -1185,32 +1185,62 @@ function RoundEnd({ client, gameState, oldGameState }) {
     const [state, setState] = useState(0);
     const [currentEconomy, setCurrentEconomy] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [economyLength, setEconomyLength] = useState(-1);
+    const [economies, setEconomies] = useState({
+        old: [],
+        new: []
+    });
+    const [numRounds, setNumRounds] = useState(0);
+
+    useEffect(() => {
+        if (gameState && gameState.economies && oldGameState && oldGameState.economies) {
+            if (JSON.stringify(gameState.economies) !== JSON.stringify(economies.new) || JSON.stringify(oldGameState.economies) !== JSON.stringify(economies.old)) {
+                setEconomies({
+                    old: oldGameState.economies.map(e => e),
+                    new: gameState.economies.map(e => e)
+                });
+            }
+        }
+    }, [gameState, oldGameState, economies])
 
     const selectEconomy = useCallback((index) => {
         return {
-            old: oldGameState.economies[index],
-            new: gameState.economies[index],
+            old: economies.old[index],
+            new: economies.new[index],
             index: index
         }
-    }, [gameState, oldGameState]);
+    }, [economies]);
+
+    useEffect(() => {
+        if (gameState && gameState.economies) {
+            if (economyLength !== gameState.economies.length) {
+                setEconomyLength(gameState.economies.length);
+            }
+        }
+        if (gameState && gameState.round) {
+            if (numRounds !== gameState.round.numRound) {
+                setNumRounds(gameState.round.numRound);
+            }
+        }
+    }, [gameState, economyLength, numRounds]);
 
     useEffect(() => {
         if (state === 0) {
             return;
         }
 
-        if (gameState && gameState.economies && gameState.economies.length > 0 && currentIndex < gameState.economies.length) {
+        if (economyLength > 0 && currentIndex < economyLength) {
             setCurrentEconomy(selectEconomy(currentIndex));
             setState(1);
         } else {
             // Check if we've reached the maximum rounds (5)
-            if (gameState.round.numRound >= 5) {
+            if (numRounds >= 5) {
                 setState(3); // Go to game summary state
             } else {
                 client.sendMessage("nextRound");
             }
         }
-    }, [client, currentIndex, gameState, selectEconomy, state])
+    }, [client, currentIndex, economyLength, selectEconomy, state])
 
     function goBackEconomy() {
         if (currentIndex > 0) {
@@ -1233,7 +1263,17 @@ function RoundEnd({ client, gameState, oldGameState }) {
         }
     }, [state])
 
-    function State0() {
+    return (
+        <>
+            {state === 0 && <State0 client={client} />}
+            {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} gameState={gameState} setState={setState} goBackEconomy={goBackEconomy} />}
+            {state === 3 && <GameSummary gameState={gameState} client={client} />}
+        </>
+    )
+}
+
+
+    function State0({client, }) {
         useEffect(() => {
             if (client) {
                 client.playSound("roundEnd", 0.1);
@@ -1275,7 +1315,7 @@ function RoundEnd({ client, gameState, oldGameState }) {
         )
     }
 
-    function State1({ economy, votes }) {
+    function State1({ economy, votes, gameState, setState, goBackEconomy }) {
         const [localState, setLocalState] = useState(0);
         const [stats, setStats] = useState(economy.old.stats || {});
 
@@ -1569,15 +1609,6 @@ function RoundEnd({ client, gameState, oldGameState }) {
         )
     }
 
-    return (
-        <>
-            {state === 0 && <State0 />}
-            {state === 1 && currentEconomy && <State1 key={currentEconomy?.name} votes={gameState.votes} economy={currentEconomy} />}
-            {state === 3 && <GameSummary gameState={gameState} client={client} />}
-        </>
-    )
-}
-
 function RoundEndGraph({ economy }) {
     const {
         pib,
@@ -1666,7 +1697,7 @@ function RoundEndGraph({ economy }) {
                         dot={false}
                         name="Curva LM" />
                     {/* Pontos de referência */}
-                  
+
                     {/* Ponto do PIB real (com validação) */}
                     {pib > 0 && (
                         <ReferenceDot
@@ -2381,7 +2412,7 @@ function GlobalEventAnnouncement({ client, gameState }) {
     const [globalEvent, setGlobalEvent] = useState(gameState?.round?.globalEvent || null);
 
     useEffect(() => {
-        if(JSON.stringify(gameState?.round?.globalEvent) === JSON.stringify(globalEvent)) return;
+        if (JSON.stringify(gameState?.round?.globalEvent) === JSON.stringify(globalEvent)) return;
         setGlobalEvent(gameState?.round?.globalEvent || null);
     }, [gameState]);
 
