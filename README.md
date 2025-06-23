@@ -41,16 +41,23 @@ git clone https://github.com/mercuryVM/econosim.git
 cd econosim
 ```
 
-2. Instale as dependências:
+2. Instale as dependências do servidor de cliente:
 
 ```bash
 yarn
 ```
 
-3. Inicie o servidor:
+3. Inicie o servidor de cliente:
 
 ```bash
 yarn start
+```
+
+4. Inicie o servidor Node JS
+```bash
+cd server
+yarn
+node index.js
 ```
 
 4. Acesse no navegador:
