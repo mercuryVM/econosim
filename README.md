@@ -74,6 +74,21 @@ http://localhost:3000/server
 
 ---
 
+## 🚀 Rodando na nuvem
+
+### Cliente
+Recomendo a utilização do Netlify para hospedar o React App.
+- Utilizar env CI=false
+- Configurar variável de ambiente com o REACT_APP_API_PATH
+
+### Servidor
+Recomendo ou rodar na sua rede local ou hospedar em uma máquina virtual para permitir a entrada dos jogadores em redes públicas
+- Cloudflare para Proxy SSL
+- Google Cloud
+- Clonar o repositório (utilizar PM2 para gerenciar o processo)
+
+---
+
 ## 📷 Visão do Jogo
 
 <p align="center">
